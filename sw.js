@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flickers-v1';
+const CACHE_NAME = 'flickers-v2';
 const urlsToCache = [
   '/',
   '/index.html',

@@ -125,6 +125,65 @@
             background: rgba(99, 102, 241, 0.2);
         }
 
+        /* ========== Мобильный UI (Telegram-style) ========== */
+        @media (max-width: 768px) {
+            #main-app {
+                flex-direction: column;
+            }
+            
+            #main-app > aside {
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                z-index: 30;
+                transition: transform 0.3s ease;
+            }
+            
+            #main-app > aside.mobile-hidden {
+                transform: translateX(-100%);
+            }
+            
+            #main-app > main {
+                position: fixed;
+                inset: 0;
+                z-index: 25;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            }
+            
+            #main-app > main.mobile-visible {
+                transform: translateX(0);
+            }
+            
+            #chat-placeholder {
+                display: none !important;
+            }
+            
+            .mobile-back-btn {
+                display: flex !important;
+            }
+            
+            /* Убираем placeholder на мобильных */
+            #main-app > main:not(.mobile-visible) {
+                pointer-events: none;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-back-btn {
+                display: none !important;
+            }
+            
+            #main-app > aside {
+                transform: none !important;
+            }
+            
+            #main-app > main {
+                transform: none !important;
+                position: relative !important;
+            }
+        }
+
         /* Уведомления */
         .notification-toast {
             position: fixed;
@@ -1210,10 +1269,18 @@
         <div id="active-chat" class="hidden flex-1 flex flex-col h-full">
             <header class="p-4 border-b border-[var(--border)] glass-panel flex items-center justify-between z-10">
                 <div class="flex items-center space-x-3">
-                    <div id="target-avatar" class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-500 flex items-center justify-center font-bold">?</div>
+                    <!-- Кнопка назад для мобильных -->
+                    <button onclick="mobileGoBack()" class="mobile-back-btn hidden w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors items-center justify-center -ml-2">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <div class="relative">
+                        <div id="target-avatar" class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-500 flex items-center justify-center font-bold">?</div>
+                        <div id="online-indicator" class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white dark:border-slate-900 hidden"></div>
+                    </div>
                     <div>
                         <p id="target-name" class="font-bold">Чат</p>
-                        <p id="typing-indicator" class="text-[10px] opacity-0 transition-opacity">Печатает...</p>
+                        <p id="online-status" class="text-[10px] text-slate-400 hidden">Офлайн</p>
+                        <p id="typing-indicator" class="text-[10px] opacity-0 transition-opacity text-indigo-500">Печатает...</p>
                     </div>
                 </div>
                 <div class="flex space-x-2">
@@ -1222,7 +1289,7 @@
                     <div class="relative">
                         <button onclick="toggleChatMenu()" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><i class="fas fa-ellipsis-v"></i></button>
                         <div id="chat-menu" class="hidden absolute right-0 top-12 w-56 bg-[var(--bg-primary)] border border-[var(--border)] rounded-2xl shadow-xl overflow-hidden z-50">
-                            <button onclick="searchInChat()" class="w-full px-4 py-3 flex items-center gap-3 hover:bg-[var(--bg-secondary)] transition-colors text-left">
+                            <button onclick="searchInChat()" class="w-full px-4 py-3 flex items-center gap-3 hover:bg-[var(--bg-secondary)] transition-colors text-left"></button>
                                 <i class="fas fa-search text-indigo-500 w-5"></i>
                                 <span data-i18n="searchInChat">Поиск в чате</span>
                             </button>
@@ -1612,8 +1679,107 @@
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'flickers-pro-v2';
 
     let me = null, activeChatPartner = null, msgUnsub = null, partnerUnsub = null, chatListeners = {}, activeGroupCallUnsub = null;
+    let onlineStatusInterval = null;
+    let isMobileView = window.innerWidth <= 768;
 
     const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+    
+    // ========== Мобильная навигация (Telegram-style) ==========
+    function checkMobileView() {
+        isMobileView = window.innerWidth <= 768;
+        
+        if (!isMobileView) {
+            // На десктопе убираем мобильные классы
+            document.querySelector('#main-app > aside')?.classList.remove('mobile-hidden');
+            document.querySelector('#main-app > main')?.classList.remove('mobile-visible');
+        }
+    }
+    
+    window.addEventListener('resize', checkMobileView);
+    
+    function mobileShowChat() {
+        if (!isMobileView) return;
+        
+        const sidebar = document.querySelector('#main-app > aside');
+        const chatArea = document.querySelector('#main-app > main');
+        
+        sidebar?.classList.add('mobile-hidden');
+        chatArea?.classList.add('mobile-visible');
+    }
+    
+    window.mobileGoBack = function() {
+        const sidebar = document.querySelector('#main-app > aside');
+        const chatArea = document.querySelector('#main-app > main');
+        
+        sidebar?.classList.remove('mobile-hidden');
+        chatArea?.classList.remove('mobile-visible');
+        
+        // Сбрасываем активный чат
+        activeChatPartner = null;
+        activeGroup = null;
+    };
+    
+    // Обработка кнопки "Назад" на Android
+    window.addEventListener('popstate', (e) => {
+        if (isMobileView && document.querySelector('#main-app > main.mobile-visible')) {
+            e.preventDefault();
+            mobileGoBack();
+        }
+    });
+    
+    // ========== Онлайн статус ==========
+    async function updateOnlineStatus(isOnline = true) {
+        if (!me) return;
+        try {
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                isOnline: isOnline,
+                lastSeen: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            console.log('Error updating online status:', err);
+        }
+    }
+    
+    function startOnlineStatusUpdates() {
+        // Обновляем статус сразу
+        updateOnlineStatus(true);
+        
+        // Обновляем каждые 30 секунд
+        onlineStatusInterval = setInterval(() => {
+            updateOnlineStatus(true);
+        }, 30000);
+        
+        // При закрытии страницы - ставим офлайн
+        window.addEventListener('beforeunload', () => {
+            updateOnlineStatus(false);
+        });
+        
+        // При потере фокуса - не меняем статус (пользователь может вернуться)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                updateOnlineStatus(true);
+            }
+        });
+    }
+    
+    function formatLastSeen(timestamp) {
+        if (!timestamp) return currentLang === 'ru' ? 'давно' : 'long ago';
+        
+        const now = Date.now();
+        const lastSeen = timestamp.seconds ? timestamp.seconds * 1000 : timestamp;
+        const diff = now - lastSeen;
+        
+        const minutes = Math.floor(diff / 60000);
+        const hours = Math.floor(diff / 3600000);
+        const days = Math.floor(diff / 86400000);
+        
+        if (minutes < 1) return currentLang === 'ru' ? 'только что' : 'just now';
+        if (minutes < 60) return currentLang === 'ru' ? `${minutes} мин. назад` : `${minutes}m ago`;
+        if (hours < 24) return currentLang === 'ru' ? `${hours} ч. назад` : `${hours}h ago`;
+        if (days < 7) return currentLang === 'ru' ? `${days} дн. назад` : `${days}d ago`;
+        
+        return new Date(lastSeen).toLocaleDateString();
+    }
 
     // ========== Локализация ==========
     let currentLang = localStorage.getItem('flickers-lang') || 'ru';
@@ -1718,7 +1884,7 @@
             screenshotsBlocked: 'Скриншоты заблокированы в этом чате',
             
             // Аватар
-            avatarTooLarge: 'Аватарка слишком большая. Максимум 500KB.',
+            avatarTooLarge: 'Аватарка слишком большая. Максимум 1MB.',
             selectImage: 'Выберите изображение',
             
             // Эмодзи категории
@@ -1906,7 +2072,7 @@
             screenshotsBlocked: 'Screenshots are blocked in this chat',
             
             // Avatar
-            avatarTooLarge: 'Avatar is too large. Maximum 500KB.',
+            avatarTooLarge: 'Avatar is too large. Maximum 1MB.',
             selectImage: 'Select an image',
             
             // Emoji categories
@@ -2573,11 +2739,22 @@
 
     // Простая хеш-функция для пароля
     async function hashPassword(password) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(password + 'flickers-salt-2024');
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const saltedPassword = password + 'flickers-salt-2024';
+        
+        // Простой но надёжный хеш (работает везде)
+        let hash1 = 0, hash2 = 0;
+        for (let i = 0; i < saltedPassword.length; i++) {
+            const char = saltedPassword.charCodeAt(i);
+            hash1 = ((hash1 << 5) - hash1) + char;
+            hash1 = hash1 & hash1;
+            hash2 = ((hash2 << 7) - hash2) + char + i;
+            hash2 = hash2 & hash2;
+        }
+        const part1 = Math.abs(hash1).toString(16).padStart(8, '0');
+        const part2 = Math.abs(hash2).toString(16).padStart(8, '0');
+        const part3 = Math.abs(hash1 ^ hash2).toString(16).padStart(8, '0');
+        const part4 = Math.abs(hash1 + hash2).toString(16).padStart(8, '0');
+        return (part1 + part2 + part3 + part4 + part1 + part2 + part3 + part4).substring(0, 64);
     }
 
     window.switchAuthTab = (tab) => {
@@ -2756,6 +2933,9 @@
         loadWallpaper();
         listenToGroups();
         
+        // Запускаем обновление онлайн-статуса
+        startOnlineStatusUpdates();
+        
         // Запрашиваем разрешение на уведомления
         requestNotificationPermission();
     }
@@ -2847,7 +3027,10 @@
                 
                 // Сначала показываем с буквой, потом асинхронно подгружаем аватарку
                 div.innerHTML = `
-                    <div class="chat-avatar w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center font-bold text-indigo-500 shadow-sm overflow-hidden">${chat.username[0].toUpperCase()}</div>
+                    <div class="relative">
+                        <div class="chat-avatar w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center font-bold text-indigo-500 shadow-sm overflow-hidden">${chat.username[0].toUpperCase()}</div>
+                        <div class="chat-online-dot absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white dark:border-slate-900 hidden"></div>
+                    </div>
                     <div class="flex-1 overflow-hidden">
                         <div class="flex justify-between items-center">
                             <p class="font-bold text-sm">@${chat.username}</p>
@@ -2858,7 +3041,7 @@
                 `;
                 list.appendChild(div);
                 
-                // Асинхронно загружаем аватарку и проверяем удалён ли пользователь
+                // Асинхронно загружаем аватарку, статус онлайн и проверяем удалён ли пользователь
                 getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', chat.uid)).then(userDoc => {
                     // Проверяем, что снапшот ещё актуален
                     if (currentSnapshotId !== chatsSnapshotId) return;
@@ -2874,6 +3057,20 @@
                         const avatarEl = div.querySelector('.chat-avatar');
                         if (avatarEl && userData.avatar && !userData.deleted) {
                             avatarEl.innerHTML = `<img src="${userData.avatar}" class="w-full h-full object-cover">`;
+                        }
+                        
+                        // Показываем онлайн-статус
+                        const onlineDot = div.querySelector('.chat-online-dot');
+                        if (onlineDot) {
+                            const isOnline = userData.isOnline && userData.lastSeen && 
+                                (Date.now() - (userData.lastSeen.seconds ? userData.lastSeen.seconds * 1000 : userData.lastSeen) < 60000);
+                            
+                            onlineDot.classList.remove('hidden');
+                            if (isOnline) {
+                                onlineDot.className = 'chat-online-dot absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900';
+                            } else {
+                                onlineDot.className = 'chat-online-dot absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white dark:border-slate-900';
+                            }
                         }
                     }
                 }).catch(() => {});
@@ -2901,6 +3098,14 @@
         document.getElementById('active-chat').classList.remove('hidden');
         document.getElementById('target-name').innerText = "@" + partner.username;
         
+        // Мобильная навигация - показываем чат
+        mobileShowChat();
+        if (isMobileView) history.pushState({ chat: true }, '');
+        
+        // Показываем онлайн-статус для личных чатов
+        document.getElementById('online-status').classList.remove('hidden');
+        document.getElementById('online-indicator').classList.remove('hidden');
+        
         // Отписываемся от предыдущего слушателя профиля
         if (partnerUnsub) {
             partnerUnsub();
@@ -2910,6 +3115,8 @@
         // Слушаем изменения профиля собеседника в реальном времени
         const targetAvatar = document.getElementById('target-avatar');
         const targetName = document.getElementById('target-name');
+        const onlineStatus = document.getElementById('online-status');
+        const onlineIndicator = document.getElementById('online-indicator');
         
         partnerUnsub = onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'users', partner.uid), (userDoc) => {
             if (userDoc.exists()) {
@@ -2926,6 +3133,18 @@
                 if (userData.username) {
                     targetName.innerText = "@" + userData.username;
                     activeChatPartner.username = userData.username;
+                }
+                
+                // Обновляем онлайн-статус
+                const isOnline = userData.isOnline && userData.lastSeen && 
+                    (Date.now() - (userData.lastSeen.seconds ? userData.lastSeen.seconds * 1000 : userData.lastSeen) < 60000);
+                
+                if (isOnline) {
+                    onlineStatus.innerHTML = `<span class="text-green-500">${currentLang === 'ru' ? 'в сети' : 'online'}</span>`;
+                    onlineIndicator.className = 'absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-slate-900';
+                } else {
+                    onlineStatus.innerHTML = formatLastSeen(userData.lastSeen);
+                    onlineIndicator.className = 'absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white dark:border-slate-900';
                 }
                 
                 // Обновляем аватарку в списке чатов
@@ -4297,9 +4516,9 @@
         const file = input.files[0];
         if (!file || !me) return;
 
-        // Проверяем размер (макс 500KB для аватарки)
-        if (file.size > 500 * 1024) {
-            alert('Аватарка слишком большая. Максимум 500KB.');
+        // Проверяем размер (макс 1MB для аватарки)
+        if (file.size > 1024 * 1024) {
+            alert(currentLang === 'ru' ? 'Аватарка слишком большая. Максимум 1MB.' : 'Avatar is too large. Maximum 1MB.');
             input.value = '';
             return;
         }
@@ -4935,6 +5154,14 @@
         document.getElementById('active-chat').classList.remove('hidden');
         document.getElementById('target-avatar').innerHTML = `<i class="fas fa-users text-indigo-500"></i>`;
         document.getElementById('target-name').innerText = group.name;
+        
+        // Мобильная навигация - показываем чат
+        mobileShowChat();
+        if (isMobileView) history.pushState({ chat: true }, '');
+        
+        // Скрываем онлайн-статус для групп
+        document.getElementById('online-status').classList.add('hidden');
+        document.getElementById('online-indicator').classList.add('hidden');
         
         // Показываем кнопки звонков для групп
         const callBtns = document.querySelectorAll('[onclick^="startCall"]');
@@ -6338,11 +6565,21 @@
         listenForCalls();
     };
     
-    // Регистрация Service Worker для PWA
+    // Регистрация Service Worker для PWA (отключено для отладки)
+    // Раскомментируй для продакшена на HTTPS
+    /*
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
             .then(reg => console.log('SW registered'))
             .catch(err => console.log('SW registration failed'));
+    }
+    */
+    
+    // Удаляем старый SW если есть
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            registrations.forEach(reg => reg.unregister());
+        });
     }
 </script>
 </body>
