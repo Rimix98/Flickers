@@ -974,6 +974,212 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.3; }
         }
+        
+        /* Видео-кружки (как в Telegram) */
+        .video-circle-btn {
+            transition: all 0.2s;
+        }
+        .video-circle-btn.recording {
+            background: #ef4444 !important;
+            color: white !important;
+            animation: recording-pulse 1s infinite;
+        }
+        .video-circle-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fade-in 0.2s ease;
+        }
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .video-circle-preview {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ef4444;
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.5);
+            position: relative;
+        }
+        .video-circle-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .video-circle-timer {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .video-circle-timer::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        .video-circle-controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+        .video-circle-controls button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .video-circle-controls button:hover {
+            transform: scale(1.1);
+        }
+        .video-circle-cancel {
+            background: #64748b;
+            color: white;
+        }
+        .video-circle-send {
+            background: #22c55e;
+            color: white;
+        }
+        .video-circle-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .video-circle-message video {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 3px solid var(--accent);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .video-circle-message .video-circle-duration {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+        
+        /* Предпросмотр ссылок */
+        .link-preview {
+            margin-top: 8px;
+            border-left: 3px solid var(--accent);
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .dark .link-preview {
+            background: rgba(255,255,255,0.05);
+        }
+        .link-preview:hover {
+            background: rgba(0,0,0,0.1);
+        }
+        .dark .link-preview:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .link-preview-image {
+            width: 100%;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        .link-preview-site {
+            font-size: 10px;
+            color: var(--accent);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .link-preview-title {
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1.3;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .link-preview-description {
+            font-size: 11px;
+            opacity: 0.7;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        /* Медиа-просмотрщик */
+        #media-viewer-thumbnails::-webkit-scrollbar {
+            height: 6px;
+        }
+        #media-viewer-thumbnails::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+        }
+        .media-thumbnail {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+        }
+        .media-thumbnail:hover {
+            opacity: 0.8;
+        }
+        .media-thumbnail.active {
+            opacity: 1;
+            border-color: var(--accent);
+        }
+        .media-thumbnail-video {
+            position: relative;
+        }
+        .media-thumbnail-video::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 16px;
+            text-shadow: 0 0 4px rgba(0,0,0,0.5);
+        }
+        #media-viewer-video::-webkit-media-controls-panel {
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        }
+        
         .voice-waveform {
             display: flex;
             align-items: center;
@@ -1157,6 +1363,268 @@
         .toggle-switch.active::after {
             transform: translateX(20px);
         }
+        
+        /* Стили для рамок аватара */
+        .frame-btn.active, .chat-style-btn.active {
+            border-color: #6366f1 !important;
+            background: rgba(99, 102, 241, 0.1) !important;
+        }
+        .avatar-frame-rainbow {
+            box-shadow: 0 0 0 3px transparent, 0 0 0 5px #f59e0b, 0 0 0 7px #ef4444, 0 0 0 9px #ec4899 !important;
+            animation: rainbow-rotate 3s linear infinite !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-gold {
+            box-shadow: 0 0 0 3px #fbbf24, 0 0 15px #fbbf24 !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-neon {
+            box-shadow: 0 0 0 3px #22d3ee, 0 0 15px #22d3ee, 0 0 30px #22d3ee !important;
+            animation: neon-pulse 2s ease-in-out infinite !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-fire {
+            box-shadow: 0 0 0 3px #f97316, 0 0 15px #ef4444, 0 0 25px #f97316 !important;
+            animation: fire-flicker 0.5s ease-in-out infinite alternate !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-purple {
+            box-shadow: 0 0 0 3px #a855f7, 0 0 15px #a855f7 !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-emerald {
+            box-shadow: 0 0 0 3px #10b981, 0 0 15px #10b981 !important;
+            overflow: visible !important;
+        }
+        .avatar-frame-diamond {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #60a5fa, 0 0 20px #60a5fa !important;
+            animation: diamond-shine 2s ease-in-out infinite !important;
+            overflow: visible !important;
+        }
+        @keyframes rainbow-rotate {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        @keyframes neon-pulse {
+            0%, 100% { box-shadow: 0 0 0 3px #22d3ee, 0 0 15px #22d3ee, 0 0 30px #22d3ee !important; }
+            50% { box-shadow: 0 0 0 3px #22d3ee, 0 0 25px #22d3ee, 0 0 50px #22d3ee !important; }
+        }
+        @keyframes fire-flicker {
+            0% { box-shadow: 0 0 0 3px #f97316, 0 0 15px #ef4444, 0 0 25px #f97316 !important; }
+            100% { box-shadow: 0 0 0 3px #ef4444, 0 0 20px #f97316, 0 0 35px #ef4444 !important; }
+        }
+        @keyframes diamond-shine {
+            0%, 100% { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #60a5fa, 0 0 20px #60a5fa !important; }
+            50% { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #93c5fd, 0 0 30px #60a5fa, 0 0 50px #93c5fd !important; }
+        }
+        
+        /* Стили сообщений */
+        .msg-style-gradient .message-bubble.sent {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+        }
+        .msg-style-neon .message-bubble.sent {
+            background: #0f172a !important;
+            color: #22d3ee !important;
+            box-shadow: 0 0 10px #22d3ee, inset 0 0 10px rgba(34, 211, 238, 0.1) !important;
+            border: 1px solid #22d3ee !important;
+        }
+        .msg-style-glass .message-bubble.sent {
+            background: rgba(99, 102, 241, 0.3) !important;
+            backdrop-filter: blur(10px) !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+        
+        /* Стиль сообщения-подарка */
+        .gift-message {
+            background: linear-gradient(135deg, #ef4444, #ec4899, #f59e0b) !important;
+            padding: 0 !important;
+            overflow: visible;
+            animation: gift-shine 2s ease-in-out infinite;
+            min-width: 200px;
+            max-width: 280px;
+            border-radius: 20px !important;
+        }
+        .gift-message-content {
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .gift-icon {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            animation: gift-bounce 1s ease-in-out infinite;
+        }
+        .gift-icon svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+        }
+        .gift-amount {
+            font-size: 24px;
+            font-weight: 900;
+            margin: 8px 0;
+        }
+        .gift-text {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        @keyframes gift-shine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.1); }
+        }
+        @keyframes gift-bounce {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+        
+        /* Анимация получения подарка */
+        .gift-received-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: gift-overlay-in 0.3s ease-out;
+        }
+        @keyframes gift-overlay-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .gift-received-icon {
+            font-size: 120px;
+            animation: gift-received-bounce 0.8s ease-out;
+        }
+        .gift-received-icon svg {
+            width: 150px;
+            height: 150px;
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.5));
+        }
+        @keyframes gift-received-bounce {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            50% { transform: scale(1.3) rotate(10deg); }
+            70% { transform: scale(0.9) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .gift-received-text {
+            color: white;
+            font-size: 24px;
+            font-weight: 900;
+            margin-top: 20px;
+            animation: gift-text-in 0.5s ease-out 0.3s both;
+        }
+        @keyframes gift-text-in {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .gift-received-from {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            margin-top: 8px;
+            animation: gift-text-in 0.5s ease-out 0.5s both;
+        }
+        .gift-received-message {
+            color: white;
+            font-size: 18px;
+            font-style: italic;
+            margin-top: 16px;
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            animation: gift-text-in 0.5s ease-out 0.7s both;
+        }
+        .gift-sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .gift-sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle-fly 1.5s ease-out forwards;
+        }
+        @keyframes sparkle-fly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+        .gift-confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            animation: confetti-fall 2s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* Выбор подарка */
+        .gift-option.selected {
+            box-shadow: 0 0 0 2px #ec4899;
+            background: rgba(236, 72, 153, 0.2) !important;
+            transform: scale(1.05);
+        }
+        .gift-option {
+            transition: all 0.2s ease;
+        }
+        
+        /* Витрина подарков в профиле */
+        .gifts-showcase {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(239,68,68,0.1));
+            border-radius: 16px;
+            min-height: 60px;
+        }
+        .showcase-gift {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 60px;
+        }
+        .dark .showcase-gift {
+            background: #334155;
+        }
+        .showcase-gift-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .showcase-gift-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+        .showcase-gift-count {
+            font-size: 11px;
+            font-weight: bold;
+            color: #ec4899;
+            margin-top: 4px;
+        }
+        
         .secret-chat-indicator {
             background: linear-gradient(135deg, #059669, #10b981);
             color: white;
@@ -2487,6 +2955,217 @@
             opacity: 0.5;
             cursor: not-allowed;
         }
+        
+        /* ========== РУБИНЫ ========== */
+        .rubies-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+        .rubies-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+        .rubies-display i {
+            font-size: 16px;
+            animation: ruby-shine 2s infinite;
+        }
+        @keyframes ruby-shine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        .ruby-earned {
+            position: fixed;
+            z-index: 1000;
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 16px;
+            pointer-events: none;
+            animation: ruby-float 1.5s ease-out forwards;
+        }
+        @keyframes ruby-float {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+        }
+        
+        /* Магазин рубинов */
+        .ruby-shop-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: modal-fade 0.2s ease;
+        }
+        .ruby-shop-content {
+            background: var(--bg-card);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+            animation: modal-pop 0.25s ease;
+        }
+        .ruby-shop-header {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            padding: 24px;
+            color: white;
+            text-align: center;
+        }
+        .ruby-shop-header h3 {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .ruby-shop-balance {
+            font-size: 32px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .ruby-shop-balance i {
+            animation: ruby-shine 2s infinite;
+        }
+        .ruby-shop-body {
+            padding: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+        .ruby-shop-category {
+            margin-bottom: 20px;
+        }
+        .ruby-shop-category-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ruby-shop-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            background: var(--bg-app);
+            border-radius: 16px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .ruby-shop-item:hover {
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+        .ruby-shop-item.owned {
+            opacity: 0.6;
+            border-color: #22c55e;
+        }
+        .ruby-shop-item-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .ruby-shop-item-info {
+            flex: 1;
+        }
+        .ruby-shop-item-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .ruby-shop-item-desc {
+            font-size: 11px;
+            opacity: 0.6;
+        }
+        .ruby-shop-item-price {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: white;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .ruby-shop-item-price:hover {
+            transform: scale(1.05);
+        }
+        .ruby-shop-item-price.owned {
+            background: #22c55e;
+            cursor: default;
+        }
+        .ruby-shop-item-price.owned:hover {
+            transform: none;
+        }
+        
+        /* Анимированные аватарки */
+        .animated-avatar {
+            position: relative;
+        }
+        .animated-avatar::before {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #f59e0b, #ef4444, #ec4899, #8b5cf6, #3b82f6);
+            background-size: 300% 300%;
+            animation: avatar-glow 3s ease infinite;
+            z-index: -1;
+        }
+        @keyframes avatar-glow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Уникальное оформление чата */
+        .premium-chat-bg {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)) !important;
+        }
+        .premium-messages .sent {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        }
+        .premium-messages .received {
+            background: linear-gradient(135deg, var(--bg-card), rgba(99, 102, 241, 0.1)) !important;
+        }
+        
+        /* Админ панель создателя */
+        .creator-panel {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b) !important;
+        }
+        .creator-panel h3 {
+            color: #78350f !important;
+        }
     </style>
 </head>
 <body class="theme-light h-screen flex flex-col overflow-hidden">
@@ -2690,7 +3369,40 @@
     </div>
 </div>
 
-<!-- Просмотр изображений на весь экран -->
+<!-- Просмотр медиа на весь экран (фото и видео) -->
+<div id="media-viewer" class="fixed inset-0 z-[9999] bg-black/95 hidden flex items-center justify-center backdrop-blur-sm" onclick="closeMediaViewer(event)">
+    <button onclick="closeMediaViewer()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+    <button id="media-viewer-prev" onclick="navigateMedia(-1); event.stopPropagation();" class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+        <i class="fas fa-chevron-left text-xl"></i>
+    </button>
+    <button id="media-viewer-next" onclick="navigateMedia(1); event.stopPropagation();" class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all z-10">
+        <i class="fas fa-chevron-right text-xl"></i>
+    </button>
+    
+    <!-- Контейнер для медиа -->
+    <div id="media-viewer-content" class="max-w-[90vw] max-h-[90vh] flex items-center justify-center" onclick="event.stopPropagation()">
+        <img id="media-viewer-img" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl hidden">
+        <video id="media-viewer-video" src="" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl hidden" controls playsinline></video>
+    </div>
+    
+    <!-- Счётчик и кнопки -->
+    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <span id="media-viewer-counter" class="text-white/70 text-sm"></span>
+        <div class="flex gap-2">
+            <a id="media-viewer-download" href="" download class="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-sm flex items-center gap-2 transition-all">
+                <i class="fas fa-download"></i>
+                <span>Скачать</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Миниатюры -->
+    <div id="media-viewer-thumbnails" class="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-2 max-w-[80vw] overflow-x-auto p-2 bg-black/50 rounded-xl hidden"></div>
+</div>
+
+<!-- Старый просмотрщик для совместимости -->
 <div id="image-viewer" class="fixed inset-0 z-[9999] bg-black/95 hidden flex items-center justify-center backdrop-blur-sm" onclick="closeImageViewer(event)">
     <button onclick="closeImageViewer()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all">
         <i class="fas fa-times text-xl"></i>
@@ -3007,9 +3719,9 @@
         <div class="p-4 relative">
             <div class="relative group">
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors"></i>
-                <input type="text" id="search-input" data-i18n-placeholder="searchNickname" placeholder="Поиск ника..." class="w-full p-3 pl-10 bg-slate-100 dark:bg-slate-800 rounded-xl outline-none text-sm border border-transparent focus:border-indigo-500 transition-all">
+                <input type="text" id="search-input" data-i18n-placeholder="searchNickname" placeholder="Поиск ника..." class="w-full p-3 pl-10 bg-slate-100 dark:bg-slate-800 rounded-xl outline-none text-sm border border-transparent focus:border-indigo-500 transition-all" oninput="doNicknameSearch(this.value)">
             </div>
-            <div id="search-results" class="absolute left-4 right-4 mt-2 glass-panel rounded-xl shadow-2xl z-50 hidden max-h-60 overflow-y-auto animate-panel-pop"></div>
+            <div id="nickname-search-results" class="absolute left-4 right-4 mt-2 glass-panel rounded-xl shadow-2xl z-50 hidden max-h-60 overflow-y-auto animate-panel-pop"></div>
         </div>
         
         <!-- Истории/Статусы -->
@@ -3032,10 +3744,16 @@
             </button>
         </div>
         <div class="p-4 border-t border-[var(--border)] flex items-center space-x-3 bg-slate-50/50 dark:bg-slate-900/50">
-            <div id="my-avatar" class="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">?</div>
+            <div class="p-1">
+                <div id="my-avatar" class="w-12 h-12 rounded-2xl bg-indigo-500 text-white flex items-center justify-center font-bold text-xl shadow-lg shadow-indigo-500/20">?</div>
+            </div>
             <div class="flex-1 min-w-0">
                 <p class="font-bold text-sm truncate" id="my-name">Загрузка...</p>
                 <p class="text-[10px] text-green-500 font-bold uppercase tracking-wider" data-i18n="online">В сети</p>
+            </div>
+            <div class="rubies-display" onclick="openRubyShop()" title="Магазин рубинов">
+                <i class="fas fa-gem"></i>
+                <span id="rubies-count">0.00</span>
             </div>
         </div>
     </aside>
@@ -3064,6 +3782,7 @@
                     </div>
                 </div>
                 <div class="flex space-x-2">
+                    <button onclick="openGiftRubies()" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors text-red-500" title="Подарить рубины"><i class="fas fa-gem"></i></button>
                     <button onclick="startCall(false)" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Аудио звонок"><i class="fas fa-phone-alt"></i></button>
                     <button onclick="startCall(true)" class="w-10 h-10 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" title="Видео звонок"><i class="fas fa-video"></i></button>
                     <div class="relative">
@@ -3309,6 +4028,10 @@
                         </div>
                     </div>
 
+                    <button onclick="openVideoCircle()" class="video-circle-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all" title="Видео-кружок">
+                        <i class="fas fa-circle text-xl"></i>
+                    </button>
+
                     <button id="voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="voice-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-xl transition-all">
                         <i class="fas fa-microphone text-xl"></i>
                     </button>
@@ -3332,7 +4055,7 @@
             <div>
                 <p class="text-[10px] font-bold uppercase text-indigo-500 mb-3 tracking-widest" data-i18n="profile">Профиль</p>
                 <div class="flex flex-col items-center p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl">
-                    <div class="relative group cursor-pointer" onclick="triggerAvatarUpload()">
+                    <div class="relative group cursor-pointer p-3" onclick="triggerAvatarUpload()">
                         <div id="settings-avatar" class="w-24 h-24 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-3xl shadow-lg overflow-hidden">
                             ?
                         </div>
@@ -3384,6 +4107,102 @@
                             <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-indigo-500"></div>
                         </label>
                     </div>
+                </div>
+            </div>
+
+            <!-- Рамки аватара (за рубины) -->
+            <div>
+                <p class="text-[10px] font-bold uppercase text-indigo-500 mb-3 tracking-widest">💎 Рамка аватара</p>
+                <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs opacity-60">Ваши рубины:</span>
+                        <span class="font-bold text-red-500"><i class="fas fa-gem"></i> <span id="settings-rubies">0.00</span></span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2" id="avatar-frames-grid">
+                        <button onclick="selectAvatarFrame('none')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="none">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-green-500 text-white px-1 rounded">FREE</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('rainbow')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="rainbow">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 3px transparent, 0 0 0 5px #f59e0b, 0 0 0 7px #ef4444, 0 0 0 9px #ec4899;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-red-500 text-white px-1 rounded">50💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('gold')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="gold">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 3px #fbbf24, 0 0 10px #fbbf24;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-yellow-500 text-white px-1 rounded">75💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('neon')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="neon">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 2px #22d3ee, 0 0 15px #22d3ee, 0 0 30px #22d3ee;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-cyan-500 text-white px-1 rounded">100💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('fire')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="fire">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 3px #f97316, 0 0 15px #ef4444, 0 0 25px #f97316;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-orange-500 text-white px-1 rounded">100💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('purple')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="purple">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 3px #a855f7, 0 0 15px #a855f7;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-purple-500 text-white px-1 rounded">75💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('emerald')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="emerald">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 3px #10b981, 0 0 15px #10b981;"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-emerald-500 text-white px-1 rounded">75💎</span>
+                        </button>
+                        <button onclick="selectAvatarFrame('diamond')" class="frame-btn aspect-square rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all flex items-center justify-center bg-white dark:bg-slate-700 relative" data-frame="diamond">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500" style="box-shadow: 0 0 0 2px #fff, 0 0 0 4px #60a5fa, 0 0 20px #60a5fa, inset 0 0 10px rgba(96,165,250,0.3);"></div>
+                            <span class="absolute -bottom-1 text-[8px] bg-blue-500 text-white px-1 rounded">150💎</span>
+                        </button>
+                    </div>
+                    <p class="text-[10px] opacity-50 mt-2 text-center">Выбранная рамка: <span id="current-frame-name" class="font-bold">Без рамки</span></p>
+                </div>
+            </div>
+
+            <!-- Оформление чата (за рубины) -->
+            <div>
+                <p class="text-[10px] font-bold uppercase text-indigo-500 mb-3 tracking-widest">✨ Оформление сообщений</p>
+                <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+                    <div class="space-y-2" id="chat-styles-list">
+                        <button onclick="selectChatStyle('default')" class="chat-style-btn w-full p-3 rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all text-left flex items-center justify-between" data-style="default">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-indigo-500 flex items-center justify-center text-white text-xs">💬</div>
+                                <div>
+                                    <p class="text-sm font-bold">Стандартное</p>
+                                    <p class="text-[10px] opacity-50">Обычные сообщения</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-green-500 text-white px-2 py-1 rounded">FREE</span>
+                        </button>
+                        <button onclick="selectChatStyle('gradient')" class="chat-style-btn w-full p-3 rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all text-left flex items-center justify-between" data-style="gradient">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🌈</div>
+                                <div>
+                                    <p class="text-sm font-bold">Градиент</p>
+                                    <p class="text-[10px] opacity-50">Красивый градиент</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-red-500 text-white px-2 py-1 rounded">100💎</span>
+                        </button>
+                        <button onclick="selectChatStyle('neon')" class="chat-style-btn w-full p-3 rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all text-left flex items-center justify-between" data-style="neon">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-cyan-400 text-xs" style="box-shadow: 0 0 10px #22d3ee;">⚡</div>
+                                <div>
+                                    <p class="text-sm font-bold">Неон</p>
+                                    <p class="text-[10px] opacity-50">Светящиеся сообщения</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-cyan-500 text-white px-2 py-1 rounded">150💎</span>
+                        </button>
+                        <button onclick="selectChatStyle('glass')" class="chat-style-btn w-full p-3 rounded-xl border-2 border-[var(--border)] hover:border-indigo-500 transition-all text-left flex items-center justify-between" data-style="glass">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3);">💎</div>
+                                <div>
+                                    <p class="text-sm font-bold">Стекло</p>
+                                    <p class="text-[10px] opacity-50">Прозрачный эффект</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] bg-blue-500 text-white px-2 py-1 rounded">200💎</span>
+                        </button>
+                    </div>
+                    <p class="text-[10px] opacity-50 mt-2 text-center">Выбрано: <span id="current-style-name" class="font-bold">Стандартное</span></p>
                 </div>
             </div>
 
@@ -3534,48 +4353,339 @@
 
     <!-- Админ-панель -->
     <div id="admin-panel" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
-            <!-- Заголовок -->
-            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-red-500 text-white">
-                <div class="flex items-center gap-3">
-                    <i class="fas fa-shield-alt text-2xl"></i>
-                    <div>
-                        <h3 class="text-xl font-black" data-i18n="adminPanel">Админ панель</h3>
-                        <p class="text-xs opacity-80" data-i18n="userManagement">Управление пользователями</p>
+        <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden flex">
+            <!-- Основная часть админки -->
+            <div class="flex-1 flex flex-col">
+                <!-- Заголовок -->
+                <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center bg-red-500 text-white">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-shield-alt text-2xl"></i>
+                        <div>
+                            <h3 class="text-xl font-black" data-i18n="adminPanel">Админ панель</h3>
+                            <p class="text-xs opacity-80">Мониторинг пользователей</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAdminPanel()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <!-- Форма входа в админку -->
+                <div id="admin-login" class="p-8 text-center">
+                    <i class="fas fa-lock text-5xl text-slate-300 mb-4"></i>
+                    <p class="text-slate-500 mb-6" data-i18n="enterAdminPassword">Введите пароль администратора</p>
+                    <div class="relative w-full max-w-xs mx-auto mb-4">
+                        <input type="password" id="admin-password" data-i18n-placeholder="password" placeholder="Пароль" class="w-full p-4 bg-slate-100 dark:bg-slate-700 rounded-2xl outline-none focus:ring-2 focus:ring-red-500 transition-all text-center">
+                        <div id="admin-code-hint" class="hidden mt-2 p-2 bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-xl">
+                            <p class="text-xs text-green-600 dark:text-green-400"><i class="fas fa-key mr-1"></i> Код: <span id="admin-code-value" class="font-bold select-all"></span></p>
+                        </div>
+                    </div>
+                    <p id="admin-error" class="text-red-500 text-sm mb-4 hidden" data-i18n="wrongAdminPassword">Неверный пароль</p>
+                    <button onclick="adminLogin()" class="px-8 py-3 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all">
+                        <i class="fas fa-unlock mr-2"></i> <span data-i18n="access">Войти</span>
+                    </button>
+                </div>
+                
+                <!-- Содержимое админки -->
+                <div id="admin-content" class="hidden flex-1 overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-700">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="admin-search" data-i18n-placeholder="searchUsers" placeholder="Поиск пользователей..." class="w-full p-3 pl-10 bg-slate-100 dark:bg-slate-700 rounded-xl outline-none text-sm" oninput="filterAdminUsers()">
+                        </div>
+                    </div>
+                    <div id="admin-users-list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
+                    <div class="p-4 border-t border-slate-200 dark:border-slate-700 text-center text-xs text-slate-400">
+                        <span id="admin-users-count">0 онлайн / 0</span> пользователей
                     </div>
                 </div>
-                <button onclick="closeAdminPanel()" class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all">
-                    <i class="fas fa-times text-xl"></i>
-                </button>
             </div>
             
-            <!-- Форма входа в админку -->
-            <div id="admin-login" class="p-8 text-center">
-                <i class="fas fa-lock text-5xl text-slate-300 mb-4"></i>
-                <p class="text-slate-500 mb-6" data-i18n="enterAdminPassword">Введите пароль администратора</p>
-                <input type="password" id="admin-password" data-i18n-placeholder="password" placeholder="Пароль" class="w-full max-w-xs p-4 bg-slate-100 dark:bg-slate-700 rounded-2xl outline-none mb-4 focus:ring-2 focus:ring-red-500 transition-all text-center">
-                <p id="admin-error" class="text-red-500 text-sm mb-4 hidden" data-i18n="wrongAdminPassword">Неверный пароль</p>
-                <button onclick="adminLogin()" class="px-8 py-3 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 transition-all">
-                    <i class="fas fa-unlock mr-2"></i> <span data-i18n="access">Войти</span>
-                </button>
-            </div>
-            
-            <!-- Содержимое админки -->
-            <div id="admin-content" class="hidden flex-1 overflow-hidden flex flex-col">
-                <div class="p-4 border-b border-slate-200 dark:border-slate-700">
-                    <div class="relative">
-                        <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" id="admin-search" data-i18n-placeholder="searchUsers" placeholder="Поиск пользователей..." class="w-full p-3 pl-10 bg-slate-100 dark:bg-slate-700 rounded-xl outline-none text-sm" oninput="filterAdminUsers()">
+            <!-- Боковая панель создателя (скрыта по умолчанию) -->
+            <div id="creator-sidebar" class="hidden w-72 border-l border-slate-200 dark:border-slate-700 bg-gradient-to-b from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 flex-col" style="display: none;">
+                <div class="p-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i class="fas fa-crown"></i>
+                        <span class="font-black">Панель создателя</span>
                     </div>
+                    <p class="text-xs opacity-80">Рубины и управление</p>
                 </div>
-                <div id="admin-users-list" class="flex-1 overflow-y-auto p-4 space-y-2"></div>
-                <div class="p-4 border-t border-slate-200 dark:border-slate-700 text-center text-xs text-slate-400">
-                    <span id="admin-users-count">0</span> <span data-i18n="usersTotal">пользователей всего</span>
+                
+                <div class="p-4 flex-1 overflow-y-auto">
+                    <div class="mb-4 relative">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Выберите пользователя</label>
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" id="creator-user-search" placeholder="Поиск по нику..." class="w-full p-3 pl-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-yellow-500 text-sm" oninput="searchCreatorUsers(this.value)">
+                        </div>
+                        <div id="creator-user-results" class="absolute left-0 right-0 mt-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg max-h-40 overflow-y-auto z-10 hidden"></div>
+                    </div>
+                    
+                    <div id="creator-selected-user-container" class="mb-4 hidden">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Выбран</label>
+                        <div id="creator-selected-user" class="p-3 bg-white dark:bg-slate-800 rounded-xl border-2 border-yellow-400 text-sm"></div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Текущий баланс</label>
+                        <div class="text-2xl font-black text-red-500 flex items-center gap-2">
+                            <i class="fas fa-gem"></i>
+                            <span id="creator-user-rubies">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Добавить рубины</label>
+                        <input type="number" id="creator-add-amount" placeholder="Количество" class="w-full p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-yellow-500 text-sm">
+                    </div>
+                    
+                    <button onclick="creatorAddRubiesToUser()" class="w-full p-3 bg-gradient-to-r from-yellow-400 to-orange-400 text-yellow-900 font-bold rounded-xl hover:from-yellow-500 hover:to-orange-500 transition-all text-sm">
+                        <i class="fas fa-plus mr-2"></i> Добавить
+                    </button>
+                    
+                    <div class="mt-4">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Быстрые действия</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="creatorQuickAdd(10)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold hover:border-yellow-400 transition-all">+10 💎</button>
+                            <button onclick="creatorQuickAdd(50)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold hover:border-yellow-400 transition-all">+50 💎</button>
+                            <button onclick="creatorQuickAdd(100)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold hover:border-yellow-400 transition-all">+100 💎</button>
+                            <button onclick="creatorQuickAdd(1000)" class="p-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-bold hover:border-yellow-400 transition-all">+1000 💎</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <label class="text-xs font-bold text-slate-500 mb-2 block">Очистка данных</label>
+                        <button onclick="cleanDeletedUsersStories()" class="w-full p-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg text-xs font-bold hover:bg-red-200 dark:hover:bg-red-900/50 transition-all">
+                            <i class="fas fa-trash-alt mr-1"></i> Удалить статусы удалённых
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Модальное окно подарка -->
+<div id="gift-rubies-modal" class="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4" onclick="if(event.target === this) closeGiftRubies()">
+    <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden animate-panel-pop max-h-[90vh] flex flex-col">
+        <div class="p-5 bg-gradient-to-r from-pink-500 via-red-500 to-orange-500 text-white text-center flex-shrink-0">
+            <div class="w-16 h-16 mx-auto mb-2 bg-white/20 rounded-full flex items-center justify-center">
+                <span id="gift-preview-icon" class="text-4xl">🎁</span>
+            </div>
+            <h3 class="text-lg font-black">Отправить подарок</h3>
+            <p class="text-xs opacity-80">для <span id="gift-recipient-name" class="font-bold">@user</span></p>
+        </div>
+        <div class="p-4 overflow-y-auto flex-1">
+            <div class="flex items-center justify-between mb-3 p-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm">
+                <span class="opacity-60">Баланс:</span>
+                <span class="font-bold text-red-500"><i class="fas fa-gem"></i> <span id="gift-my-balance">0.00</span></span>
+            </div>
+            
+            <label class="text-[10px] font-bold text-slate-500 mb-2 block uppercase tracking-wider">Выберите подарок</label>
+            <div class="grid grid-cols-4 gap-2 mb-3" id="gifts-grid">
+                <!-- Заполняется динамически -->
+            </div>
+            
+            <div class="p-3 bg-pink-50 dark:bg-pink-900/20 rounded-xl mb-3 text-center">
+                <p class="text-xs opacity-60 mb-1">Выбрано:</p>
+                <div class="flex items-center justify-center gap-2">
+                    <span id="gift-selected-icon" class="w-8 h-8"></span>
+                    <span class="font-bold"><span id="gift-selected-name">Подарок</span> — <span id="gift-selected-price" class="text-red-500">100💎</span></span>
+                </div>
+            </div>
+            
+            <label class="text-[10px] font-bold text-slate-500 mb-1 block uppercase tracking-wider">Сообщение</label>
+            <input type="text" id="gift-message" maxlength="100" placeholder="От всего сердца! 💕" class="w-full p-3 bg-slate-100 dark:bg-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-pink-500 text-sm mb-3">
+            
+            <div class="flex gap-2">
+                <button onclick="closeGiftRubies()" class="flex-1 p-3 bg-slate-200 dark:bg-slate-600 rounded-xl font-bold hover:bg-slate-300 dark:hover:bg-slate-500 transition-all text-sm">
+                    Отмена
+                </button>
+                <button onclick="sendGiftRubies()" class="flex-1 p-3 bg-gradient-to-r from-pink-500 to-red-500 text-white rounded-xl font-bold hover:from-pink-600 hover:to-red-600 transition-all text-sm">
+                    <i class="fas fa-paper-plane mr-1"></i>Отправить
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Магазин рубинов -->
+<div id="ruby-shop-modal" class="ruby-shop-modal" style="display: none;" onclick="if(event.target === this) closeRubyShop()">
+    <div class="ruby-shop-content">
+        <div class="ruby-shop-header">
+            <button onclick="closeRubyShop()" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/20 transition-all">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            <h3><i class="fas fa-gem"></i> Магазин рубинов</h3>
+            <p class="text-sm opacity-80 mb-4">Трать рубины на крутые штуки!</p>
+            <div class="ruby-shop-balance">
+                <i class="fas fa-gem"></i>
+                <span id="shop-rubies-count">0.00</span>
+            </div>
+        </div>
+        <div class="ruby-shop-body">
+            <!-- Рамки аватара -->
+            <div class="ruby-shop-category">
+                <div class="ruby-shop-category-title">
+                    <i class="fas fa-circle-notch"></i> Рамки аватара
+                </div>
+                <div id="shop-frames-list">
+                    <div class="ruby-shop-item" data-item="frame-rainbow">
+                        <div class="ruby-shop-item-icon" style="background: linear-gradient(45deg, #f59e0b, #ef4444, #ec4899, #8b5cf6); border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">🌈 Радужная рамка</div>
+                            <div class="ruby-shop-item-desc">Анимированная радужная рамка с переливами</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('rainbow', 50)">
+                            <i class="fas fa-gem"></i> 50
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-gold">
+                        <div class="ruby-shop-item-icon" style="background: #fbbf24; box-shadow: 0 0 15px #fbbf24; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">👑 Золотая рамка</div>
+                            <div class="ruby-shop-item-desc">Сияющая золотая рамка для VIP</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('gold', 75)">
+                            <i class="fas fa-gem"></i> 75
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-neon">
+                        <div class="ruby-shop-item-icon" style="background: #0f172a; box-shadow: 0 0 15px #22d3ee, 0 0 30px #22d3ee; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #22d3ee; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">⚡ Неоновая рамка</div>
+                            <div class="ruby-shop-item-desc">Пульсирующее неоновое свечение</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('neon', 100)">
+                            <i class="fas fa-gem"></i> 100
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-fire">
+                        <div class="ruby-shop-item-icon" style="background: linear-gradient(45deg, #f97316, #ef4444); box-shadow: 0 0 15px #ef4444; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">🔥 Огненная рамка</div>
+                            <div class="ruby-shop-item-desc">Мерцающее пламя вокруг аватара</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('fire', 100)">
+                            <i class="fas fa-gem"></i> 100
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-purple">
+                        <div class="ruby-shop-item-icon" style="background: #a855f7; box-shadow: 0 0 15px #a855f7; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">💜 Фиолетовая рамка</div>
+                            <div class="ruby-shop-item-desc">Магическое фиолетовое свечение</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('purple', 75)">
+                            <i class="fas fa-gem"></i> 75
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-emerald">
+                        <div class="ruby-shop-item-icon" style="background: #10b981; box-shadow: 0 0 15px #10b981; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">💚 Изумрудная рамка</div>
+                            <div class="ruby-shop-item-desc">Благородное изумрудное сияние</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('emerald', 75)">
+                            <i class="fas fa-gem"></i> 75
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="frame-diamond">
+                        <div class="ruby-shop-item-icon" style="background: linear-gradient(135deg, #60a5fa, #93c5fd, #fff); box-shadow: 0 0 20px #60a5fa; border-radius: 50%;">
+                            <div style="width: 30px; height: 30px; background: #6366f1; border-radius: 50%; margin: 5px;"></div>
+                        </div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">💎 Бриллиантовая рамка</div>
+                            <div class="ruby-shop-item-desc">Роскошная сверкающая рамка</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyFrameFromShop('diamond', 150)">
+                            <i class="fas fa-gem"></i> 150
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Стили сообщений -->
+            <div class="ruby-shop-category">
+                <div class="ruby-shop-category-title">
+                    <i class="fas fa-comment-dots"></i> Стили сообщений
+                </div>
+                <div id="shop-styles-list">
+                    <div class="ruby-shop-item" data-item="style-gradient">
+                        <div class="ruby-shop-item-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px;">🌈</div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">Градиент</div>
+                            <div class="ruby-shop-item-desc">Красивые градиентные сообщения</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyStyleFromShop('gradient', 100)">
+                            <i class="fas fa-gem"></i> 100
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="style-neon">
+                        <div class="ruby-shop-item-icon" style="background: #0f172a; color: #22d3ee; box-shadow: 0 0 10px #22d3ee; border-radius: 12px; display: flex; align-items: center; justify-content: center;">⚡</div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">Неон</div>
+                            <div class="ruby-shop-item-desc">Светящиеся неоновые сообщения</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyStyleFromShop('neon', 150)">
+                            <i class="fas fa-gem"></i> 150
+                        </div>
+                    </div>
+                    <div class="ruby-shop-item" data-item="style-glass">
+                        <div class="ruby-shop-item-icon" style="background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); border-radius: 12px;">💎</div>
+                        <div class="ruby-shop-item-info">
+                            <div class="ruby-shop-item-name">Стекло</div>
+                            <div class="ruby-shop-item-desc">Прозрачный стеклянный эффект</div>
+                        </div>
+                        <div class="ruby-shop-item-price" onclick="buyStyleFromShop('glass', 200)">
+                            <i class="fas fa-gem"></i> 200
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Секретные коды -->
+            <div class="ruby-shop-category">
+                <div class="ruby-shop-category-title">
+                    <i class="fas fa-key"></i> Секретные коды
+                </div>
+                <div class="ruby-shop-item" data-item="admin-code">
+                    <div class="ruby-shop-item-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">🔐</div>
+                    <div class="ruby-shop-item-info">
+                        <div class="ruby-shop-item-name">Код админ-панели</div>
+                        <div class="ruby-shop-item-desc">Узнай секретный пароль администратора</div>
+                    </div>
+                    <div class="ruby-shop-item-price" onclick="buyShopItem('admin-code', 1000)">
+                        <i class="fas fa-gem"></i> 1000
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Глобальная функция поиска - определяется до модуля
+window.doNicknameSearch = function(val) {
+    if (window.handleNicknameSearch) {
+        window.handleNicknameSearch(val);
+    } else {
+        console.log('handleNicknameSearch not ready yet');
+    }
+};
+</script>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -3603,6 +4713,689 @@
     let isMobileView = window.innerWidth <= 768;
 
     const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+    
+    // ========== СИСТЕМА РУБИНОВ ==========
+    const RUBY_PER_MESSAGE = 0.01;
+    const ADMIN_PASSWORD = 'RimixLegenda98!';
+    const CREATOR_PASSWORD = 'РУБИНЫ_ЗДЕСЬ!1!1Ye';
+    
+    // Функция обновления отображения рубинов
+    function updateRubiesDisplay() {
+        const rubies = me?.rubies || 0;
+        const formatted = rubies.toFixed(2);
+        const rubiesCount = document.getElementById('rubies-count');
+        const shopRubiesCount = document.getElementById('shop-rubies-count');
+        
+        if (rubiesCount) rubiesCount.textContent = formatted;
+        if (shopRubiesCount) shopRubiesCount.textContent = formatted;
+    }
+    
+    // Начисление рубинов за сообщение
+    async function earnRubies(amount = RUBY_PER_MESSAGE) {
+        if (!me) return;
+        
+        const newBalance = (me.rubies || 0) + amount;
+        me.rubies = newBalance;
+        
+        // Сохраняем в Firebase (используем setDoc с merge для создания/обновления)
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+            rubies: newBalance
+        }, { merge: true });
+        
+        updateRubiesDisplay();
+        
+        // Показываем анимацию заработка
+        showRubyEarnedAnimation(amount);
+    }
+    
+    // Анимация заработка рубинов
+    function showRubyEarnedAnimation(amount) {
+        const rubyDisplay = document.querySelector('.rubies-display');
+        if (!rubyDisplay) return;
+        
+        const rect = rubyDisplay.getBoundingClientRect();
+        const anim = document.createElement('div');
+        anim.className = 'ruby-earned';
+        anim.innerHTML = `<i class="fas fa-gem"></i> +${amount.toFixed(2)}`;
+        anim.style.left = rect.left + 'px';
+        anim.style.top = rect.top + 'px';
+        document.body.appendChild(anim);
+        
+        setTimeout(() => anim.remove(), 1500);
+    }
+    
+    // Открыть магазин рубинов
+    window.openRubyShop = () => {
+        updateRubiesDisplay();
+        updateShopItems();
+        document.getElementById('ruby-shop-modal').style.display = 'flex';
+    };
+    
+    // Закрыть магазин рубинов
+    window.closeRubyShop = () => {
+        document.getElementById('ruby-shop-modal').style.display = 'none';
+    };
+    
+    // ========== Подарок рубинов ==========
+    
+    // SVG иконки подарков в стиле Telegram (глобальный для доступа при рендеринге)
+    window.giftSVGs = {
+        'rose': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="32" cy="20" rx="14" ry="16" fill="#e53935"/><ellipse cx="32" cy="16" rx="9" ry="11" fill="#ef5350"/><ellipse cx="28" cy="14" rx="4" ry="5" fill="#ff8a80"/><ellipse cx="36" cy="18" rx="3" ry="4" fill="#ff8a80"/><path d="M32 36v20" stroke="#2e7d32" stroke-width="5" stroke-linecap="round"/><path d="M32 46c-8-2-12 4-14 8" stroke="#2e7d32" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="18" cy="54" rx="5" ry="4" fill="#43a047"/><path d="M32 42c6-2 10 2 12 6" stroke="#2e7d32" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="44" cy="48" rx="4" ry="3" fill="#43a047"/></svg>`,
+        'heart': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 56C32 56 8 40 8 22c0-10 8-16 16-16 5 0 8 3 8 3s3-3 8-3c8 0 16 6 16 16 0 18-24 34-24 34z" fill="#e53935"/><ellipse cx="20" cy="20" rx="6" ry="5" fill="#ff8a8a" opacity="0.6"/></svg>`,
+        'teddy': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="16" cy="14" r="10" fill="#f59f00"/><circle cx="48" cy="14" r="10" fill="#f59f00"/><circle cx="16" cy="14" r="6" fill="#ffc078"/><circle cx="48" cy="14" r="6" fill="#ffc078"/><ellipse cx="32" cy="38" rx="22" ry="24" fill="#ffa726"/><ellipse cx="32" cy="42" rx="14" ry="12" fill="#ffe4b8"/><circle cx="22" cy="32" r="4" fill="#2d2d2d"/><circle cx="42" cy="32" r="4" fill="#2d2d2d"/><circle cx="23" cy="31" r="1.5" fill="#fff"/><circle cx="43" cy="31" r="1.5" fill="#fff"/><ellipse cx="32" cy="40" rx="5" ry="4" fill="#8b5a2b"/><path d="M28 46c4 3 8 3 8 0" stroke="#8b5a2b" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+        'gift': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="8" y="26" width="48" height="32" rx="4" fill="#8b5cf6"/><rect x="4" y="18" width="56" height="12" rx="4" fill="#c4b5fd"/><rect x="28" y="18" width="8" height="40" fill="#fbbf24"/><path d="M32 18c-10-12-20 0-20 0h20z" fill="#f472b6"/><path d="M32 18c10-12 20 0 20 0H32z" fill="#f472b6"/><circle cx="32" cy="18" r="4" fill="#fbbf24"/></svg>`,
+        'cake': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="10" y="32" width="44" height="26" rx="6" fill="#ec4899"/><ellipse cx="32" cy="32" rx="22" ry="6" fill="#fbcfe8"/><path d="M10 40c8 4 16-2 22 0s14-4 22 0" stroke="#fff" stroke-width="3" fill="none" opacity="0.5"/><rect x="30" y="14" width="4" height="18" fill="#fbbf24"/><ellipse cx="32" cy="12" rx="5" ry="7" fill="#f97316"/><ellipse cx="32" cy="10" rx="3" ry="4" fill="#fbbf24"/><circle cx="32" cy="7" r="2" fill="#fff9db"/></svg>`,
+        'ring': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="32" cy="42" rx="20" ry="14" stroke="#fbbf24" stroke-width="8" fill="none"/><ellipse cx="32" cy="42" rx="12" ry="8" stroke="#fff5db" stroke-width="2" fill="none" opacity="0.5"/><polygon points="32,8 24,24 40,24" fill="#60a5fa"/><polygon points="32,8 28,20 36,20" fill="#93c5fd"/><circle cx="32" cy="18" r="3" fill="#dbeafe"/></svg>`,
+        'star': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 4l7 22h23l-19 14 7 22-18-14-18 14 7-22L2 26h23z" fill="#fbbf24"/><path d="M32 12l4 13h14l-11 8 4 13-11-8-11 8 4-13-11-8h14z" fill="#fef3c7" opacity="0.5"/></svg>`,
+        'crown': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M6 50h52v8H6z" fill="#fbbf24"/><path d="M6 26l14 24h24l14-24-14 14-12-18-12 18z" fill="#fbbf24"/><circle cx="6" cy="26" r="5" fill="#f59e0b"/><circle cx="32" cy="22" r="5" fill="#f59e0b"/><circle cx="58" cy="26" r="5" fill="#f59e0b"/><circle cx="18" cy="54" r="4" fill="#ef4444"/><circle cx="32" cy="54" r="4" fill="#3b82f6"/><circle cx="46" cy="54" r="4" fill="#22c55e"/></svg>`,
+        'rocket': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 4c-14 10-18 32-18 40h36c0-8-4-30-18-40z" fill="#e5e7eb"/><path d="M32 8c-10 8-14 24-14 32h28c0-8-4-24-14-32z" fill="#f8f9fa"/><ellipse cx="32" cy="30" rx="8" ry="8" fill="#3b82f6"/><ellipse cx="32" cy="28" rx="4" ry="4" fill="#93c5fd"/><path d="M14 44c-10 6-10 16-10 16h10z" fill="#ef4444"/><path d="M50 44c10 6 10 16 10 16h-10z" fill="#ef4444"/><path d="M24 56h16l-8 8z" fill="#f97316"/><path d="M28 56h8l-4 6z" fill="#fbbf24"/></svg>`,
+        'gem': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 58L4 26l10-18h36l10 18z" fill="#3b82f6"/><path d="M14 8L4 26h18L32 8z" fill="#93c5fd"/><path d="M50 8l10 18H42L32 8z" fill="#93c5fd"/><path d="M22 26L32 58l10-32z" fill="#60a5fa"/><path d="M4 26h18L32 58z" fill="#2563eb"/><path d="M60 26H42L32 58z" fill="#2563eb"/><path d="M22 26h20L32 8z" fill="#bfdbfe"/></svg>`,
+        'unicorn': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="30" cy="42" rx="22" ry="18" fill="#f9a8d4"/><circle cx="18" cy="36" r="14" fill="#fce7f3"/><path d="M10 26l6-22 6 18z" fill="#fbbf24"/><circle cx="14" cy="34" r="3" fill="#2d2d2d"/><circle cx="15" cy="33" r="1" fill="#fff"/><path d="M8 42c6 2 10 0 10 0" stroke="#f472b6" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M22 22c10-4 18 2 24 8" stroke="#a855f7" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M26 18c8-2 14 2 20 6" stroke="#f472b6" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M30 14c6-2 10 2 14 4" stroke="#60a5fa" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="48" cy="50" rx="6" ry="10" fill="#fce7f3"/></svg>`,
+        'trophy': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M14 8h36v26c0 10-8 18-18 18S14 44 14 34z" fill="#fbbf24"/><path d="M18 12h28v22c0 8-6 14-14 14s-14-6-14-14z" fill="#fef3c7" opacity="0.5"/><path d="M14 14H6c0 12 6 18 12 18v-4c-4 0-8-4-8-10h4z" fill="#fbbf24"/><path d="M50 14h8c0 12-6 18-12 18v-4c4 0 8-4 8-10h-4z" fill="#fbbf24"/><rect x="28" y="52" width="8" height="6" fill="#b8860b"/><rect x="20" y="56" width="24" height="6" rx="2" fill="#8b6914"/><path d="M28 24l2 4h5l-4 3 2 5-5-3-5 3 2-5-4-3h5z" fill="#f59e0b"/></svg>`,
+        'shark': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="32" cy="32" rx="28" ry="16" fill="#64748b"/><ellipse cx="32" cy="34" rx="24" ry="12" fill="#94a3b8"/><path d="M32 16l-6 16h12z" fill="#475569"/><path d="M56 28c6 1 8 4 8 4s-2 3-8 4z" fill="#64748b"/><path d="M8 32c-4 1-6 3-6 3s2 2 6 3z" fill="#64748b"/><ellipse cx="32" cy="38" rx="16" ry="6" fill="#cbd5e1"/><circle cx="20" cy="28" r="4" fill="#1e293b"/><circle cx="21" cy="27" r="1.5" fill="#fff"/><circle cx="44" cy="28" r="4" fill="#1e293b"/><circle cx="45" cy="27" r="1.5" fill="#fff"/><path d="M26 40c3 2 9 2 12 0" stroke="#475569" stroke-width="2" fill="none"/><path d="M24 44l2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/></svg>`,
+        'spaceship': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="32" cy="32" rx="28" ry="12" fill="#8b5cf6"/><ellipse cx="32" cy="28" rx="16" ry="16" fill="#a78bfa"/><ellipse cx="32" cy="26" rx="10" ry="10" fill="#60a5fa"/><ellipse cx="32" cy="24" rx="6" ry="6" fill="#93c5fd"/><ellipse cx="32" cy="32" rx="28" ry="4" fill="#7c3aed"/><circle cx="12" cy="32" r="4" fill="#fbbf24"/><circle cx="52" cy="32" r="4" fill="#fbbf24"/><circle cx="22" cy="32" r="3" fill="#22c55e"/><circle cx="42" cy="32" r="3" fill="#22c55e"/><path d="M32 44v8" stroke="#f97316" stroke-width="4"/><path d="M24 44v6" stroke="#fbbf24" stroke-width="3"/><path d="M40 44v6" stroke="#fbbf24" stroke-width="3"/></svg>`,
+        'planet': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#ec4899"/><ellipse cx="32" cy="32" rx="32" ry="8" stroke="#fbbf24" stroke-width="4" fill="none" transform="rotate(-20 32 32)"/><circle cx="24" cy="26" r="6" fill="#f9a8d4" opacity="0.5"/><circle cx="38" cy="38" r="4" fill="#f9a8d4" opacity="0.4"/><circle cx="28" cy="42" r="3" fill="#f9a8d4" opacity="0.3"/></svg>`,
+        'oscar': `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><ellipse cx="32" cy="58" rx="12" ry="4" fill="#8b6914"/><rect x="28" y="52" width="8" height="8" fill="#fbbf24"/><ellipse cx="32" cy="52" rx="6" ry="2" fill="#fcd34d"/><rect x="29" y="38" width="6" height="16" fill="#fbbf24"/><ellipse cx="32" cy="32" rx="10" ry="12" fill="#fbbf24"/><ellipse cx="32" cy="30" rx="7" ry="8" fill="#fef3c7" opacity="0.4"/><circle cx="32" cy="18" r="8" fill="#fbbf24"/><circle cx="32" cy="17" r="5" fill="#fef3c7" opacity="0.3"/><ellipse cx="28" cy="16" rx="1.5" ry="2" fill="#d97706"/><ellipse cx="36" cy="16" rx="1.5" ry="2" fill="#d97706"/><path d="M22 30c-6 2-8 8-6 10" stroke="#fbbf24" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M42 30c6 2 8 8 6 10" stroke="#fbbf24" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="16" cy="40" r="3" fill="#fbbf24"/><circle cx="48" cy="40" r="3" fill="#fbbf24"/></svg>`
+    };
+    
+    // Список подарков (обновлённый с новыми ценами)
+    const giftTypes = {
+        'rose': { icon: window.giftSVGs.rose, name: 'Роза', price: 10 },
+        'heart': { icon: window.giftSVGs.heart, name: 'Сердце', price: 25 },
+        'teddy': { icon: window.giftSVGs.teddy, name: 'Мишка', price: 50 },
+        'gift': { icon: window.giftSVGs.gift, name: 'Подарок', price: 100 },
+        'cake': { icon: window.giftSVGs.cake, name: 'Торт', price: 150 },
+        'ring': { icon: window.giftSVGs.ring, name: 'Кольцо', price: 500 },
+        'star': { icon: window.giftSVGs.star, name: 'Звезда', price: 1000 },
+        'crown': { icon: window.giftSVGs.crown, name: 'Корона', price: 5000 },
+        'rocket': { icon: window.giftSVGs.rocket, name: 'Ракета', price: 10000 },
+        'gem': { icon: window.giftSVGs.gem, name: 'Кристалл', price: 25000 },
+        'unicorn': { icon: window.giftSVGs.unicorn, name: 'Единорог', price: 50000 },
+        'trophy': { icon: window.giftSVGs.trophy, name: 'Кубок', price: 100000 },
+        'shark': { icon: window.giftSVGs.shark, name: 'Акула', price: 500000 },
+        'spaceship': { icon: window.giftSVGs.spaceship, name: 'НЛО', price: 1000000 },
+        'planet': { icon: window.giftSVGs.planet, name: 'Планета', price: 10000000 },
+        'oscar': { icon: window.giftSVGs.oscar, name: 'Оскар', price: 100000000 }
+    };
+    
+    let selectedGift = { id: 'gift', icon: window.giftSVGs.gift, name: 'Подарок', price: 100 };
+    
+    // Открыть окно подарка
+    window.openGiftRubies = () => {
+        if (!activeChatPartner) {
+            showToast('Сначала выберите чат', '❌');
+            return;
+        }
+        
+        document.getElementById('gift-recipient-name').textContent = '@' + activeChatPartner.username;
+        document.getElementById('gift-my-balance').textContent = (me?.rubies || 0).toFixed(2);
+        document.getElementById('gift-message').value = '';
+        
+        // Генерируем сетку подарков
+        renderGiftsGrid();
+        
+        // Сбрасываем выбор на подарок по умолчанию
+        selectGift('gift');
+        
+        document.getElementById('gift-rubies-modal').classList.remove('hidden');
+    };
+    
+    // Форматирование цены подарка
+    function formatGiftPrice(price) {
+        if (price >= 100000000) return (price / 1000000).toFixed(0) + 'M';
+        if (price >= 1000000) return (price / 1000000).toFixed(0) + 'M';
+        if (price >= 1000) return (price / 1000).toFixed(0) + 'K';
+        return price;
+    }
+    
+    // Генерация сетки подарков
+    function renderGiftsGrid() {
+        const grid = document.getElementById('gifts-grid');
+        grid.innerHTML = '';
+        
+        for (const [id, gift] of Object.entries(giftTypes)) {
+            const priceText = formatGiftPrice(gift.price);
+            const btn = document.createElement('button');
+            btn.className = 'gift-option p-2 bg-slate-100 dark:bg-slate-700 rounded-xl hover:ring-2 hover:ring-pink-500 transition-all flex flex-col items-center';
+            btn.dataset.gift = id;
+            btn.onclick = () => selectGift(id);
+            btn.innerHTML = `
+                <span class="w-10 h-10 mb-1">${gift.icon}</span>
+                <span class="text-[9px] font-bold">${priceText}💎</span>
+            `;
+            grid.appendChild(btn);
+        }
+    }
+    
+    // Закрыть окно подарка
+    window.closeGiftRubies = () => {
+        document.getElementById('gift-rubies-modal').classList.add('hidden');
+    };
+    
+    // Выбрать подарок
+    window.selectGift = (id) => {
+        const gift = giftTypes[id];
+        if (!gift) return;
+        
+        selectedGift = { id, icon: gift.icon, name: gift.name, price: gift.price };
+        
+        // Обновляем UI
+        document.querySelectorAll('.gift-option').forEach(btn => {
+            btn.classList.remove('selected');
+            if (btn.dataset.gift === id) {
+                btn.classList.add('selected');
+            }
+        });
+        
+        document.getElementById('gift-preview-icon').innerHTML = gift.icon;
+        document.getElementById('gift-selected-icon').innerHTML = gift.icon;
+        document.getElementById('gift-selected-name').textContent = gift.name;
+        const priceText = gift.price >= 1000 ? (gift.price >= 1000000 ? '1M💎' : (gift.price/1000) + 'K💎') : gift.price + '💎';
+        document.getElementById('gift-selected-price').textContent = priceText;
+    };
+    
+    // Отправить подарок
+    window.sendGiftRubies = async () => {
+        if (!me || !activeChatPartner) return;
+        
+        const messageInput = document.getElementById('gift-message');
+        const giftMessage = messageInput.value.trim() || 'От всего сердца! 💕';
+        const price = selectedGift.price;
+        
+        if (price > (me.rubies || 0)) {
+            showToast(`Недостаточно рубинов! Нужно ${price}💎`, '❌');
+            return;
+        }
+        
+        try {
+            // Списываем рубины у отправителя
+            me.rubies = (me.rubies || 0) - price;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                rubies: me.rubies
+            }, { merge: true });
+            
+            // Добавляем подарок в витрину получателя
+            const recipientRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', activeChatPartner.uid);
+            const recipientSnap = await getDoc(recipientRef);
+            const recipientData = recipientSnap.exists() ? recipientSnap.data() : {};
+            const giftsShowcase = recipientData.giftsShowcase || {};
+            giftsShowcase[selectedGift.id] = (giftsShowcase[selectedGift.id] || 0) + 1;
+            
+            await setDoc(recipientRef, {
+                giftsShowcase: giftsShowcase
+            }, { merge: true });
+            
+            // Отправляем сообщение-подарок в чат
+            const chatId = [me.uid, activeChatPartner.uid].sort().join('_');
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), {
+                type: 'gift',
+                senderId: me.uid,
+                senderName: me.username,
+                recipientId: activeChatPartner.uid,
+                recipientName: activeChatPartner.username,
+                giftId: selectedGift.id,
+                giftName: selectedGift.name,
+                giftPrice: price,
+                giftMessage: giftMessage,
+                timestamp: serverTimestamp()
+            });
+            
+            // Обновляем отображение
+            updateRubiesDisplay();
+            closeGiftRubies();
+            showToast(`Подарок отправлен!`, '🎉');
+            
+        } catch (e) {
+            console.error('Gift error:', e);
+            showToast('Ошибка отправки подарка', '❌');
+        }
+    };
+    
+    // Показать анимацию получения подарка
+    window.showGiftReceivedAnimation = (giftId, giftName, senderName, message) => {
+        const gift = giftTypes[giftId];
+        if (!gift) return;
+        
+        const overlay = document.createElement('div');
+        overlay.className = 'gift-received-overlay';
+        overlay.onclick = () => overlay.remove();
+        
+        // Создаём конфетти
+        let confettiHtml = '<div class="gift-sparkles">';
+        const colors = ['#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#ec4899', '#8b5cf6'];
+        for (let i = 0; i < 50; i++) {
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const left = Math.random() * 100;
+            const delay = Math.random() * 0.5;
+            confettiHtml += `<div class="gift-confetti" style="left: ${left}%; background: ${color}; animation-delay: ${delay}s;"></div>`;
+        }
+        confettiHtml += '</div>';
+        
+        overlay.innerHTML = `
+            ${confettiHtml}
+            <div class="gift-received-icon">${gift.icon}</div>
+            <div class="gift-received-text">Вы получили ${giftName}!</div>
+            <div class="gift-received-from">от @${senderName}</div>
+            ${message ? `<div class="gift-received-message">"${message}"</div>` : ''}
+            <p class="text-white/50 text-sm mt-6">Нажмите чтобы закрыть</p>
+        `;
+        
+        document.body.appendChild(overlay);
+        
+        // Автоматически закрываем через 5 секунд
+        setTimeout(() => {
+            if (overlay.parentNode) {
+                overlay.style.animation = 'gift-overlay-in 0.3s ease-out reverse';
+                setTimeout(() => overlay.remove(), 300);
+            }
+        }, 5000);
+    };
+    
+    // Обновить статус товаров в магазине
+    function updateShopItems() {
+        const ownedItems = me?.ownedItems || [];
+        const ownedFrames = me?.ownedFrames || ['none'];
+        const ownedStyles = me?.ownedStyles || ['default'];
+        
+        document.querySelectorAll('.ruby-shop-item').forEach(item => {
+            const itemId = item.dataset.item;
+            const priceBtn = item.querySelector('.ruby-shop-item-price');
+            
+            // Проверяем обычные товары
+            if (ownedItems.includes(itemId)) {
+                item.classList.add('owned');
+                priceBtn.classList.add('owned');
+                priceBtn.innerHTML = '<i class="fas fa-check"></i> Куплено';
+                priceBtn.onclick = null;
+            }
+            
+            // Проверяем рамки
+            if (itemId && itemId.startsWith('frame-')) {
+                const frameName = itemId.replace('frame-', '');
+                if (ownedFrames.includes(frameName)) {
+                    item.classList.add('owned');
+                    priceBtn.classList.add('owned');
+                    if (me?.avatarFrame === frameName) {
+                        priceBtn.innerHTML = '<i class="fas fa-check-circle"></i> Активно';
+                    } else {
+                        priceBtn.innerHTML = '<i class="fas fa-check"></i> Выбрать';
+                    }
+                }
+            }
+            
+            // Проверяем стили
+            if (itemId && itemId.startsWith('style-')) {
+                const styleName = itemId.replace('style-', '');
+                if (ownedStyles.includes(styleName)) {
+                    item.classList.add('owned');
+                    priceBtn.classList.add('owned');
+                    if (me?.chatStyle === styleName) {
+                        priceBtn.innerHTML = '<i class="fas fa-check-circle"></i> Активно';
+                    } else {
+                        priceBtn.innerHTML = '<i class="fas fa-check"></i> Выбрать';
+                    }
+                }
+            }
+        });
+        
+        // Обновляем баланс в магазине
+        const shopRubies = document.getElementById('shop-rubies-count');
+        if (shopRubies) shopRubies.textContent = (me?.rubies || 0).toFixed(2);
+    }
+    
+    // Покупка товара
+    window.buyShopItem = async (itemId, price) => {
+        if (!me) return;
+        
+        const ownedItems = me.ownedItems || [];
+        if (ownedItems.includes(itemId)) {
+            showToast('У тебя уже есть этот предмет!', '✅');
+            return;
+        }
+        
+        if ((me.rubies || 0) < price) {
+            showToast(`Недостаточно рубинов! Нужно ${price}`, '💎');
+            return;
+        }
+        
+        // Списываем рубины
+        me.rubies = (me.rubies || 0) - price;
+        me.ownedItems = [...ownedItems, itemId];
+        
+        // Сохраняем в Firebase
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+            rubies: me.rubies,
+            ownedItems: me.ownedItems
+        }, { merge: true });
+        
+        updateRubiesDisplay();
+        updateShopItems();
+        
+        // Обрабатываем покупку
+        if (itemId === 'admin-code') {
+            showToast(`Пароль админ-панели: ${ADMIN_PASSWORD}. Теперь он виден в админ-панели!`, '🔐');
+            // Закрываем магазин
+            closeRubyShop();
+        } else if (itemId.startsWith('avatar-')) {
+            me.activeAvatar = itemId;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                activeAvatar: itemId
+            }, { merge: true });
+            applyAvatarEffect();
+            showToast('Анимированная аватарка активирована!', '🌈');
+        } else if (itemId.startsWith('theme-')) {
+            me.activeTheme = itemId;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                activeTheme: itemId
+            }, { merge: true });
+            applyPremiumTheme();
+            showToast('Уникальное оформление активировано!', '✨');
+        }
+    };
+    
+    // Покупка рамки из магазина
+    window.buyFrameFromShop = async (frame, price) => {
+        if (!me) return;
+        
+        const ownedFrames = me.ownedFrames || ['none'];
+        if (ownedFrames.includes(frame)) {
+            // Уже куплена - активируем
+            me.avatarFrame = frame;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                avatarFrame: frame
+            }, { merge: true });
+            window.updateFrameSelection(frame);
+            window.applyAvatarFrame();
+            showToast(`Рамка активирована!`, '✅');
+            return;
+        }
+        
+        if ((me.rubies || 0) < price) {
+            showToast(`Недостаточно рубинов! Нужно ${price}💎`, '❌');
+            return;
+        }
+        
+        if (!confirm(`Купить рамку за ${price}💎?`)) return;
+        
+        // Списываем рубины и добавляем рамку
+        ownedFrames.push(frame);
+        me.rubies = (me.rubies || 0) - price;
+        me.ownedFrames = ownedFrames;
+        me.avatarFrame = frame;
+        
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+            rubies: me.rubies,
+            ownedFrames: ownedFrames,
+            avatarFrame: frame
+        }, { merge: true });
+        
+        updateRubiesDisplay();
+        updateShopItems();
+        window.updateFrameSelection(frame);
+        window.applyAvatarFrame();
+        showToast(`Рамка куплена и активирована!`, '🎉');
+    };
+    
+    // Покупка стиля из магазина
+    window.buyStyleFromShop = async (style, price) => {
+        if (!me) return;
+        
+        const ownedStyles = me.ownedStyles || ['default'];
+        if (ownedStyles.includes(style)) {
+            // Уже куплен - активируем
+            me.chatStyle = style;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                chatStyle: style
+            }, { merge: true });
+            window.updateStyleSelection(style);
+            window.applyChatStyle();
+            showToast(`Стиль активирован!`, '✅');
+            return;
+        }
+        
+        if ((me.rubies || 0) < price) {
+            showToast(`Недостаточно рубинов! Нужно ${price}💎`, '❌');
+            return;
+        }
+        
+        if (!confirm(`Купить стиль за ${price}💎?`)) return;
+        
+        // Списываем рубины и добавляем стиль
+        ownedStyles.push(style);
+        me.rubies = (me.rubies || 0) - price;
+        me.ownedStyles = ownedStyles;
+        me.chatStyle = style;
+        
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+            rubies: me.rubies,
+            ownedStyles: ownedStyles,
+            chatStyle: style
+        }, { merge: true });
+        
+        updateRubiesDisplay();
+        updateShopItems();
+        window.updateStyleSelection(style);
+        window.applyChatStyle();
+        showToast(`Стиль куплен и активирован!`, '🎉');
+    };
+    
+    // Применить эффект аватарки
+    function applyAvatarEffect() {
+        const avatars = document.querySelectorAll('#my-avatar, #settings-avatar');
+        avatars.forEach(avatar => {
+            avatar.classList.remove('animated-avatar');
+            if (me?.activeAvatar) {
+                avatar.classList.add('animated-avatar');
+            }
+        });
+    }
+    
+    // Применить премиум тему
+    function applyPremiumTheme() {
+        const messagesContainer = document.getElementById('messages-container');
+        if (!messagesContainer) return;
+        
+        messagesContainer.classList.remove('premium-chat-bg', 'premium-messages');
+        
+        if (me?.activeTheme === 'theme-premium') {
+            messagesContainer.classList.add('premium-chat-bg', 'premium-messages');
+        }
+    }
+    
+    // Открыть панель создателя (боковую в админке)
+    let isCreatorMode = false;
+    let selectedCreatorUser = null;
+    
+    window.openCreatorPanel = () => {
+        isCreatorMode = true;
+        const sidebar = document.getElementById('creator-sidebar');
+        if (sidebar) {
+            sidebar.classList.remove('hidden');
+            sidebar.style.display = 'flex';
+        }
+    };
+    
+    // Закрыть панель создателя
+    window.closeCreatorPanel = () => {
+        isCreatorMode = false;
+        selectedCreatorUser = null;
+        const sidebar = document.getElementById('creator-sidebar');
+        if (sidebar) {
+            sidebar.classList.add('hidden');
+            sidebar.style.display = 'none';
+        }
+        document.getElementById('creator-selected-user-container')?.classList.add('hidden');
+        document.getElementById('creator-user-rubies').textContent = '0.00';
+        document.getElementById('creator-user-search').value = '';
+        document.getElementById('creator-user-results').classList.add('hidden');
+    };
+    
+    // Выбрать пользователя для накрутки рубинов
+    window.selectUserForRubies = (userId, username, rubies) => {
+        selectedCreatorUser = { id: userId, username, rubies: rubies || 0 };
+        
+        // Показываем выбранного пользователя
+        document.getElementById('creator-selected-user-container').classList.remove('hidden');
+        document.getElementById('creator-selected-user').innerHTML = `
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold">${username[0].toUpperCase()}</div>
+                <span class="font-bold">@${username}</span>
+            </div>
+        `;
+        document.getElementById('creator-user-rubies').textContent = (rubies || 0).toFixed(2);
+        
+        // Скрываем результаты поиска
+        document.getElementById('creator-user-results').classList.add('hidden');
+        document.getElementById('creator-user-search').value = '';
+    };
+    
+    // Поиск пользователей для панели создателя
+    window.searchCreatorUsers = (query) => {
+        const results = document.getElementById('creator-user-results');
+        
+        if (!query.trim()) {
+            results.classList.add('hidden');
+            return;
+        }
+        
+        const filtered = allUsers.filter(u => 
+            !u.deleted && u.username?.toLowerCase().includes(query.toLowerCase())
+        ).slice(0, 5);
+        
+        if (filtered.length === 0) {
+            results.innerHTML = '<p class="p-3 text-xs text-slate-400 text-center">Не найдено</p>';
+        } else {
+            results.innerHTML = filtered.map(user => `
+                <div class="flex items-center gap-2 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer rounded-lg m-1" onclick="selectUserForRubies('${user.id}', '${user.username}', ${user.rubies || 0})">
+                    <div class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center text-xs font-bold">
+                        ${user.avatar ? `<img src="${user.avatar}" class="w-full h-full object-cover rounded-full">` : user.username[0].toUpperCase()}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-bold text-sm truncate">@${user.username}</p>
+                        <p class="text-[10px] text-red-500"><i class="fas fa-gem"></i> ${(user.rubies || 0).toFixed(2)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        results.classList.remove('hidden');
+    };
+    
+    // Добавить рубины выбранному пользователю
+    window.creatorAddRubiesToUser = async () => {
+        if (!selectedCreatorUser) {
+            showToast('Сначала выберите пользователя', '❌');
+            return;
+        }
+        
+        const input = document.getElementById('creator-add-amount');
+        const amount = parseFloat(input.value);
+        
+        if (isNaN(amount) || amount <= 0) {
+            showToast('Введите корректное количество', '❌');
+            return;
+        }
+        
+        const newBalance = (selectedCreatorUser.rubies || 0) + amount;
+        
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', selectedCreatorUser.id), {
+            rubies: newBalance
+        }, { merge: true });
+        
+        selectedCreatorUser.rubies = newBalance;
+        document.getElementById('creator-user-rubies').textContent = newBalance.toFixed(2);
+        input.value = '';
+        
+        // Обновляем список пользователей
+        await loadAllUsers();
+        
+        showToast(`Добавлено ${amount} рубинов для @${selectedCreatorUser.username}!`, '💎');
+    };
+    
+    // Быстрое добавление рубинов
+    window.creatorQuickAdd = async (amount) => {
+        if (!selectedCreatorUser) {
+            showToast('Сначала выберите пользователя', '❌');
+            return;
+        }
+        
+        const newBalance = (selectedCreatorUser.rubies || 0) + amount;
+        
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', selectedCreatorUser.id), {
+            rubies: newBalance
+        }, { merge: true });
+        
+        selectedCreatorUser.rubies = newBalance;
+        document.getElementById('creator-user-rubies').textContent = newBalance.toFixed(2);
+        
+        // Обновляем список пользователей
+        await loadAllUsers();
+        
+        showToast(`+${amount} 💎 для @${selectedCreatorUser.username}!`, '✅');
+    };
+    
+    // Очистка статусов удалённых пользователей
+    window.cleanDeletedUsersStories = async () => {
+        try {
+            // Получаем всех удалённых пользователей
+            const usersSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
+            const deletedUserIds = [];
+            
+            usersSnap.forEach(d => {
+                const user = d.data();
+                if (user.deleted === true) {
+                    deletedUserIds.push(d.id);
+                }
+            });
+            
+            if (deletedUserIds.length === 0) {
+                showToast('Нет удалённых пользователей', '📭');
+                return;
+            }
+            
+            // Удаляем статусы удалённых пользователей
+            let deletedCount = 0;
+            for (const uid of deletedUserIds) {
+                try {
+                    const storyRef = doc(db, 'artifacts', appId, 'public', 'data', 'stories', uid);
+                    const storySnap = await getDoc(storyRef);
+                    if (storySnap.exists()) {
+                        await deleteDoc(storyRef);
+                        deletedCount++;
+                    }
+                } catch (e) {
+                    console.log('Error deleting story for', uid, e);
+                }
+            }
+            
+            showToast(`Удалено ${deletedCount} статусов`, '🗑️');
+        } catch (e) {
+            console.error('Error cleaning stories:', e);
+            showToast('Ошибка очистки', '❌');
+        }
+    };
+    
+    // Добавить рубины себе (старая функция для совместимости)
+    window.creatorAddRubies = async () => {
+        const input = document.getElementById('creator-add-rubies');
+        if (!input) return;
+        const amount = parseFloat(input.value);
+        
+        if (isNaN(amount) || amount <= 0) {
+            showToast('Введите корректное количество', '❌');
+            return;
+        }
+        
+        me.rubies = (me.rubies || 0) + amount;
+        
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+            rubies: me.rubies
+        }, { merge: true });
+        
+        updateRubiesDisplay();
+        input.value = '';
+        showToast(`Добавлено ${amount} рубинов!`, '💎');
+    };
     
     // ========== УТИЛИТЫ ОПТИМИЗАЦИИ ==========
     // Debounce для предотвращения частых вызовов
@@ -4323,6 +6116,14 @@
     // Инициализация языка при загрузке
     document.addEventListener('DOMContentLoaded', () => {
         updateAllTranslations();
+        
+        // Привязываем обработчик поиска по нику
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                handleNicknameSearch(e.target.value);
+            });
+        }
     });
 
     // ========== Приватность и шифрование ==========
@@ -4466,7 +6267,6 @@
     };
 
     // ========== Админ-панель ==========
-    const ADMIN_PASSWORD = 'RimixLegenda98!';
     let isAdminAuthenticated = false;
     let allUsers = [];
 
@@ -4477,6 +6277,16 @@
         document.getElementById('admin-password').value = '';
         document.getElementById('admin-error').classList.add('hidden');
         
+        // Показываем код если куплен
+        const codeHint = document.getElementById('admin-code-hint');
+        const codeValue = document.getElementById('admin-code-value');
+        if (me?.ownedItems?.includes('admin-code')) {
+            codeHint.classList.remove('hidden');
+            codeValue.textContent = ADMIN_PASSWORD;
+        } else {
+            codeHint.classList.add('hidden');
+        }
+        
         if (isAdminAuthenticated) {
             showAdminContent();
         }
@@ -4484,14 +6294,21 @@
 
     window.closeAdminPanel = () => {
         document.getElementById('admin-panel').classList.add('hidden');
+        closeCreatorPanel();
     };
 
-    window.adminLogin = () => {
+    window.adminLogin = async () => {
         const password = document.getElementById('admin-password').value;
         
-        if (password === ADMIN_PASSWORD) {
+        if (password === CREATOR_PASSWORD) {
+            // Пароль создателя - показываем админку с боковой панелью создателя
             isAdminAuthenticated = true;
-            showAdminContent();
+            await showAdminContent();
+            openCreatorPanel();
+        } else if (password === ADMIN_PASSWORD) {
+            isAdminAuthenticated = true;
+            closeCreatorPanel();
+            await showAdminContent();
         } else {
             document.getElementById('admin-error').classList.remove('hidden');
         }
@@ -4527,65 +6344,133 @@
         const list = document.getElementById('admin-users-list');
         list.innerHTML = '';
         
-        users.forEach(user => {
+        // Сортируем: сначала онлайн, потом по последнему визиту
+        const sortedUsers = [...users].sort((a, b) => {
+            const aOnline = a.isOnline && (Date.now() - (a.lastSeen?.seconds * 1000 || 0) < 60000);
+            const bOnline = b.isOnline && (Date.now() - (b.lastSeen?.seconds * 1000 || 0) < 60000);
+            if (aOnline && !bOnline) return -1;
+            if (!aOnline && bOnline) return 1;
+            const aTime = a.lastSeen?.seconds || 0;
+            const bTime = b.lastSeen?.seconds || 0;
+            return bTime - aTime;
+        });
+        
+        sortedUsers.forEach(user => {
             const div = document.createElement('div');
             const isDeleted = user.deleted === true;
-            div.className = `flex items-center justify-between p-4 rounded-xl ${isDeleted ? 'bg-red-50 dark:bg-red-900/20 opacity-60' : 'bg-slate-50 dark:bg-slate-700'}`;
+            const isOnline = user.isOnline && (Date.now() - (user.lastSeen?.seconds * 1000 || 0) < 60000);
+            
+            div.className = `flex items-center justify-between p-4 rounded-xl ${isDeleted ? 'bg-red-50 dark:bg-red-900/20 opacity-60' : isOnline ? 'bg-green-50 dark:bg-green-900/20' : 'bg-slate-50 dark:bg-slate-700'} ${isCreatorMode && !isDeleted ? 'cursor-pointer hover:ring-2 hover:ring-yellow-400' : ''}`;
             
             const docId = user.id;
             const username = user.username || 'unknown';
+            const rubies = user.rubies || 0;
+            const lastSeen = user.lastSeen?.seconds ? new Date(user.lastSeen.seconds * 1000) : null;
             
-            console.log('Rendering user:', docId, username, 'deleted:', isDeleted);
+            // В режиме создателя - клик выбирает пользователя
+            if (isCreatorMode && !isDeleted) {
+                div.onclick = () => selectUserForRubies(docId, username, rubies);
+            }
+            
+            // Форматируем время последнего визита
+            let lastSeenText = 'Никогда';
+            if (lastSeen) {
+                const now = new Date();
+                const diff = now - lastSeen;
+                if (diff < 60000) lastSeenText = 'Только что';
+                else if (diff < 3600000) lastSeenText = `${Math.floor(diff / 60000)} мин. назад`;
+                else if (diff < 86400000) lastSeenText = `${Math.floor(diff / 3600000)} ч. назад`;
+                else lastSeenText = lastSeen.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+            }
             
             // Создаём левую часть с аватаром и именем
             const leftPart = document.createElement('div');
             leftPart.className = 'flex items-center gap-3';
             leftPart.innerHTML = `
-                <div class="w-10 h-10 rounded-full ${isDeleted ? 'bg-red-400' : 'bg-indigo-500'} text-white flex items-center justify-center font-bold overflow-hidden">
-                    ${user.avatar && !isDeleted ? `<img src="${user.avatar}" class="w-full h-full object-cover">` : (isDeleted ? '<i class="fas fa-ban"></i>' : (username[0]?.toUpperCase() || '?'))}
+                <div class="relative">
+                    <div class="w-10 h-10 rounded-full ${isDeleted ? 'bg-red-400' : 'bg-indigo-500'} text-white flex items-center justify-center font-bold overflow-hidden">
+                        ${user.avatar && !isDeleted ? `<img src="${user.avatar}" class="w-full h-full object-cover">` : (isDeleted ? '<i class="fas fa-ban"></i>' : (username[0]?.toUpperCase() || '?'))}
+                    </div>
+                    ${!isDeleted ? `<div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 ${isOnline ? 'bg-green-500' : 'bg-gray-400'} rounded-full border-2 border-white dark:border-slate-700"></div>` : ''}
                 </div>
                 <div>
                     <p class="font-bold text-sm ${isDeleted ? 'line-through text-red-500' : ''}">@${username}</p>
-                    <p class="text-[10px] opacity-50">ID: ${docId}</p>
-                    ${isDeleted ? '<span class="text-[9px] text-red-500 font-bold">DELETED</span>' : ''}
+                    ${isDeleted ? '<span class="text-[9px] text-red-500 font-bold">УДАЛЁН</span>' : 
+                        `<p class="text-[10px] ${isOnline ? 'text-green-500 font-bold' : 'opacity-50'}">${isOnline ? '● В сети' : lastSeenText}</p>`}
                 </div>
             `;
             
-            // Создаём кнопку
-            const btn = document.createElement('button');
-            if (isDeleted) {
-                btn.className = 'px-4 py-2 bg-green-500 text-white text-xs font-bold rounded-xl hover:bg-green-600 transition-all';
-                btn.innerHTML = `<i class="fas fa-undo mr-1"></i> ${t('restore')}`;
-                btn.addEventListener('click', async () => {
-                    console.log('Restore clicked for:', docId);
-                    if (typeof window.restoreUser === 'function') {
-                        await window.restoreUser(docId);
-                    } else {
-                        console.error('restoreUser function not found!');
-                        alert('Error: restoreUser function not found');
-                    }
-                });
-            } else {
-                btn.className = 'px-4 py-2 bg-red-500 text-white text-xs font-bold rounded-xl hover:bg-red-600 transition-all';
-                btn.innerHTML = `<i class="fas fa-trash mr-1"></i> ${t('delete')}`;
-                btn.addEventListener('click', async () => {
-                    console.log('Delete clicked for:', docId, username);
-                    if (typeof window.deleteUser === 'function') {
-                        await window.deleteUser(docId, username);
-                    } else {
-                        console.error('deleteUser function not found!');
-                        alert('Error: deleteUser function not found');
-                    }
-                });
-            }
+            // Показываем рубины справа от имени
+            const rubiesDiv = document.createElement('div');
+            rubiesDiv.className = 'flex items-center gap-1 text-sm font-bold text-red-500';
+            rubiesDiv.innerHTML = `<i class="fas fa-gem text-xs"></i> ${rubies >= 1000 ? (rubies >= 1000000 ? (rubies/1000000).toFixed(1) + 'M' : (rubies/1000).toFixed(1) + 'K') : rubies.toFixed(2)}`;
             
             div.appendChild(leftPart);
-            div.appendChild(btn);
+            if (!isDeleted) {
+                div.appendChild(rubiesDiv);
+            }
+            
+            // В режиме создателя показываем кнопки управления
+            if (isCreatorMode) {
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'flex items-center gap-2';
+                
+                if (isDeleted) {
+                    // Кнопка восстановления
+                    const restoreBtn = document.createElement('button');
+                    restoreBtn.className = 'px-3 py-1.5 bg-green-500 text-white text-xs font-bold rounded-lg hover:bg-green-600 transition-all';
+                    restoreBtn.innerHTML = '<i class="fas fa-undo"></i>';
+                    restoreBtn.title = 'Восстановить';
+                    restoreBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        window.restoreUser(docId);
+                    };
+                    actionsDiv.appendChild(restoreBtn);
+                } else {
+                    // Рубины
+                    const rubiesDisplay = document.createElement('span');
+                    rubiesDisplay.className = 'text-red-500 font-bold text-sm mr-2';
+                    rubiesDisplay.innerHTML = `<i class="fas fa-gem"></i> ${rubies.toFixed(2)}`;
+                    actionsDiv.appendChild(rubiesDisplay);
+                    
+                    // Кнопка удаления
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded-lg hover:bg-red-600 transition-all';
+                    deleteBtn.innerHTML = '<i class="fas fa-trash"></i>';
+                    deleteBtn.title = 'Удалить';
+                    deleteBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Удалить пользователя @${username}?`)) {
+                            window.deleteUser(docId, username);
+                        }
+                    };
+                    actionsDiv.appendChild(deleteBtn);
+                }
+                
+                div.appendChild(actionsDiv);
+            } else {
+                // В обычном режиме показываем только статус
+                const statusDiv = document.createElement('div');
+                statusDiv.className = 'text-right';
+                if (!isDeleted) {
+                    statusDiv.innerHTML = `
+                        <p class="text-xs font-bold ${isOnline ? 'text-green-500' : 'text-slate-400'}">${isOnline ? 'Online' : 'Offline'}</p>
+                        <p class="text-[10px] opacity-50">${lastSeenText}</p>
+                    `;
+                }
+                div.appendChild(statusDiv);
+            }
+            
             list.appendChild(div);
         });
         
+        // Статистика
+        const onlineCount = users.filter(u => !u.deleted && u.isOnline && (Date.now() - (u.lastSeen?.seconds * 1000 || 0) < 60000)).length;
+        const totalActive = users.filter(u => !u.deleted).length;
+        document.getElementById('admin-users-count').innerHTML = `${onlineCount} онлайн / ${totalActive}`;
+        
         if (users.length === 0) {
-            list.innerHTML = '<p class="text-center text-slate-400 py-8">No users found</p>';
+            list.innerHTML = '<p class="text-center text-slate-400 py-8">Пользователи не найдены</p>';
         }
     }
 
@@ -4617,6 +6502,15 @@
             // Помечаем как удалённого
             await setDoc(userRef, { deleted: true }, { merge: true });
             console.log('User marked as deleted');
+            
+            // Удаляем статус/историю пользователя
+            try {
+                const storyRef = doc(db, 'artifacts', appId, 'public', 'data', 'stories', userId);
+                await deleteDoc(storyRef);
+                console.log('User story deleted');
+            } catch (storyErr) {
+                console.log('No story to delete or error:', storyErr);
+            }
             
             // Если это текущий пользователь - выходим
             if (me?.uid === userId) {
@@ -4909,6 +6803,13 @@
             myAvatar.innerText = me.username[0].toUpperCase();
         }
         
+        // Загружаем рубины
+        if (me.rubies === undefined) me.rubies = 0;
+        if (me.ownedItems === undefined) me.ownedItems = [];
+        updateRubiesDisplay();
+        applyAvatarEffect();
+        applyPremiumTheme();
+        
         if(me.settings?.theme) setTheme(me.settings.theme);
         if(me.settings?.language) {
             currentLang = me.settings.language;
@@ -4922,6 +6823,9 @@
         loadWallpaper();
         listenToGroups();
         loadStories();
+        
+        // Загружаем рамку и стиль
+        loadFrameAndStyleSettings();
         
         // Запускаем обновление онлайн-статуса
         startOnlineStatusUpdates();
@@ -5189,6 +7093,9 @@
         activeChatPartner = partner;
         activeGroup = null; // Сбрасываем активную группу
         
+        // Применяем стиль сообщений
+        if (window.applyChatStyle) window.applyChatStyle();
+        
         // Убираем баннер группового звонка
         const groupCallBanner = document.getElementById('group-call-banner');
         if (groupCallBanner) groupCallBanner.remove();
@@ -5377,7 +7284,9 @@
                     forwardedHtml = `<div class="forwarded-label"><i class="fas fa-share"></i> Переслано от ${m.forwardedFrom}</div>`;
                 }
                 
-                let content = `<p class="text-sm leading-relaxed">${displayText}${editedBadge}</p>`;
+                // Применяем linkify для текстовых сообщений
+                const linkedText = (!m.type || m.type === 'text') ? linkifyText(displayText) : displayText;
+                let content = `<p class="text-sm leading-relaxed">${linkedText}${editedBadge}</p>`;
                 
                 // Игровые сообщения (крестики-нолики)
                 if (m.type === 'ttt_invite') {
@@ -5402,6 +7311,47 @@
                     return;
                 }
                 
+                // Подарок рубинов
+                if (m.type === 'gift') {
+                    const isMine = m.senderId === me.uid;
+                    div.className = `message-bubble gift-message shadow-lg ${isMine ? 'sent' : 'received'}`;
+                    const priceText = m.giftPrice >= 100000000 ? (m.giftPrice/1000000)+'M' : m.giftPrice >= 1000000 ? (m.giftPrice/1000000)+'M' : m.giftPrice >= 1000 ? (m.giftPrice/1000)+'K' : m.giftPrice;
+                    
+                    // Получаем SVG иконку с fallback
+                    let giftIcon = '🎁';
+                    if (window.giftSVGs && m.giftId && window.giftSVGs[m.giftId]) {
+                        giftIcon = window.giftSVGs[m.giftId];
+                    } else if (window.giftSVGs && window.giftSVGs.gift) {
+                        giftIcon = window.giftSVGs.gift;
+                    }
+                    
+                    div.innerHTML = `
+                        <div class="gift-message-content text-white">
+                            <div class="gift-icon">${giftIcon}</div>
+                            <div class="text-lg font-bold">${m.giftName || 'Подарок'}</div>
+                            <div class="text-xs opacity-80 mb-1">${priceText}💎</div>
+                            <div class="gift-text text-xs">${isMine ? `Вы подарили @${m.recipientName}` : `@${m.senderName} подарил вам`}</div>
+                            ${m.giftMessage ? `<div class="text-sm mt-2 italic opacity-90">"${m.giftMessage}"</div>` : ''}
+                            <div class="text-[9px] mt-2 opacity-60">${m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</div>
+                        </div>
+                    `;
+                    cont.appendChild(div);
+                    
+                    // Показываем анимацию если это новый подарок для нас
+                    if (!isMine && !div.dataset.animShown) {
+                        div.dataset.animShown = 'true';
+                        // Проверяем что сообщение свежее (менее 5 секунд)
+                        if (m.timestamp && (Date.now() - m.timestamp.seconds * 1000) < 5000) {
+                            setTimeout(() => {
+                                showGiftReceivedAnimation(m.giftId, m.giftName, m.senderName, m.giftMessage);
+                            }, 300);
+                        }
+                    }
+                    
+                    if (shouldScroll) cont.scrollTop = cont.scrollHeight;
+                    return;
+                }
+                
                 // Стикеры
                 if (m.type === 'sticker') {
                     content = `<span style="font-size: 64px;">${m.sticker}</span>`;
@@ -5409,7 +7359,7 @@
                 
                 // GIF
                 if (m.type === 'gif') {
-                    content = `<img src="${m.gifUrl}" class="rounded-xl max-w-full" style="max-height: 200px;">`;
+                    content = `<img src="${m.gifUrl}" class="chat-image rounded-xl max-w-full cursor-pointer hover:brightness-90 transition-all" style="max-height: 200px;" onclick="openMediaViewer('${m.gifUrl.replace(/'/g, "\\'")}', 'image')">`;
                 }
                 
                 if (m.type === 'voice') {
@@ -5427,9 +7377,39 @@
                             </div>
                         </div>
                     `;
+                } else if (m.type === 'video_circle') {
+                    // Видео-кружок (как в Telegram)
+                    const dur = m.videoDuration || 0;
+                    const mins = Math.floor(dur / 60);
+                    const secs = dur % 60;
+                    const durationText = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    content = `
+                        <div class="video-circle-message" ondblclick="openMediaViewer('${m.videoData.replace(/'/g, "\\'")}', 'video')">
+                            <video 
+                                src="${m.videoData}" 
+                                onclick="playVideoCircle(this)"
+                                playsinline
+                                loop
+                                style="transform: scaleX(-1);"
+                            ></video>
+                            <span class="video-circle-duration"><i class="fas fa-play-circle"></i> ${durationText}</span>
+                        </div>
+                    `;
                 } else if (m.type === 'file') {
                     if (m.fileType && m.fileType.startsWith('image/')) {
-                        content = `<img src="${m.fileData}" loading="lazy" decoding="async" class="chat-image rounded-xl max-w-full mb-2 cursor-pointer hover:brightness-90 transition-all shadow-md" onclick="openImageViewer('${m.fileData.replace(/'/g, "\\'")}')">` + content;
+                        content = `<img src="${m.fileData}" loading="lazy" decoding="async" class="chat-image rounded-xl max-w-full mb-2 cursor-pointer hover:brightness-90 transition-all shadow-md" onclick="openMediaViewer('${m.fileData.replace(/'/g, "\\'")}', 'image')">` + content;
+                    } else if (m.fileType && m.fileType.startsWith('video/')) {
+                        // Видео файлы
+                        content = `
+                            <div class="relative mb-2 cursor-pointer" onclick="openMediaViewer('${m.fileData.replace(/'/g, "\\'")}', 'video')">
+                                <video src="${m.fileData}" class="chat-video rounded-xl max-w-full shadow-md" style="max-height: 300px;" preload="metadata"></video>
+                                <div class="absolute inset-0 flex items-center justify-center bg-black/30 rounded-xl hover:bg-black/40 transition-all">
+                                    <div class="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center">
+                                        <i class="fas fa-play text-indigo-500 text-xl ml-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        ` + content;
                     } else {
                         const fileSize = m.fileSize ? formatFileSize(m.fileSize) : '';
                         const sizeText = fileSize ? ` (${fileSize})` : '';
@@ -5489,6 +7469,11 @@
                 setupSwipeToReply(div, msgId, false);
                 
                 cont.appendChild(div);
+                
+                // Загружаем предпросмотр ссылок для текстовых сообщений
+                if ((!m.type || m.type === 'text') && displayText) {
+                    loadLinkPreviewForMessage(div, displayText);
+                }
                 
                 // Автоудаление сообщения после просмотра (только для получателя)
                 if (m.autoDestruct && m.autoDestruct > 0 && m.senderId !== me.uid) {
@@ -6408,12 +8393,23 @@
         
         try {
             const storiesSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'stories'));
+            const usersSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
+            
+            // Собираем ID удалённых пользователей
+            const deletedUserIds = new Set();
+            usersSnap.forEach(d => {
+                if (d.data().deleted === true) {
+                    deletedUserIds.add(d.id);
+                }
+            });
+            
             const now = Date.now();
             
             storiesSnap.forEach(d => {
                 const story = d.data();
                 if (story.uid === me.uid) return; // Пропускаем свою историю
                 if (story.expiresAt && story.expiresAt < now) return; // Истёкшие
+                if (deletedUserIds.has(story.uid)) return; // Пропускаем удалённых пользователей
                 
                 const viewed = story.viewedBy && story.viewedBy.includes(me.uid);
                 const storyEl = document.createElement('div');
@@ -6934,6 +8930,9 @@
         
         try {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msg);
+            
+            // Начисляем рубины за отправку сообщения
+            earnRubies(RUBY_PER_MESSAGE);
             
             const lastMsgText = privacySettings.encryption ? '🔒 Зашифровано' : (text || (extraData.type === 'file' ? '[Файл]' : 'Сообщение'));
             
@@ -7832,6 +9831,334 @@
         }
     }
 
+    // ========== Видео-кружки (как в Telegram) ==========
+    let videoCircleStream = null;
+    let videoCircleRecorder = null;
+    let videoCircleChunks = [];
+    let videoCircleTimer = null;
+    let videoCircleSeconds = 0;
+    const MAX_VIDEO_CIRCLE_DURATION = 60; // максимум 60 секунд
+
+    window.openVideoCircle = async () => {
+        if (!activeChatPartner) {
+            showToast('Сначала выберите чат', '❌');
+            return;
+        }
+
+        try {
+            // Запрашиваем доступ к камере и микрофону
+            videoCircleStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: 'user', width: 480, height: 480 },
+                audio: true
+            });
+
+            // Создаём оверлей для записи
+            const overlay = document.createElement('div');
+            overlay.className = 'video-circle-overlay';
+            overlay.id = 'video-circle-overlay';
+            overlay.innerHTML = `
+                <div class="video-circle-preview">
+                    <video id="video-circle-preview" autoplay muted playsinline></video>
+                    <div class="video-circle-timer">
+                        <span id="video-circle-time">0:00</span> / 1:00
+                    </div>
+                </div>
+                <p class="text-white mt-4 text-sm opacity-70">Запись начнётся автоматически</p>
+                <div class="video-circle-controls">
+                    <button class="video-circle-cancel" onclick="cancelVideoCircle()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button class="video-circle-send" onclick="sendVideoCircle()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+
+            // Показываем превью
+            const preview = document.getElementById('video-circle-preview');
+            preview.srcObject = videoCircleStream;
+
+            // Начинаем запись
+            videoCircleChunks = [];
+            videoCircleRecorder = new MediaRecorder(videoCircleStream, {
+                mimeType: MediaRecorder.isTypeSupported('video/webm;codecs=vp9') 
+                    ? 'video/webm;codecs=vp9' 
+                    : 'video/webm'
+            });
+
+            videoCircleRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) {
+                    videoCircleChunks.push(e.data);
+                }
+            };
+
+            videoCircleRecorder.start(100);
+
+            // Запускаем таймер
+            videoCircleSeconds = 0;
+            videoCircleTimer = setInterval(() => {
+                videoCircleSeconds++;
+                const mins = Math.floor(videoCircleSeconds / 60);
+                const secs = videoCircleSeconds % 60;
+                document.getElementById('video-circle-time').textContent = 
+                    `${mins}:${secs.toString().padStart(2, '0')}`;
+
+                // Автоматически останавливаем после 60 секунд
+                if (videoCircleSeconds >= MAX_VIDEO_CIRCLE_DURATION) {
+                    sendVideoCircle();
+                }
+            }, 1000);
+
+        } catch (err) {
+            console.error('Ошибка доступа к камере:', err);
+            showToast('Не удалось получить доступ к камере', '❌');
+        }
+    };
+
+    window.cancelVideoCircle = () => {
+        cleanupVideoCircle();
+        const overlay = document.getElementById('video-circle-overlay');
+        if (overlay) overlay.remove();
+    };
+
+    let isSendingVideoCircle = false;
+
+    window.sendVideoCircle = async () => {
+        if (isSendingVideoCircle) return;
+        isSendingVideoCircle = true;
+        
+        // Останавливаем таймер
+        if (videoCircleTimer) {
+            clearInterval(videoCircleTimer);
+            videoCircleTimer = null;
+        }
+
+        const duration = videoCircleSeconds;
+
+        if (!videoCircleRecorder) {
+            isSendingVideoCircle = false;
+            cancelVideoCircle();
+            return;
+        }
+
+        try {
+            // СНАЧАЛА останавливаем запись и ждём данные (пока стрим ещё активен!)
+            if (videoCircleRecorder.state === 'recording') {
+                await new Promise((resolve) => {
+                    videoCircleRecorder.onstop = resolve;
+                    videoCircleRecorder.stop();
+                });
+            }
+
+            // Теперь закрываем UI и останавливаем камеру
+            const overlay = document.getElementById('video-circle-overlay');
+            if (overlay) overlay.remove();
+            
+            if (videoCircleStream) {
+                videoCircleStream.getTracks().forEach(track => track.stop());
+                videoCircleStream = null;
+            }
+
+            // Создаём blob
+            const blob = new Blob(videoCircleChunks, { type: 'video/webm' });
+            
+            if (blob.size === 0) {
+                showToast('Видео пустое', '❌');
+                return;
+            }
+            
+            if (blob.size > 4 * 1024 * 1024) {
+                showToast('Видео слишком большое', '❌');
+                return;
+            }
+
+            // Конвертируем в base64
+            const base64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+
+            // Отправляем сообщение
+            const chatId = [me.uid, activeChatPartner.uid].sort().join('_');
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), {
+                type: 'video_circle',
+                senderId: me.uid,
+                senderName: me.username,
+                videoData: base64,
+                videoDuration: duration,
+                timestamp: serverTimestamp()
+            });
+
+            // Начисляем рубины
+            me.rubies = (me.rubies || 0) + RUBY_PER_MESSAGE;
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                rubies: me.rubies
+            }, { merge: true });
+            updateRubiesDisplay();
+
+            showToast('Кружок отправлен!', '🎥');
+        } catch (e) {
+            console.error('Ошибка отправки кружка:', e);
+            showToast('Ошибка отправки', '❌');
+            // Закрываем UI при ошибке
+            const overlay = document.getElementById('video-circle-overlay');
+            if (overlay) overlay.remove();
+        }
+        
+        isSendingVideoCircle = false;
+        videoCircleRecorder = null;
+        videoCircleChunks = [];
+        videoCircleSeconds = 0;
+    };
+
+    function cleanupVideoCircle() {
+        if (videoCircleTimer) {
+            clearInterval(videoCircleTimer);
+            videoCircleTimer = null;
+        }
+        if (videoCircleStream) {
+            videoCircleStream.getTracks().forEach(track => track.stop());
+            videoCircleStream = null;
+        }
+        if (videoCircleRecorder && videoCircleRecorder.state === 'recording') {
+            videoCircleRecorder.stop();
+        }
+        videoCircleRecorder = null;
+        videoCircleChunks = [];
+        videoCircleSeconds = 0;
+    }
+
+    // Воспроизведение видео-кружка
+    window.playVideoCircle = (videoEl) => {
+        // Останавливаем все другие видео-кружки
+        document.querySelectorAll('.video-circle-message video').forEach(v => {
+            if (v !== videoEl) {
+                v.pause();
+                v.currentTime = 0;
+            }
+        });
+
+        if (videoEl.paused) {
+            videoEl.play();
+            videoEl.style.border = '3px solid #22c55e';
+        } else {
+            videoEl.pause();
+            videoEl.style.border = '3px solid var(--accent)';
+        }
+    };
+
+    // ========== Предпросмотр ссылок ==========
+    const linkPreviewCache = new Map();
+    
+    // Извлечение URL из текста
+    function extractUrls(text) {
+        const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/gi;
+        return text.match(urlRegex) || [];
+    }
+    
+    // Преобразование URL в кликабельные ссылки
+    function linkifyText(text) {
+        const urlRegex = /(https?:\/\/[^\s<>"{}|\\^`\[\]]+)/gi;
+        return text.replace(urlRegex, (url) => {
+            return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline" onclick="event.stopPropagation()">${url}</a>`;
+        });
+    }
+    
+    // Получение метаданных ссылки через прокси
+    async function fetchLinkPreview(url) {
+        // Проверяем кэш
+        if (linkPreviewCache.has(url)) {
+            return linkPreviewCache.get(url);
+        }
+        
+        try {
+            // Используем бесплатный API для получения метаданных
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+            const response = await fetch(proxyUrl, { 
+                signal: AbortSignal.timeout(5000)
+            });
+            
+            if (!response.ok) return null;
+            
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Извлекаем метаданные
+            const getMetaContent = (name) => {
+                const meta = doc.querySelector(`meta[property="${name}"], meta[name="${name}"]`);
+                return meta ? meta.getAttribute('content') : null;
+            };
+            
+            const preview = {
+                url: url,
+                title: getMetaContent('og:title') || doc.querySelector('title')?.textContent || '',
+                description: getMetaContent('og:description') || getMetaContent('description') || '',
+                image: getMetaContent('og:image') || '',
+                siteName: getMetaContent('og:site_name') || new URL(url).hostname.replace('www.', '')
+            };
+            
+            // Исправляем относительные URL изображений
+            if (preview.image && !preview.image.startsWith('http')) {
+                const baseUrl = new URL(url);
+                preview.image = preview.image.startsWith('/') 
+                    ? `${baseUrl.origin}${preview.image}`
+                    : `${baseUrl.origin}/${preview.image}`;
+            }
+            
+            // Кэшируем результат
+            linkPreviewCache.set(url, preview);
+            
+            return preview;
+        } catch (e) {
+            console.log('Link preview error:', e);
+            return null;
+        }
+    }
+    
+    // Рендеринг превью ссылки
+    function renderLinkPreview(preview) {
+        if (!preview || (!preview.title && !preview.description)) return '';
+        
+        const imageHtml = preview.image 
+            ? `<img src="${preview.image}" class="link-preview-image" onerror="this.style.display='none'" loading="lazy">` 
+            : '';
+        
+        return `
+            <div class="link-preview" onclick="window.open('${preview.url}', '_blank')">
+                ${imageHtml}
+                <div class="link-preview-site">${preview.siteName}</div>
+                ${preview.title ? `<div class="link-preview-title">${preview.title}</div>` : ''}
+                ${preview.description ? `<div class="link-preview-description">${preview.description}</div>` : ''}
+            </div>
+        `;
+    }
+    
+    // Загрузка превью для сообщения
+    async function loadLinkPreviewForMessage(msgElement, text) {
+        const urls = extractUrls(text);
+        if (urls.length === 0) return;
+        
+        // Берём только первую ссылку
+        const url = urls[0];
+        const preview = await fetchLinkPreview(url);
+        
+        if (preview && msgElement) {
+            const previewHtml = renderLinkPreview(preview);
+            if (previewHtml) {
+                const previewContainer = document.createElement('div');
+                previewContainer.innerHTML = previewHtml;
+                const textEl = msgElement.querySelector('p');
+                if (textEl) {
+                    textEl.insertAdjacentElement('afterend', previewContainer.firstElementChild);
+                }
+            }
+        }
+    }
+
     // Глобальный объект для управления воспроизведением
     let currentPlayingAudio = null;
 
@@ -7874,21 +10201,24 @@
         audio.play();
     };
 
-    document.getElementById('search-input').oninput = async (e) => {
-        const val = e.target.value.trim().toLowerCase();
-        const res = document.getElementById('search-results');
+    window.handleNicknameSearch = async (val) => {
+        console.log('Search called with:', val);
+        val = val.trim().toLowerCase();
+        const res = document.getElementById('nickname-search-results');
         if (val.length < 1) { res.classList.add('hidden'); return; }
         
+        console.log('Searching for:', val);
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'users'));
+        console.log('Found users:', snap.size);
         res.innerHTML = '';
         res.classList.remove('hidden');
         
         let found = false;
         snap.forEach(d => {
-            const u = d.data();
+            const u = { uid: d.id, ...d.data() };
             // Пропускаем удалённых пользователей и себя
             if (u.deleted) return;
-            if (u.username.toLowerCase().includes(val) && u.uid !== me?.uid) {
+            if (u.username && u.username.toLowerCase().includes(val) && u.uid !== me?.uid) {
                 found = true;
                 const div = document.createElement('div');
                 div.className = "p-4 hover:bg-indigo-500/10 cursor-pointer text-sm font-bold flex items-center justify-between group";
@@ -7898,7 +10228,11 @@
                         <span>@${u.username}</span>
                     </div>
                 `;
-                div.onclick = () => { selectChat(u); res.classList.add('hidden'); e.target.value = ''; };
+                div.onclick = () => { 
+                    selectChat(u); 
+                    res.classList.add('hidden'); 
+                    document.getElementById('search-input').value = ''; 
+                };
                 res.appendChild(div);
             }
         });
@@ -7912,6 +10246,7 @@
             updateSettingsAvatar();
             loadBio();
             loadProfileSettings();
+            loadFrameAndStyleSettings();
         }
     };
     
@@ -8013,6 +10348,240 @@
         } catch (e) {}
     };
     
+    // Цены на рамки и стили
+    const framePrices = {
+        'none': 0,
+        'rainbow': 50,
+        'gold': 75,
+        'neon': 100,
+        'fire': 100,
+        'purple': 75,
+        'emerald': 75,
+        'diamond': 150
+    };
+    
+    const frameNames = {
+        'none': 'Без рамки',
+        'rainbow': 'Радужная',
+        'gold': 'Золотая',
+        'neon': 'Неоновая',
+        'fire': 'Огненная',
+        'purple': 'Фиолетовая',
+        'emerald': 'Изумрудная',
+        'diamond': 'Бриллиантовая'
+    };
+    
+    const stylePrices = {
+        'default': 0,
+        'gradient': 100,
+        'neon': 150,
+        'glass': 200
+    };
+    
+    const styleNames = {
+        'default': 'Стандартное',
+        'gradient': 'Градиент',
+        'neon': 'Неон',
+        'glass': 'Стекло'
+    };
+    
+    // Выбор рамки аватара
+    window.selectAvatarFrame = async (frame) => {
+        if (!me) return;
+        
+        const price = framePrices[frame] || 0;
+        const currentRubies = me.rubies || 0;
+        
+        // Проверяем, куплена ли уже рамка
+        const ownedFrames = me.ownedFrames || ['none'];
+        
+        if (!ownedFrames.includes(frame)) {
+            // Нужно купить
+            if (currentRubies < price) {
+                showToast(`Недостаточно рубинов! Нужно ${price}💎`, '❌');
+                return;
+            }
+            
+            if (!confirm(`Купить рамку "${frameNames[frame]}" за ${price}💎?`)) return;
+            
+            // Списываем рубины и добавляем рамку
+            ownedFrames.push(frame);
+            me.rubies = currentRubies - price;
+            me.ownedFrames = ownedFrames;
+            
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                rubies: me.rubies,
+                ownedFrames: ownedFrames,
+                avatarFrame: frame
+            }, { merge: true });
+            
+            updateRubiesDisplay();
+            showToast(`Рамка "${frameNames[frame]}" куплена!`, '🎉');
+        } else {
+            // Уже куплена - просто выбираем
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                avatarFrame: frame
+            }, { merge: true });
+        }
+        
+        me.avatarFrame = frame;
+        window.updateFrameSelection(frame);
+        window.applyAvatarFrame();
+        showToast(`Рамка: ${frameNames[frame]}`, '✅');
+    };
+    
+    // Обновление UI выбора рамки
+    window.updateFrameSelection = function(frame) {
+        document.querySelectorAll('.frame-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.frame === frame) {
+                btn.classList.add('active');
+            }
+        });
+        const nameEl = document.getElementById('current-frame-name');
+        if (nameEl) nameEl.textContent = frameNames[frame] || 'Без рамки';
+    }
+    
+    // Применение рамки к аватару
+    window.applyAvatarFrame = function() {
+        const frame = me?.avatarFrame || 'none';
+        const settingsAvatar = document.getElementById('settings-avatar');
+        const myAvatar = document.getElementById('my-avatar');
+        
+        // Удаляем все классы рамок
+        const frameClasses = ['avatar-frame-rainbow', 'avatar-frame-gold', 'avatar-frame-neon', 'avatar-frame-fire', 'avatar-frame-purple', 'avatar-frame-emerald', 'avatar-frame-diamond'];
+        
+        [settingsAvatar, myAvatar].forEach(el => {
+            if (el) {
+                frameClasses.forEach(cls => el.classList.remove(cls));
+                if (frame !== 'none') {
+                    el.classList.add('avatar-frame-' + frame);
+                }
+            }
+        });
+    }
+    
+    // Выбор стиля сообщений
+    window.selectChatStyle = async (style) => {
+        if (!me) return;
+        
+        const price = stylePrices[style] || 0;
+        const currentRubies = me.rubies || 0;
+        
+        // Проверяем, куплен ли уже стиль
+        const ownedStyles = me.ownedStyles || ['default'];
+        
+        if (!ownedStyles.includes(style)) {
+            // Нужно купить
+            if (currentRubies < price) {
+                showToast(`Недостаточно рубинов! Нужно ${price}💎`, '❌');
+                return;
+            }
+            
+            if (!confirm(`Купить стиль "${styleNames[style]}" за ${price}💎?`)) return;
+            
+            // Списываем рубины и добавляем стиль
+            ownedStyles.push(style);
+            me.rubies = currentRubies - price;
+            me.ownedStyles = ownedStyles;
+            
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                rubies: me.rubies,
+                ownedStyles: ownedStyles,
+                chatStyle: style
+            }, { merge: true });
+            
+            updateRubiesDisplay();
+            showToast(`Стиль "${styleNames[style]}" куплен!`, '🎉');
+        } else {
+            // Уже куплен - просто выбираем
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                chatStyle: style
+            }, { merge: true });
+        }
+        
+        me.chatStyle = style;
+        window.updateStyleSelection(style);
+        window.applyChatStyle();
+        showToast(`Стиль: ${styleNames[style]}`, '✅');
+    };
+    
+    // Обновление UI выбора стиля
+    window.updateStyleSelection = function(style) {
+        document.querySelectorAll('.chat-style-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.style === style) {
+                btn.classList.add('active');
+            }
+        });
+        const nameEl = document.getElementById('current-style-name');
+        if (nameEl) nameEl.textContent = styleNames[style] || 'Стандартное';
+    }
+    
+    // Применение стиля к сообщениям
+    window.applyChatStyle = function() {
+        const style = me?.chatStyle || 'default';
+        const messagesContainer = document.getElementById('messages-container');
+        
+        if (messagesContainer) {
+            messagesContainer.classList.remove('msg-style-gradient', 'msg-style-neon', 'msg-style-glass');
+            if (style !== 'default') {
+                messagesContainer.classList.add('msg-style-' + style);
+            }
+        }
+    }
+    
+    // Загрузка настроек рамок и стилей
+    window.loadFrameAndStyleSettings = async function() {
+        if (!me) return;
+        
+        try {
+            const userDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid));
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                me.avatarFrame = data.avatarFrame || 'none';
+                me.chatStyle = data.chatStyle || 'default';
+                me.ownedFrames = data.ownedFrames || ['none'];
+                me.ownedStyles = data.ownedStyles || ['default'];
+                
+                window.updateFrameSelection(me.avatarFrame);
+                window.updateStyleSelection(me.chatStyle);
+                window.applyAvatarFrame();
+                window.applyChatStyle();
+                
+                // Обновляем рубины в настройках
+                const settingsRubies = document.getElementById('settings-rubies');
+                if (settingsRubies) settingsRubies.textContent = (me.rubies || 0).toFixed(2);
+                
+                // Помечаем купленные рамки
+                document.querySelectorAll('.frame-btn').forEach(btn => {
+                    const frame = btn.dataset.frame;
+                    if (me.ownedFrames.includes(frame)) {
+                        const priceSpan = btn.querySelector('span');
+                        if (priceSpan && frame !== 'none') {
+                            priceSpan.textContent = '✓';
+                            priceSpan.className = 'absolute -bottom-1 text-[8px] bg-green-500 text-white px-1 rounded';
+                        }
+                    }
+                });
+                
+                // Помечаем купленные стили
+                document.querySelectorAll('.chat-style-btn').forEach(btn => {
+                    const style = btn.dataset.style;
+                    if (me.ownedStyles.includes(style)) {
+                        const priceSpan = btn.querySelector('span:last-child');
+                        if (priceSpan && style !== 'default') {
+                            priceSpan.textContent = '✓ Куплено';
+                            priceSpan.className = 'text-[10px] bg-green-500 text-white px-2 py-1 rounded';
+                        }
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Error loading frame/style settings:', e);
+        }
+    };
+    
     // Показать профиль пользователя
     window.showUserProfile = async (uid) => {
         if (!uid) return;
@@ -8085,6 +10654,31 @@
                     '<div class="profile-info-icon"><i class="fas fa-quote-left"></i></div>' +
                     '<div><div class="profile-info-label">' + (currentLang === 'ru' ? 'О себе' : 'About') + '</div>' +
                     '<div class="profile-info-value">' + data.bio + '</div></div></div>';
+            }
+            
+            // Витрина подарков
+            if (data.giftsShowcase && Object.keys(data.giftsShowcase).length > 0) {
+                let giftsHtml = '<div class="profile-info-item" style="flex-direction: column; align-items: flex-start;">' +
+                    '<div class="profile-info-label mb-2"><i class="fas fa-gift mr-1"></i> ' + 
+                    (currentLang === 'ru' ? 'Витрина подарков' : 'Gift Showcase') + '</div>' +
+                    '<div class="gifts-showcase">';
+                
+                // Сортируем по количеству
+                const sortedGifts = Object.entries(data.giftsShowcase)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                for (const [giftId, count] of sortedGifts) {
+                    if (count > 0) {
+                        const giftSvg = (window.giftSVGs && window.giftSVGs[giftId]) ? window.giftSVGs[giftId] : (window.giftSVGs ? window.giftSVGs.gift : '🎁');
+                        giftsHtml += '<div class="showcase-gift">' +
+                            '<span class="showcase-gift-icon">' + giftSvg + '</span>' +
+                            '<span class="showcase-gift-count">×' + count + '</span>' +
+                        '</div>';
+                    }
+                }
+                
+                giftsHtml += '</div></div>';
+                infoHtml += giftsHtml;
             }
             
             if (!infoHtml) {
@@ -8531,62 +11125,180 @@
         }
     }
 
-    // ========== Просмотр изображений ==========
+    // ========== Просмотр изображений (совместимость) ==========
     let currentImageIndex = 0;
     let chatImages = [];
 
     window.openImageViewer = (src) => {
-        // Собираем все изображения из чата
-        chatImages = Array.from(document.querySelectorAll('.chat-image')).map(img => img.src);
-        currentImageIndex = chatImages.indexOf(src);
-        if (currentImageIndex === -1) currentImageIndex = 0;
-        
-        const viewer = document.getElementById('image-viewer');
-        const img = document.getElementById('image-viewer-img');
-        const downloadBtn = document.getElementById('image-viewer-download');
-        
-        img.src = src;
-        downloadBtn.href = src;
-        
-        // Показываем/скрываем кнопки навигации
-        updateImageNavigation();
-        
-        viewer.classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        
-        // Добавляем обработчик клавиш
-        document.addEventListener('keydown', handleImageViewerKeys);
+        // Перенаправляем на новый медиа-просмотрщик
+        openMediaViewer(src, 'image');
     };
 
+    // Старые функции для совместимости
     window.closeImageViewer = (event) => {
         if (event && event.target !== event.currentTarget) return;
-        
         const viewer = document.getElementById('image-viewer');
         viewer.classList.add('hidden');
         document.body.style.overflow = '';
-        document.removeEventListener('keydown', handleImageViewerKeys);
     };
 
     window.navigateImage = (direction) => {
-        currentImageIndex += direction;
-        
-        if (currentImageIndex < 0) currentImageIndex = chatImages.length - 1;
-        if (currentImageIndex >= chatImages.length) currentImageIndex = 0;
-        
-        const img = document.getElementById('image-viewer-img');
-        const downloadBtn = document.getElementById('image-viewer-download');
-        
-        img.src = chatImages[currentImageIndex];
-        downloadBtn.href = chatImages[currentImageIndex];
-        
-        updateImageNavigation();
+        navigateMedia(direction);
     };
 
-    function updateImageNavigation() {
-        const prevBtn = document.getElementById('image-viewer-prev');
-        const nextBtn = document.getElementById('image-viewer-next');
+    function updateImageNavigation() {}
+
+    function handleImageViewerKeys(e) {
+        handleMediaViewerKeys(e);
+    }
+
+    // ========== Медиа-просмотрщик (фото + видео) ==========
+    let currentMediaIndex = 0;
+    let chatMedia = []; // { src: string, type: 'image' | 'video' }
+
+    window.openMediaViewer = (src, type = 'image') => {
+        // Собираем все медиа из чата
+        chatMedia = [];
         
-        if (chatImages.length <= 1) {
+        // Изображения
+        document.querySelectorAll('.chat-image').forEach(img => {
+            chatMedia.push({ src: img.src, type: 'image' });
+        });
+        
+        // Видео (не кружки)
+        document.querySelectorAll('.chat-video').forEach(video => {
+            chatMedia.push({ src: video.src, type: 'video' });
+        });
+        
+        // Видео-кружки тоже добавляем
+        document.querySelectorAll('.video-circle-message video').forEach(video => {
+            chatMedia.push({ src: video.src, type: 'video' });
+        });
+        
+        // Находим индекс текущего медиа
+        currentMediaIndex = chatMedia.findIndex(m => m.src === src);
+        if (currentMediaIndex === -1) {
+            chatMedia.push({ src, type });
+            currentMediaIndex = chatMedia.length - 1;
+        }
+        
+        showMediaAtIndex(currentMediaIndex);
+        
+        const viewer = document.getElementById('media-viewer');
+        viewer.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        
+        // Обработчик клавиш
+        document.addEventListener('keydown', handleMediaViewerKeys);
+        
+        // Показываем миниатюры если больше 1 медиа
+        renderMediaThumbnails();
+    };
+
+    function showMediaAtIndex(index) {
+        const media = chatMedia[index];
+        if (!media) return;
+        
+        const imgEl = document.getElementById('media-viewer-img');
+        const videoEl = document.getElementById('media-viewer-video');
+        const downloadBtn = document.getElementById('media-viewer-download');
+        const counter = document.getElementById('media-viewer-counter');
+        
+        // Останавливаем предыдущее видео
+        videoEl.pause();
+        
+        if (media.type === 'video') {
+            imgEl.classList.add('hidden');
+            videoEl.classList.remove('hidden');
+            videoEl.src = media.src;
+            videoEl.play().catch(() => {});
+        } else {
+            videoEl.classList.add('hidden');
+            imgEl.classList.remove('hidden');
+            imgEl.src = media.src;
+        }
+        
+        downloadBtn.href = media.src;
+        
+        // Счётчик
+        if (chatMedia.length > 1) {
+            counter.textContent = `${index + 1} / ${chatMedia.length}`;
+        } else {
+            counter.textContent = '';
+        }
+        
+        // Обновляем навигацию
+        updateMediaNavigation();
+        
+        // Обновляем активную миниатюру
+        document.querySelectorAll('.media-thumbnail').forEach((thumb, i) => {
+            thumb.classList.toggle('active', i === index);
+        });
+    }
+
+    function renderMediaThumbnails() {
+        const container = document.getElementById('media-viewer-thumbnails');
+        
+        if (chatMedia.length <= 1) {
+            container.classList.add('hidden');
+            return;
+        }
+        
+        container.classList.remove('hidden');
+        container.innerHTML = '';
+        
+        chatMedia.forEach((media, index) => {
+            if (media.type === 'video') {
+                const wrapper = document.createElement('div');
+                wrapper.className = `media-thumbnail media-thumbnail-video ${index === currentMediaIndex ? 'active' : ''}`;
+                wrapper.style.cssText = 'position:relative;width:60px;height:60px;background:#333;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+                wrapper.innerHTML = '<i class="fas fa-play text-white"></i>';
+                wrapper.onclick = (e) => {
+                    e.stopPropagation();
+                    currentMediaIndex = index;
+                    showMediaAtIndex(index);
+                };
+                container.appendChild(wrapper);
+            } else {
+                const thumb = document.createElement('img');
+                thumb.className = `media-thumbnail ${index === currentMediaIndex ? 'active' : ''}`;
+                thumb.src = media.src;
+                thumb.onclick = (e) => {
+                    e.stopPropagation();
+                    currentMediaIndex = index;
+                    showMediaAtIndex(index);
+                };
+                container.appendChild(thumb);
+            }
+        });
+    }
+
+    window.closeMediaViewer = (event) => {
+        if (event && event.target !== event.currentTarget) return;
+        
+        const viewer = document.getElementById('media-viewer');
+        const videoEl = document.getElementById('media-viewer-video');
+        
+        videoEl.pause();
+        viewer.classList.add('hidden');
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', handleMediaViewerKeys);
+    };
+
+    window.navigateMedia = (direction) => {
+        currentMediaIndex += direction;
+        
+        if (currentMediaIndex < 0) currentMediaIndex = chatMedia.length - 1;
+        if (currentMediaIndex >= chatMedia.length) currentMediaIndex = 0;
+        
+        showMediaAtIndex(currentMediaIndex);
+    };
+
+    function updateMediaNavigation() {
+        const prevBtn = document.getElementById('media-viewer-prev');
+        const nextBtn = document.getElementById('media-viewer-next');
+        
+        if (chatMedia.length <= 1) {
             prevBtn.classList.add('hidden');
             nextBtn.classList.add('hidden');
         } else {
@@ -8595,13 +11307,24 @@
         }
     }
 
-    function handleImageViewerKeys(e) {
+    function handleMediaViewerKeys(e) {
         if (e.key === 'Escape') {
-            closeImageViewer();
+            closeMediaViewer();
         } else if (e.key === 'ArrowLeft') {
-            navigateImage(-1);
+            navigateMedia(-1);
         } else if (e.key === 'ArrowRight') {
-            navigateImage(1);
+            navigateMedia(1);
+        } else if (e.key === ' ') {
+            // Пробел для паузы/воспроизведения видео
+            const videoEl = document.getElementById('media-viewer-video');
+            if (!videoEl.classList.contains('hidden')) {
+                e.preventDefault();
+                if (videoEl.paused) {
+                    videoEl.play();
+                } else {
+                    videoEl.pause();
+                }
+            }
         }
     }
 
@@ -9065,12 +11788,15 @@
                 // Реакции
                 const reactionsHtml = renderReactions(m.reactions, msgId, true);
                 
+                // Применяем linkify для текстовых сообщений
+                const linkedText = (!m.type || m.type === 'text') ? linkifyText(displayText) : displayText;
+                
                 div.innerHTML = `
                     <div class="swipe-reply-hint"><i class="fas fa-reply"></i></div>
                     ${forwardedHtml}
                     ${replyQuoteHtml}
                     ${!isMine ? `<p class="text-xs text-indigo-500 font-bold mb-1">@${senderName}</p>` : ''}
-                    <p class="text-sm leading-relaxed">${displayText}</p>
+                    <p class="text-sm leading-relaxed">${linkedText}</p>
                     ${reactionsHtml}
                     <span class="text-[9px] block mt-1 opacity-50 text-right">${m.timestamp ? new Date(m.timestamp.seconds * 1000).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '...'}</span>
                 `;
@@ -9091,6 +11817,11 @@
                 setupSwipeToReply(div, msgId, true);
                 
                 cont.appendChild(div);
+                
+                // Загружаем предпросмотр ссылок для текстовых сообщений
+                if ((!m.type || m.type === 'text') && displayText) {
+                    loadLinkPreviewForMessage(div, displayText);
+                }
             });
             
             if (shouldScroll) cont.scrollTop = cont.scrollHeight;
@@ -9177,6 +11908,9 @@
             
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'groups', activeGroup.id, 'messages'), msgData);
+                
+                // Начисляем рубины за отправку сообщения в группу
+                earnRubies(RUBY_PER_MESSAGE);
                 
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'groups', activeGroup.id), {
                     lastMessage: text.substring(0, 50),
@@ -11139,6 +13873,8 @@
             }
         } catch (err) {
             console.error('Ошибка демонстрации экрана:', err);
+            const isElectronApp = window.electronAPI && window.electronAPI.isElectron;
+            
             if (err.name === 'NotAllowedError') {
                 alert('Доступ к демонстрации экрана отклонён. Разрешите доступ в браузере.');
             } else if (err.name === 'NotSupportedError') {
@@ -11148,7 +13884,7 @@
             } else if (err.name === 'AbortError') {
                 // Пользователь отменил выбор экрана - это нормально, не показываем ошибку
                 console.log('Пользователь отменил демонстрацию экрана');
-            } else if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+            } else if (!isElectronApp && location.protocol !== 'https:' && location.hostname !== 'localhost') {
                 alert('Для демонстрации экрана требуется HTTPS соединение');
             } else {
                 alert('Не удалось начать демонстрацию экрана: ' + err.message);
@@ -11551,8 +14287,9 @@
         }
     }, { once: true });
     
-    // Предупреждение о HTTP для демонстрации экрана
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+    // Предупреждение о HTTP для демонстрации экрана (только для браузера, не для Electron)
+    const isElectronApp = window.electronAPI && window.electronAPI.isElectron;
+    if (!isElectronApp && location.protocol !== 'https:' && location.hostname !== 'localhost' && location.protocol !== 'file:') {
         const warning = document.createElement('div');
         warning.className = 'http-warning';
         warning.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Для демонстрации экрана нужен HTTPS';
