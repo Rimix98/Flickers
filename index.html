@@ -252,6 +252,215 @@
         }
 
         /* ========== Мобильный UI (Telegram-style) ========== */
+        
+        /* Telegram-style Input Area */
+        .tg-input-wrapper {
+            display: none;
+        }
+        .tg-send-btn, .tg-voice-btn {
+            display: none;
+        }
+        .desktop-input-btns {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tg-panels-container {
+            flex: 1;
+        }
+        
+        /* Desktop input field */
+        .desktop-msg-input {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            /* Скрываем десктопные кнопки */
+            .desktop-input-btns {
+                display: none !important;
+            }
+            
+            /* Скрываем десктопный input */
+            .desktop-msg-input {
+                display: none !important;
+            }
+            
+            /* Скрываем plus-menu-container на мобильных */
+            .plus-menu-container {
+                display: none !important;
+            }
+            
+            /* Показываем Telegram-style элементы */
+            .tg-input-wrapper {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                background: var(--bg-card);
+                border-radius: 24px;
+                padding: 4px 4px 4px 8px;
+                border: 1px solid var(--border);
+                gap: 4px;
+                min-height: 48px;
+            }
+            
+            .tg-attach-btn {
+                width: 36px;
+                height: 36px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-secondary);
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+                flex-shrink: 0;
+            }
+            .tg-attach-btn:active {
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--accent);
+            }
+            .tg-attach-btn i {
+                font-size: 18px;
+                transform: rotate(45deg);
+            }
+            
+            .tg-input-field {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                position: relative;
+                min-width: 0;
+            }
+            
+            .tg-message-input {
+                flex: 1;
+                border: none;
+                background: transparent;
+                outline: none;
+                font-size: 16px;
+                padding: 8px 0;
+                color: var(--text-primary);
+                min-width: 0;
+            }
+            .tg-message-input::placeholder {
+                color: var(--text-secondary);
+                opacity: 0.6;
+            }
+            
+            .tg-input-actions {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                flex-shrink: 0;
+            }
+            
+            .tg-emoji-btn, .tg-sticker-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-secondary);
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .tg-emoji-btn:active, .tg-sticker-btn:active {
+                background: rgba(99, 102, 241, 0.1);
+                color: var(--accent);
+            }
+            .tg-emoji-btn i, .tg-sticker-btn i {
+                font-size: 18px;
+            }
+            
+            /* Telegram-style Send/Voice buttons */
+            .tg-send-btn, .tg-voice-btn {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+                flex-shrink: 0;
+            }
+            
+            .tg-send-btn {
+                background: var(--accent);
+                color: white;
+                display: none;
+            }
+            .tg-send-btn.tg-send-active {
+                display: flex;
+                animation: tg-btn-pop 0.2s ease;
+            }
+            .tg-send-btn:active {
+                transform: scale(0.9);
+            }
+            .tg-send-btn i {
+                font-size: 18px;
+            }
+            
+            .tg-voice-btn {
+                background: var(--accent);
+                color: white;
+                display: flex;
+            }
+            .tg-voice-btn.tg-voice-hidden {
+                display: none;
+            }
+            .tg-voice-btn:active {
+                transform: scale(0.9);
+                background: #ef4444;
+            }
+            .tg-voice-btn i {
+                font-size: 18px;
+            }
+            
+            @keyframes tg-btn-pop {
+                0% { transform: scale(0.8); opacity: 0; }
+                50% { transform: scale(1.1); }
+                100% { transform: scale(1); opacity: 1; }
+            }
+            
+            /* Скрываем панели контейнер на мобильных */
+            .tg-panels-container {
+                position: absolute;
+                bottom: 100%;
+                left: 0;
+                right: 0;
+                flex: none;
+            }
+            
+            /* Адаптируем footer для мобильных */
+            #chat-footer {
+                padding: 8px 12px !important;
+                gap: 8px !important;
+            }
+            #chat-footer > div {
+                gap: 8px !important;
+            }
+            
+            /* Plus menu адаптация */
+            .plus-menu {
+                bottom: calc(100% + 8px) !important;
+                left: 8px !important;
+                right: auto !important;
+                min-width: 200px;
+            }
+            
+            /* Voice recording UI на мобильных */
+            .voice-recording-ui {
+                border-radius: 24px !important;
+            }
+        }
+        
         @media (max-width: 768px) {
             #main-app {
                 flex-direction: column;
@@ -3870,7 +4079,7 @@
                 </div>
             </div>
 
-            <footer class="p-4 border-t border-[var(--border)] glass-panel relative z-10">
+            <footer id="chat-footer" class="p-4 border-t border-[var(--border)] glass-panel relative z-10">
                 <div id="emoji-panel" class="emoji-panel glass-panel">
                     <div class="emoji-tabs" id="emoji-tabs"></div>
                     <div class="emoji-search">
@@ -3926,16 +4135,29 @@
                     </div>
                     <input type="file" id="file-input" class="hidden" onchange="handleFile(this)">
 
-                    <button onclick="toggleEmoji()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-xl transition-all">
-                        <i class="far fa-smile text-lg"></i>
-                    </button>
-                    
-                    <button onclick="toggleStickers()" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-pink-500 hover:bg-pink-50 rounded-xl transition-all" title="Стикеры и GIF">
-                        <i class="fas fa-sticky-note text-lg"></i>
-                    </button>
+                    <!-- Telegram-style input area -->
+                    <div class="tg-input-wrapper">
+                        <button onclick="togglePlusMenu()" class="tg-attach-btn">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                        
+                        <div class="tg-input-field">
+                            <input type="text" id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" oninput="syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()">
+                            
+                            <div class="tg-input-actions">
+                                <button onclick="toggleEmoji()" class="tg-emoji-btn">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                <button onclick="toggleStickers()" class="tg-sticker-btn" title="Стикеры и GIF">
+                                    <i class="fas fa-sticky-note"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="flex-1 relative" id="input-container">
-                        <input type="text" id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Напишите сообщение..." class="w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all border border-transparent" oninput="if(typeof onTyping==='function')onTyping()">
+                    <div class="flex-1 relative tg-panels-container" id="input-container">
+                        <!-- Desktop input (hidden on mobile) -->
+                        <input type="text" id="msg-input-desktop" data-i18n-placeholder="writeMessage" placeholder="Напишите сообщение..." class="desktop-msg-input w-full bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 transition-all border border-transparent" oninput="syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()">
                         
                         <!-- Панель быстрых ответов -->
                         <div id="quick-replies-panel" class="quick-replies-panel">
@@ -4028,17 +4250,28 @@
                         </div>
                     </div>
 
-                    <button onclick="openVideoCircle()" class="video-circle-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all" title="Видео-кружок">
-                        <i class="fas fa-circle text-xl"></i>
+                    <!-- Telegram-style send/voice button -->
+                    <button id="tg-send-btn" onclick="sendMsg()" class="tg-send-btn">
+                        <i class="fas fa-arrow-up"></i>
                     </button>
+                    <button id="tg-voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="tg-voice-btn">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    
+                    <!-- Desktop buttons (hidden on mobile) -->
+                    <div class="desktop-input-btns">
+                        <button onclick="openVideoCircle()" class="video-circle-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-purple-500 hover:bg-purple-50 rounded-xl transition-all" title="Видео-кружок">
+                            <i class="fas fa-circle text-xl"></i>
+                        </button>
 
-                    <button id="voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="voice-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-xl transition-all">
-                        <i class="fas fa-microphone text-xl"></i>
-                    </button>
+                        <button id="voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="voice-btn w-12 h-12 flex items-center justify-center text-slate-400 hover:text-indigo-500 hover:bg-indigo-50 rounded-xl transition-all">
+                            <i class="fas fa-microphone text-xl"></i>
+                        </button>
 
-                    <button onclick="sendMsg()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center hover:bg-indigo-700 shadow-xl active:scale-90 transition-all">
-                        <i class="fas fa-paper-plane text-xl"></i>
-                    </button>
+                        <button onclick="sendMsg()" class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center hover:bg-indigo-700 shadow-xl active:scale-90 transition-all">
+                            <i class="fas fa-paper-plane text-xl"></i>
+                        </button>
+                    </div>
                 </div>
             </footer>
         </div>
@@ -8881,9 +9114,46 @@ window.doNicknameSearch = function(val) {
         }
     };
 
-    window.sendMsg = async (extraData = {}) => {
+    // Telegram-style: переключение кнопки отправки/микрофона
+    window.handleInputChange = () => {
         const input = document.getElementById('msg-input');
-        const text = input.value.trim();
+        const desktopInput = document.getElementById('msg-input-desktop');
+        const sendBtn = document.getElementById('tg-send-btn');
+        const voiceBtn = document.getElementById('tg-voice-btn');
+        
+        if (!sendBtn || !voiceBtn) return;
+        
+        // Проверяем оба input
+        const mobileHasText = input && input.value.trim().length > 0;
+        const desktopHasText = desktopInput && desktopInput.value.trim().length > 0;
+        const hasText = mobileHasText || desktopHasText;
+        
+        if (hasText) {
+            sendBtn.classList.add('tg-send-active');
+            voiceBtn.classList.add('tg-voice-hidden');
+        } else {
+            sendBtn.classList.remove('tg-send-active');
+            voiceBtn.classList.remove('tg-voice-hidden');
+        }
+    };
+    
+    // Синхронизация мобильного и десктопного input
+    window.syncInputs = (source) => {
+        const mobileInput = document.getElementById('msg-input');
+        const desktopInput = document.getElementById('msg-input-desktop');
+        
+        if (source.id === 'msg-input' && desktopInput) {
+            desktopInput.value = source.value;
+        } else if (source.id === 'msg-input-desktop' && mobileInput) {
+            mobileInput.value = source.value;
+        }
+    };
+
+    window.sendMsg = async (extraData = {}) => {
+        const mobileInput = document.getElementById('msg-input');
+        const desktopInput = document.getElementById('msg-input-desktop');
+        // Берём текст из того input, который имеет значение
+        const text = (mobileInput?.value?.trim() || desktopInput?.value?.trim() || '');
         if ((!text && !extraData.type) || !activeChatPartner || !me) return;
         
         const chatId = [me.uid, activeChatPartner.uid].sort().join('_');
@@ -8926,7 +9196,10 @@ window.doNicknameSearch = function(val) {
             cancelReply();
         }
 
-        input.value = '';
+        // Очищаем оба input
+        if (mobileInput) mobileInput.value = '';
+        if (desktopInput) desktopInput.value = '';
+        handleInputChange(); // Сбрасываем кнопку на микрофон
         
         try {
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msg);
@@ -9171,9 +9444,20 @@ window.doNicknameSearch = function(val) {
     }
 
     function insertEmoji(emoji) {
-        const input = document.getElementById('msg-input');
-        input.value += emoji;
-        input.focus();
+        const mobileInput = document.getElementById('msg-input');
+        const desktopInput = document.getElementById('msg-input-desktop');
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile && mobileInput) {
+            mobileInput.value += emoji;
+            mobileInput.focus();
+            if (desktopInput) desktopInput.value = mobileInput.value;
+        } else if (desktopInput) {
+            desktopInput.value += emoji;
+            desktopInput.focus();
+            if (mobileInput) mobileInput.value = desktopInput.value;
+        }
+        handleInputChange();
     }
     
     window.toggleEmoji = () => document.getElementById('emoji-panel').classList.toggle('active');
@@ -9725,8 +10009,19 @@ window.doNicknameSearch = function(val) {
     };
     
     window.aiUseResult = () => {
-        document.getElementById('msg-input').value = aiResult;
-        document.getElementById('msg-input').focus();
+        const mobileInput = document.getElementById('msg-input');
+        const desktopInput = document.getElementById('msg-input-desktop');
+        const isMobile = window.innerWidth <= 768;
+        
+        if (mobileInput) mobileInput.value = aiResult;
+        if (desktopInput) desktopInput.value = aiResult;
+        
+        if (isMobile && mobileInput) {
+            mobileInput.focus();
+        } else if (desktopInput) {
+            desktopInput.focus();
+        }
+        handleInputChange();
         toggleAI();
     };
     
@@ -11575,7 +11870,11 @@ window.doNicknameSearch = function(val) {
         }
     };
 
-    document.getElementById('msg-input').onkeydown = e => { if(e.key === 'Enter') sendMsg(); };
+    // Обработчик Enter для обоих input
+    const msgInput = document.getElementById('msg-input');
+    const msgInputDesktop = document.getElementById('msg-input-desktop');
+    if (msgInput) msgInput.onkeydown = e => { if(e.key === 'Enter') sendMsg(); };
+    if (msgInputDesktop) msgInputDesktop.onkeydown = e => { if(e.key === 'Enter') sendMsg(); };
 
     // ========== Групповые чаты ==========
     let selectedGroupMembers = [];
@@ -11883,6 +12182,7 @@ window.doNicknameSearch = function(val) {
             if (!text && !fileData) return;
             
             input.value = '';
+            handleInputChange(); // Сбрасываем кнопку на микрофон
             const encryptedText = text ? encrypt(text) : '';
             
             // Подготавливаем данные сообщения
@@ -14272,9 +14572,21 @@ window.doNicknameSearch = function(val) {
     };
     
     window.useQuickReply = (text) => {
-        document.getElementById('msg-input').value = text;
+        const mobileInput = document.getElementById('msg-input');
+        const desktopInput = document.getElementById('msg-input-desktop');
+        const isMobile = window.innerWidth <= 768;
+        
+        if (mobileInput) mobileInput.value = text;
+        if (desktopInput) desktopInput.value = text;
+        
         document.getElementById('quick-replies-panel').classList.remove('active');
-        document.getElementById('msg-input').focus();
+        
+        if (isMobile && mobileInput) {
+            mobileInput.focus();
+        } else if (desktopInput) {
+            desktopInput.focus();
+        }
+        handleInputChange();
     };
     
     // Закрываем панель при клике вне
