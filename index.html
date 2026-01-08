@@ -338,6 +338,170 @@
         .toast-out {
             animation: toast-out 0.5s ease forwards;
         }
+        
+        /* Уведомление о демонстрации экрана */
+        .screen-share-notification {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        
+        /* Скрываем кнопку демонстрации экрана на мобильных */
+        @media (max-width: 768px) {
+            #screen-share-btn {
+                display: none;
+            }
+            #screen-share-indicator {
+                display: none !important;
+            }
+        }
+        
+        /* ========== ОПТИМИЗАЦИИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+        @media (max-width: 768px) {
+            /* Отключаем тяжёлые эффекты */
+            .glass-panel {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+            
+            /* Упрощаем анимации */
+            .message-bubble {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            
+            /* Отключаем hover эффекты (не нужны на тач-устройствах) */
+            .chat-item:hover,
+            .emoji-item:hover,
+            .reaction-badge:hover,
+            .call-btn:hover,
+            .plus-menu-item:hover {
+                transform: none !important;
+                background: inherit;
+            }
+            
+            /* Упрощаем тени */
+            .notification-toast,
+            .plus-menu,
+            .emoji-panel,
+            .call-minimized,
+            .local-video {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+            }
+            
+            /* Ускоряем переходы */
+            #main-app > aside,
+            #main-app > main {
+                transition: transform 0.2s ease !important;
+            }
+            
+            /* Отключаем пульсацию аватара в звонке */
+            .call-avatar {
+                animation: none !important;
+            }
+            
+            /* Упрощаем video controls */
+            .video-controls {
+                backdrop-filter: none !important;
+                background: rgba(0,0,0,0.7) !important;
+            }
+            
+            /* Отключаем анимацию реакций */
+            .reaction-picker {
+                animation: none !important;
+            }
+            
+            /* Упрощаем toast */
+            .notification-toast {
+                animation: none !important;
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            
+            /* Отключаем blur на HTTP warning */
+            .http-warning,
+            .screen-share-notification {
+                backdrop-filter: none !important;
+            }
+            
+            /* Оптимизация скролла */
+            #messages-container,
+            .emoji-content,
+            #chats-list {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: auto !important;
+            }
+            
+            /* Отключаем сложные переходы */
+            * {
+                scroll-behavior: auto !important;
+            }
+            
+            /* Упрощаем прогресс-бар */
+            .progress-fill {
+                box-shadow: none !important;
+                transition: width 0.1s linear !important;
+            }
+            
+            /* Отключаем анимацию записи голоса */
+            .voice-waveform span {
+                animation: none !important;
+                height: 15px !important;
+            }
+            
+            /* Упрощаем minimize call button */
+            .minimize-call-btn {
+                backdrop-filter: none !important;
+                background: rgba(255,255,255,0.3) !important;
+            }
+        }
+        
+        /* Дополнительные оптимизации для слабых устройств */
+        @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+        
+        /* GPU ускорение для критичных элементов */
+        #main-app > aside,
+        #main-app > main,
+        #messages-container,
+        .message-bubble {
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+        
+        /* Предупреждение о HTTP */
+        .http-warning {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10000;
+            backdrop-filter: blur(10px);
+        }
 
         @keyframes toast-out {
             from { transform: translateX(0); opacity: 1; }
@@ -588,6 +752,7 @@
         .call-btn-decline { background: #ef4444; color: white; }
         .call-btn-mute { background: rgba(255,255,255,0.2); color: white; }
         .call-btn-mute.active { background: #ef4444; }
+        .call-btn-mute.screen-sharing { background: #3b82f6; }
         
         /* Видео контейнер */
         .video-container {
@@ -2686,6 +2851,9 @@
         <button class="call-btn call-btn-mute" id="video-btn" onclick="toggleVideo()" title="Камера">
             <i class="fas fa-video"></i>
         </button>
+        <button class="call-btn call-btn-mute" id="screen-share-btn" onclick="toggleScreenShare()" title="Демонстрация экрана">
+            <i class="fas fa-desktop"></i>
+        </button>
         <button class="call-btn call-btn-mute" id="speaker-btn" onclick="toggleSpeaker()" title="Динамик">
             <i class="fas fa-volume-up"></i>
         </button>
@@ -2697,6 +2865,12 @@
     <div class="absolute top-6 left-1/2 -translate-x-1/2 text-white text-center bg-black/30 px-4 py-2 rounded-full backdrop-blur-sm">
         <p class="font-bold text-sm" id="active-call-name">Звонок</p>
         <p class="text-xs opacity-60" id="call-timer">00:00</p>
+        <div id="screen-share-indicator" class="hidden text-xs text-blue-300 mt-1">
+            <i class="fas fa-desktop"></i> <span id="screen-share-user">Кто-то</span> демонстрирует экран
+            <button id="watch-screen-btn" class="ml-2 px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-xs transition-colors" onclick="toggleScreenWatch()">
+                Смотреть
+            </button>
+        </div>
     </div>
 </div>
 
@@ -3406,7 +3580,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, collection, query, onSnapshot, addDoc, serverTimestamp, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, updateDoc, deleteDoc, collection, query, onSnapshot, addDoc, serverTimestamp, orderBy, limit, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     const firebaseConfig = {
@@ -3430,8 +3604,44 @@
 
     const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
     
+    // ========== УТИЛИТЫ ОПТИМИЗАЦИИ ==========
+    // Debounce для предотвращения частых вызовов
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+    
+    // Throttle для ограничения частоты вызовов
+    function throttle(func, limit) {
+        let inThrottle;
+        return function(...args) {
+            if (!inThrottle) {
+                func.apply(this, args);
+                inThrottle = true;
+                setTimeout(() => inThrottle = false, limit);
+            }
+        };
+    }
+    
+    // Оптимизированный requestAnimationFrame для скролла
+    function smoothScrollTo(element, target) {
+        if (isMobileView) {
+            // На мобильных - мгновенный скролл
+            element.scrollTop = target;
+        } else {
+            element.scrollTo({ top: target, behavior: 'smooth' });
+        }
+    }
+    
     // ========== Мобильная навигация (Telegram-style) ==========
-    function checkMobileView() {
+    const checkMobileView = debounce(() => {
         isMobileView = window.innerWidth <= 768;
         
         if (!isMobileView) {
@@ -3439,9 +3649,9 @@
             document.querySelector('#main-app > aside')?.classList.remove('mobile-hidden');
             document.querySelector('#main-app > main')?.classList.remove('mobile-visible');
         }
-    }
+    }, 100);
     
-    window.addEventListener('resize', checkMobileView);
+    window.addEventListener('resize', checkMobileView, { passive: true });
     
     function mobileShowChat() {
         if (!isMobileView) return;
@@ -4708,6 +4918,7 @@
         updateAllTranslations();
         initEmoji();
         listenToChats();
+        listenForNewChats(); // Слушаем сообщения от новых пользователей
         loadWallpaper();
         listenToGroups();
         loadStories();
@@ -4893,6 +5104,87 @@
         });
     }
 
+    // Слушаем входящие сообщения от новых пользователей (анонимов)
+    let incomingMessagesUnsub = null;
+    let knownChatPartners = new Set();
+    
+    function listenForNewChats() {
+        if (!me || incomingMessagesUnsub) return;
+        
+        // Сначала загружаем известных партнёров
+        getDocs(collection(db, 'artifacts', appId, 'users', me.uid, 'active_chats')).then(snap => {
+            snap.docs.forEach(d => knownChatPartners.add(d.id));
+        });
+        
+        // Слушаем все чаты, где участвует текущий пользователь
+        const chatsRef = collection(db, 'artifacts', appId, 'public', 'data', 'chats');
+        
+        incomingMessagesUnsub = onSnapshot(chatsRef, async (snap) => {
+            // Обрабатываем только изменения (новые чаты или изменённые)
+            for (const change of snap.docChanges()) {
+                if (change.type !== 'added' && change.type !== 'modified') continue;
+                
+                const chatId = change.doc.id;
+                
+                // Проверяем, что это чат с текущим пользователем
+                if (!chatId.includes(me.uid)) continue;
+                
+                // Получаем ID собеседника
+                const parts = chatId.split('_');
+                if (parts.length !== 2) continue;
+                
+                const [uid1, uid2] = parts;
+                const partnerId = uid1 === me.uid ? uid2 : uid1;
+                
+                // Если партнёр уже известен - пропускаем
+                if (knownChatPartners.has(partnerId)) continue;
+                
+                // Проверяем, есть ли сообщения в этом чате
+                try {
+                    const messagesRef = collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages');
+                    const messagesSnap = await getDocs(query(messagesRef, orderBy('ts', 'desc'), limit(1)));
+                    
+                    if (messagesSnap.empty) continue;
+                    
+                    const lastMessage = messagesSnap.docs[0].data();
+                    
+                    // Если последнее сообщение от другого пользователя - создаём чат
+                    if (lastMessage.from !== me.uid) {
+                        // Получаем данные отправителя
+                        const senderDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', partnerId));
+                        
+                        if (senderDoc.exists()) {
+                            const senderData = senderDoc.data();
+                            const senderName = senderData.username || 'Аноним';
+                            
+                            // Добавляем в известных партнёров
+                            knownChatPartners.add(partnerId);
+                            
+                            // Создаём активный чат
+                            await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'active_chats', partnerId), {
+                                uid: partnerId,
+                                username: senderName,
+                                last: lastMessage.text || (lastMessage.type === 'voice' ? '🎤 Голосовое сообщение' : '📎 Вложение'),
+                                lastSenderId: lastMessage.from,
+                                ts: lastMessage.ts
+                            }, { merge: true });
+                            
+                            // Показываем уведомление
+                            showNotification({
+                                uid: partnerId,
+                                username: senderName
+                            }, lastMessage.text || 'Новое сообщение');
+                            
+                            console.log('Создан новый чат с:', senderName);
+                        }
+                    }
+                } catch (err) {
+                    console.error('Ошибка проверки нового чата:', err);
+                }
+            }
+        });
+    }
+
     window.selectChat = async (partner) => {
         activeChatPartner = partner;
         activeGroup = null; // Сбрасываем активную группу
@@ -4993,6 +5285,10 @@
             const cont = document.getElementById('messages-container');
             const shouldScroll = cont.scrollTop + cont.offsetHeight >= cont.scrollHeight - 100;
             
+            // Оптимизация: используем DocumentFragment для batch-рендеринга
+            const fragment = document.createDocumentFragment();
+            const isMobile = isMobileDevice();
+            
             cont.innerHTML = '';
             snap.forEach(d => {
                 const m = d.data();
@@ -5004,7 +5300,10 @@
                     return; // Пропускаем сообщения, удалённые через "Очистить историю"
                 }
                 
+                // На мобильных отключаем анимации через inline style
+                const mobileStyle = isMobile ? 'animation:none;opacity:1;transform:none;' : '';
                 div.className = `message-bubble p-4 shadow-sm ${m.senderId === me.uid ? 'sent' : 'received'}`;
+                if (mobileStyle) div.style.cssText = mobileStyle;
                 div.dataset.msgId = msgId;
                 div.dataset.senderId = m.senderId;
                 
@@ -5130,7 +5429,7 @@
                     `;
                 } else if (m.type === 'file') {
                     if (m.fileType && m.fileType.startsWith('image/')) {
-                        content = `<img src="${m.fileData}" class="chat-image rounded-xl max-w-full mb-2 cursor-pointer hover:brightness-90 transition-all shadow-md" onclick="openImageViewer('${m.fileData.replace(/'/g, "\\'")}')">` + content;
+                        content = `<img src="${m.fileData}" loading="lazy" decoding="async" class="chat-image rounded-xl max-w-full mb-2 cursor-pointer hover:brightness-90 transition-all shadow-md" onclick="openImageViewer('${m.fileData.replace(/'/g, "\\'")}')">` + content;
                     } else {
                         const fileSize = m.fileSize ? formatFileSize(m.fileSize) : '';
                         const sizeText = fileSize ? ` (${fileSize})` : '';
@@ -9196,6 +9495,8 @@
     let callUnsub = null;
     let isMuted = false;
     let isVideoOff = false;
+    let isScreenSharing = false;
+    let originalVideoTrack = null;
 
     // Кастомный рингтон (смесь Discord + Telegram стиля)
     let ringtoneCtx = null;
@@ -9288,6 +9589,116 @@
         
         get currentTime() { return 0; },
         set currentTime(v) {}
+    };
+
+    // Звук исходящего звонка (гудки как в телефоне)
+    let dialToneCtx = null;
+    let dialToneInterval = null;
+    
+    const dialTone = {
+        _playing: false,
+        loop: true,
+        volume: 0.4,
+        
+        play: function() {
+            if (this._playing) return Promise.resolve();
+            this._playing = true;
+            
+            try {
+                dialToneCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const playBeep = () => {
+                    if (!this._playing || !dialToneCtx) return;
+                    
+                    // Классический телефонный гудок (два тона)
+                    const osc1 = dialToneCtx.createOscillator();
+                    const osc2 = dialToneCtx.createOscillator();
+                    const gain = dialToneCtx.createGain();
+                    
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(dialToneCtx.destination);
+                    
+                    // Частоты телефонного гудка (425 Hz в Европе, 440+480 Hz в США)
+                    osc1.frequency.value = 440;
+                    osc2.frequency.value = 480;
+                    osc1.type = 'sine';
+                    osc2.type = 'sine';
+                    
+                    gain.gain.setValueAtTime(this.volume, dialToneCtx.currentTime);
+                    gain.gain.setValueAtTime(this.volume, dialToneCtx.currentTime + 0.8);
+                    gain.gain.exponentialRampToValueAtTime(0.01, dialToneCtx.currentTime + 0.85);
+                    
+                    osc1.start(dialToneCtx.currentTime);
+                    osc2.start(dialToneCtx.currentTime);
+                    osc1.stop(dialToneCtx.currentTime + 0.85);
+                    osc2.stop(dialToneCtx.currentTime + 0.85);
+                };
+                
+                playBeep();
+                if (this.loop) {
+                    dialToneInterval = setInterval(playBeep, 3000); // Гудок каждые 3 секунды
+                }
+            } catch(e) {
+                console.log('Dial tone error:', e);
+            }
+            
+            return Promise.resolve();
+        },
+        
+        pause: function() {
+            this._playing = false;
+            if (dialToneInterval) {
+                clearInterval(dialToneInterval);
+                dialToneInterval = null;
+            }
+            if (dialToneCtx) {
+                dialToneCtx.close().catch(() => {});
+                dialToneCtx = null;
+            }
+        },
+        
+        get currentTime() { return 0; },
+        set currentTime(v) {}
+    };
+
+    // Звук завершения звонка
+    const endCallSound = {
+        play: function() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                // Три нисходящих тона (как при завершении звонка)
+                const playEndTone = (freq, delay, duration) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    
+                    gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+                    gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + delay + 0.02);
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime + delay + duration - 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + delay + duration);
+                    
+                    osc.start(ctx.currentTime + delay);
+                    osc.stop(ctx.currentTime + delay + duration);
+                };
+                
+                // Три коротких нисходящих тона
+                playEndTone(880, 0, 0.15);      // Высокий
+                playEndTone(698, 0.12, 0.15);   // Средний
+                playEndTone(523, 0.24, 0.2);    // Низкий
+                
+                // Закрываем контекст после воспроизведения
+                setTimeout(() => ctx.close().catch(() => {}), 500);
+            } catch(e) {
+                console.log('End call sound error:', e);
+            }
+            return Promise.resolve();
+        }
     };
 
     // Определение мобильного устройства
@@ -9393,8 +9804,24 @@
         callUnsub = onSnapshot(callRef, async (snap) => {
             if (snap.exists()) {
                 const callData = snap.data();
-                if (callData.status === 'ringing' && !currentCallId) {
+                if (callData.status === 'ringing' && !currentCallId && !document.getElementById('active-call-screen').classList.contains('active')) {
                     showIncomingCall(callData);
+                } else if (callData.status === 'cleared' || callData.status === 'answered') {
+                    // Скрываем экран входящего звонка если он показан
+                    const incomingScreen = document.getElementById('incoming-call-screen');
+                    if (!incomingScreen.classList.contains('hidden')) {
+                        incomingScreen.classList.add('hidden');
+                        ringtone.pause();
+                        ringtone.currentTime = 0;
+                    }
+                }
+            } else {
+                // Если документ не существует, тоже скрываем экран входящего звонка
+                const incomingScreen = document.getElementById('incoming-call-screen');
+                if (!incomingScreen.classList.contains('hidden')) {
+                    incomingScreen.classList.add('hidden');
+                    ringtone.pause();
+                    ringtone.currentTime = 0;
                 }
             }
         });
@@ -9468,6 +9895,9 @@
         document.getElementById('callee-name').innerText = '@' + activeChatPartner.username;
         document.getElementById('outgoing-call-screen').classList.remove('hidden');
         
+        // Воспроизводим звук исходящего звонка (гудки)
+        dialTone.play().catch(() => {});
+        
         try {
             // Настройки видео 1080p для высокого качества
             const videoConstraints = withVideo ? {
@@ -9484,6 +9914,12 @@
             
             // Исправляем аудио для мобильных устройств
             await fixIOSAudioContext();
+            
+            // Закрываем предыдущее соединение если есть
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
             
             // Создаем offer
             peerConnection = new RTCPeerConnection(iceServers);
@@ -9545,13 +9981,27 @@
                 if (!snap.exists()) return;
                 const data = snap.data();
                 
-                if (data.status === 'answered' && data.answer) {
-                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-                    showActiveCall(activeChatPartner.username);
+                if (data.status === 'answered' && data.answer && peerConnection.signalingState !== 'stable') {
+                    try {
+                        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                        showActiveCall(activeChatPartner.username);
+                    } catch (err) {
+                        console.log('Set remote description error:', err);
+                    }
                 }
                 
                 if (data.status === 'declined' || data.status === 'ended') {
                     endCallCleanup();
+                }
+                
+                // Слушаем изменения демонстрации экрана
+                if (data.screenSharing && data.screenSharing.userId !== me.uid) {
+                    const { userName, isSharing } = data.screenSharing;
+                    if (isSharing) {
+                        showScreenShareNotification(`${userName} демонстрирует экран`);
+                    } else {
+                        showScreenShareNotification(`${userName} остановил демонстрацию экрана`);
+                    }
                 }
             });
             
@@ -9560,7 +10010,21 @@
                 snap.docChanges().forEach(async (change) => {
                     if (change.type === 'added' && peerConnection) {
                         const data = change.doc.data();
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                        try {
+                            // Проверяем, что remoteDescription установлен
+                            if (peerConnection.remoteDescription) {
+                                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                            } else {
+                                console.warn('Пропускаем ICE кандидат - remoteDescription не установлен');
+                            }
+                        } catch (err) {
+                            // Игнорируем ошибку "No such transceiver" - это нормально во время пересогласования
+                            if (err.message && err.message.includes('No such transceiver')) {
+                                console.log('ICE кандидат пропущен (transceiver ещё не создан) - это нормально');
+                            } else {
+                                console.error('Ошибка добавления ICE кандидата:', err);
+                            }
+                        }
                     }
                 });
             });
@@ -9643,6 +10107,16 @@
                     return;
                 }
                 
+                // Слушаем изменения демонстрации экрана
+                if (data.screenSharing && data.screenSharing.userId !== me.uid) {
+                    const { userName, isSharing } = data.screenSharing;
+                    if (isSharing) {
+                        showScreenShareNotification(`${userName} демонстрирует экран`);
+                    } else {
+                        showScreenShareNotification(`${userName} остановил демонстрацию экрана`);
+                    }
+                }
+                
                 // Подключаемся к новым участникам
                 for (const participantId of data.participants || []) {
                     if (participantId === me.uid) continue;
@@ -9712,7 +10186,12 @@
                         try {
                             await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
                         } catch (err) {
-                            console.log('ICE candidate error:', err);
+                            // Игнорируем ошибку "No such transceiver"
+                            if (err.message && err.message.includes('No such transceiver')) {
+                                console.log('ICE кандидат пропущен (transceiver ещё не создан)');
+                            } else {
+                                console.error('ICE candidate error:', err);
+                            }
                         }
                     }
                 }
@@ -9966,6 +10445,12 @@
             // Исправляем аудио для мобильных устройств
             await fixIOSAudioContext();
             
+            // Закрываем предыдущее соединение если есть
+            if (peerConnection) {
+                peerConnection.close();
+                peerConnection = null;
+            }
+            
             peerConnection = new RTCPeerConnection(iceServers);
             
             localStream.getTracks().forEach(track => {
@@ -9994,7 +10479,9 @@
             const callDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId));
             const callData = callDoc.data();
             
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer));
+            if (callData && callData.offer && peerConnection.signalingState === 'stable') {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.offer));
+            }
             
             const answer = await peerConnection.createAnswer();
             // Применяем высокий битрейт для 1080p
@@ -10011,22 +10498,49 @@
             }, { merge: true });
             
             // Очищаем уведомление
-            await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'), { status: 'cleared' });
+            await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'), { status: 'answered' });
             
             // Слушаем ICE кандидаты от звонящего
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId, 'ice_candidates_caller'), (snap) => {
                 snap.docChanges().forEach(async (change) => {
                     if (change.type === 'added' && peerConnection) {
                         const data = change.doc.data();
-                        await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                        try {
+                            // Проверяем, что remoteDescription установлен
+                            if (peerConnection.remoteDescription) {
+                                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                            } else {
+                                console.warn('Пропускаем ICE кандидат - remoteDescription не установлен');
+                            }
+                        } catch (err) {
+                            // Игнорируем ошибку "No such transceiver" - это нормально во время пересогласования
+                            if (err.message && err.message.includes('No such transceiver')) {
+                                console.log('ICE кандидат пропущен (transceiver ещё не создан) - это нормально');
+                            } else {
+                                console.error('Ошибка добавления ICE кандидата:', err);
+                            }
+                        }
                     }
                 });
             });
             
             // Слушаем завершение звонка
-            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId), (snap) => {
-                if (snap.exists() && snap.data().status === 'ended') {
-                    endCallCleanup();
+            onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId), async (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.status === 'ended') {
+                        endCallCleanup();
+                    }
+                    
+                    // Слушаем изменения демонстрации экрана
+                    if (data.screenSharing && data.screenSharing.userId !== me.uid) {
+                        const { userName, isSharing } = data.screenSharing;
+                        if (isSharing) {
+                            showScreenShareNotification(`${userName} демонстрирует экран`);
+                        } else {
+                            showScreenShareNotification(`${userName} остановил демонстрацию экрана`);
+                        }
+                    }
                 }
             });
             
@@ -10044,8 +10558,8 @@
         ringtone.currentTime = 0;
         document.getElementById('incoming-call-screen').classList.add('hidden');
         
-        // Очищаем уведомление о входящем звонке
-        await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'), { status: 'cleared' });
+        // Полностью удаляем уведомление о входящем звонке
+        await deleteDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'));
         
         if (isGroupCall) {
             // Для группового звонка просто отклоняем - не завершаем весь звонок
@@ -10100,7 +10614,7 @@
             }
             
             // Очищаем уведомление
-            await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'), { status: 'cleared' });
+            await setDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'), { status: 'answered' });
             
             showActiveCall(callData.groupName);
             
@@ -10112,6 +10626,16 @@
                 if (data.status === 'ended') {
                     endGroupCallCleanup();
                     return;
+                }
+                
+                // Слушаем изменения демонстрации экрана
+                if (data.screenSharing && data.screenSharing.userId !== me.uid) {
+                    const { userName, isSharing } = data.screenSharing;
+                    if (isSharing) {
+                        showScreenShareNotification(`${userName} демонстрирует экран`);
+                    } else {
+                        showScreenShareNotification(`${userName} остановил демонстрацию экрана`);
+                    }
                 }
                 
                 for (const participantId of data.participants || []) {
@@ -10129,6 +10653,10 @@
     }
 
     window.cancelCall = async () => {
+        // Останавливаем звук исходящего звонка
+        dialTone.pause();
+        dialTone.currentTime = 0;
+        
         document.getElementById('outgoing-call-screen').classList.add('hidden');
         
         if (isGroupCall && currentCallId && activeGroup) {
@@ -10172,18 +10700,31 @@
                 }
             }
             
+            // Полностью удаляем документ входящего звонка
+            await deleteDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'));
+            
             endGroupCallCleanup();
         } else if (currentCallId) {
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId), {
                 status: 'ended'
             }, { merge: true });
+            
+            // Полностью удаляем документ входящего звонка
+            await deleteDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'));
+            
             endCallCleanup();
         } else {
+            // Полностью удаляем документ входящего звонка на всякий случай
+            await deleteDoc(doc(db, 'artifacts', appId, 'users', me.uid, 'incoming_call', 'current'));
             endCallCleanup();
         }
     };
 
     function showActiveCall(partnerName) {
+        // Останавливаем звук исходящего звонка
+        dialTone.pause();
+        dialTone.currentTime = 0;
+        
         document.getElementById('outgoing-call-screen').classList.add('hidden');
         document.getElementById('incoming-call-screen').classList.add('hidden');
         document.getElementById('active-call-screen').classList.remove('hidden');
@@ -10265,6 +10806,15 @@
     }
 
     function endCallCleanup() {
+        // Воспроизводим звук завершения звонка
+        endCallSound.play().catch(() => {});
+        
+        // Останавливаем все звуки звонка
+        dialTone.pause();
+        dialTone.currentTime = 0;
+        ringtone.pause();
+        ringtone.currentTime = 0;
+        
         document.getElementById('outgoing-call-screen').classList.add('hidden');
         document.getElementById('incoming-call-screen').classList.add('hidden');
         document.getElementById('active-call-screen').classList.add('hidden');
@@ -10277,9 +10827,6 @@
         if (localVideoEl) localVideoEl.classList.remove('hidden');
         if (remoteVideoEl) remoteVideoEl.classList.remove('hidden');
         if (groupContainer) groupContainer.classList.add('hidden');
-        
-        ringtone.pause();
-        ringtone.currentTime = 0;
         
         if (callTimerInterval) {
             clearInterval(callTimerInterval);
@@ -10302,6 +10849,29 @@
         isVideoOff = false;
         isSpeakerOff = false;
         
+        // Сбрасываем демонстрацию экрана
+        if (isScreenSharing) {
+            isScreenSharing = false;
+            originalVideoTrack = null;
+            const screenBtn = document.getElementById('screen-share-btn');
+            if (screenBtn) {
+                screenBtn.classList.remove('screen-sharing');
+                screenBtn.innerHTML = '<i class="fas fa-desktop"></i>';
+                screenBtn.title = 'Демонстрация экрана';
+            }
+        }
+        
+        // Сбрасываем режим просмотра демонстрации экрана
+        if (isWatchingScreen) {
+            isWatchingScreen = false;
+            const watchBtn = document.getElementById('watch-screen-btn');
+            if (watchBtn) {
+                watchBtn.textContent = 'Смотреть';
+                watchBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+                watchBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            }
+        }
+        
         document.getElementById('mute-btn').classList.remove('active');
         document.getElementById('video-btn').classList.remove('active');
         const speakerBtn = document.getElementById('speaker-btn');
@@ -10312,6 +10882,12 @@
         
         // Скрываем мини-плеер при завершении звонка
         document.getElementById('minimized-call').style.display = 'none';
+        
+        // Скрываем индикатор демонстрации экрана
+        const screenIndicator = document.getElementById('screen-share-indicator');
+        if (screenIndicator) {
+            screenIndicator.classList.add('hidden');
+        }
     }
     
     // Сворачивание звонка
@@ -10385,6 +10961,445 @@
         const btn = document.getElementById('video-btn');
         btn.classList.toggle('active', isVideoOff);
         btn.innerHTML = isVideoOff ? '<i class="fas fa-video-slash"></i>' : '<i class="fas fa-video"></i>';
+    };
+
+    window.toggleScreenShare = async () => {
+        console.log('toggleScreenShare вызвана');
+        console.log('peerConnection:', peerConnection);
+        console.log('localStream:', localStream);
+        
+        if (!peerConnection || !localStream) {
+            console.error('Нет активного звонка! peerConnection:', !!peerConnection, 'localStream:', !!localStream);
+            alert('Нет активного звонка! Сначала начните видеозвонок.');
+            return;
+        }
+        
+        const btn = document.getElementById('screen-share-btn');
+        
+        try {
+            if (!isScreenSharing) {
+                // Проверяем, это Electron или браузер
+                const isElectron = window.electronAPI && window.electronAPI.isElectron;
+                
+                let screenStream;
+                
+                if (isElectron) {
+                    // Electron: используем desktopCapturer
+                    console.log('Используем Electron desktopCapturer');
+                    
+                    try {
+                        const sources = await window.electronAPI.getSources();
+                        
+                        if (!sources || sources.length === 0) {
+                            alert('Не найдено источников для демонстрации экрана');
+                            return;
+                        }
+                        
+                        // Показываем диалог выбора источника
+                        const selectedSource = await showSourcePicker(sources);
+                        
+                        if (!selectedSource) {
+                            console.log('Пользователь отменил выбор источника');
+                            return;
+                        }
+                        
+                        // Получаем поток с выбранного источника
+                        screenStream = await navigator.mediaDevices.getUserMedia({
+                            audio: false,
+                            video: {
+                                mandatory: {
+                                    chromeMediaSource: 'desktop',
+                                    chromeMediaSourceId: selectedSource.id,
+                                    maxWidth: 1920,
+                                    maxHeight: 1080,
+                                    maxFrameRate: 30
+                                }
+                            }
+                        });
+                    } catch (err) {
+                        console.error('Ошибка Electron screen capture:', err);
+                        alert('Не удалось начать демонстрацию экрана: ' + err.message);
+                        return;
+                    }
+                } else {
+                    // Браузер: используем getDisplayMedia
+                    // Проверяем HTTPS
+                    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                        alert('Демонстрация экрана требует HTTPS соединения. Откройте сайт через https://');
+                        return;
+                    }
+                    
+                    // Проверяем поддержку демонстрации экрана
+                    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                        if (isMobileDevice()) {
+                            alert('Демонстрация экрана не поддерживается на мобильных устройствах.');
+                            return;
+                        } else {
+                            alert('Ваш браузер не поддерживает демонстрацию экрана.');
+                            return;
+                        }
+                    }
+                    
+                    screenStream = await navigator.mediaDevices.getDisplayMedia({
+                        video: {
+                            width: { ideal: 1920, max: 1920 },
+                            height: { ideal: 1080, max: 1080 },
+                            frameRate: { ideal: 30, max: 30 }
+                        },
+                        audio: false
+                    });
+                }
+                
+                // Сохраняем оригинальный видео трек
+                const videoTrack = localStream.getVideoTracks()[0];
+                console.log('Текущий видео трек в localStream:', videoTrack);
+                console.log('Все треки в localStream:', localStream.getTracks());
+                
+                // Проверяем, что это видеозвонок
+                if (!videoTrack) {
+                    alert('Демонстрация экрана доступна только в видеозвонках. Начните видеозвонок, чтобы использовать эту функцию.');
+                    screenStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                
+                originalVideoTrack = videoTrack;
+                
+                // Заменяем видео трек на демонстрацию экрана
+                const screenVideoTrack = screenStream.getVideoTracks()[0];
+                console.log('Видео трек демонстрации экрана:', screenVideoTrack);
+                
+                // Ищем sender для видео
+                const sender = peerConnection.getSenders().find(s => 
+                    s.track && s.track.kind === 'video'
+                );
+                
+                if (!sender) {
+                    console.error('Sender для видео не найден');
+                    alert('Ошибка: не удалось найти видео поток. Попробуйте перезапустить звонок.');
+                    screenStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                
+                // Заменяем существующий трек (без пересогласования!)
+                console.log('Заменяем видео трек на демонстрацию экрана');
+                await sender.replaceTrack(screenVideoTrack);
+                console.log('Видео трек заменён успешно');
+                
+                // Обновляем локальный поток (НЕ останавливаем оригинальный трек!)
+                localStream.removeTrack(videoTrack);
+                localStream.addTrack(screenVideoTrack);
+                // videoTrack НЕ останавливаем - он нужен для восстановления
+                
+                // Обновляем локальное видео
+                document.getElementById('local-video').srcObject = localStream;
+                console.log('Локальное видео обновлено');
+                
+                // replaceTrack() НЕ требует пересогласования!
+                // Видео автоматически передаётся удалённой стороне
+                
+                // Слушаем завершение демонстрации экрана
+                screenVideoTrack.addEventListener('ended', () => {
+                    stopScreenShare();
+                });
+                
+                isScreenSharing = true;
+                btn.classList.add('screen-sharing');
+                btn.innerHTML = '<i class="fas fa-desktop"></i>';
+                btn.title = 'Остановить демонстрацию экрана';
+                
+                // Показываем уведомление
+                showScreenShareNotification('Демонстрация экрана начата');
+                
+                // Уведомляем других участников через Firebase (для показа индикатора)
+                if (currentCallId) {
+                    if (isGroupCall) {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'group_calls', currentCallId), {
+                            screenSharing: {
+                                userId: me.uid,
+                                userName: me.username,
+                                isSharing: true,
+                                timestamp: serverTimestamp()
+                            }
+                        }, { merge: true });
+                    } else {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId), {
+                            screenSharing: {
+                                userId: me.uid,
+                                userName: me.username,
+                                isSharing: true,
+                                timestamp: serverTimestamp()
+                            }
+                        }, { merge: true });
+                    }
+                }
+                
+            } else {
+                // Останавливаем демонстрацию экрана
+                await stopScreenShare();
+            }
+        } catch (err) {
+            console.error('Ошибка демонстрации экрана:', err);
+            if (err.name === 'NotAllowedError') {
+                alert('Доступ к демонстрации экрана отклонён. Разрешите доступ в браузере.');
+            } else if (err.name === 'NotSupportedError') {
+                alert('Демонстрация экрана не поддерживается на этом устройстве');
+            } else if (err.name === 'NotFoundError') {
+                alert('Не найдено устройство для демонстрации экрана');
+            } else if (err.name === 'AbortError') {
+                // Пользователь отменил выбор экрана - это нормально, не показываем ошибку
+                console.log('Пользователь отменил демонстрацию экрана');
+            } else if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                alert('Для демонстрации экрана требуется HTTPS соединение');
+            } else {
+                alert('Не удалось начать демонстрацию экрана: ' + err.message);
+            }
+        }
+    };
+
+    async function stopScreenShare() {
+        if (!isScreenSharing || !peerConnection) return;
+        
+        try {
+            // Получаем текущий видео трек (демонстрация экрана)
+            const screenTrack = localStream.getVideoTracks()[0];
+            
+            // Ищем sender для видео
+            const sender = peerConnection.getSenders().find(s => 
+                s.track && s.track.kind === 'video'
+            );
+            
+            // Возвращаем оригинальную камеру если была сохранена
+            if (originalVideoTrack && sender) {
+                try {
+                    // Проверяем, что оригинальный трек ещё жив
+                    if (originalVideoTrack.readyState === 'live') {
+                        // Заменяем трек обратно на камеру
+                        await sender.replaceTrack(originalVideoTrack);
+                        
+                        // Обновляем локальный поток
+                        if (screenTrack) {
+                            localStream.removeTrack(screenTrack);
+                            screenTrack.stop();
+                        }
+                        localStream.addTrack(originalVideoTrack);
+                        
+                        // Применяем текущее состояние видео
+                        originalVideoTrack.enabled = !isVideoOff;
+                        
+                        console.log('Камера восстановлена');
+                    } else {
+                        // Оригинальный трек мёртв, нужно запросить новый
+                        console.log('Оригинальный трек недоступен, показываем чёрный экран');
+                        // Просто останавливаем демонстрацию, камера будет чёрной
+                        if (screenTrack) {
+                            localStream.removeTrack(screenTrack);
+                            screenTrack.stop();
+                        }
+                    }
+                } catch (err) {
+                    console.error('Ошибка восстановления камеры:', err);
+                    // Просто останавливаем демонстрацию
+                    if (screenTrack) {
+                        localStream.removeTrack(screenTrack);
+                        screenTrack.stop();
+                    }
+                }
+            } else {
+                // Нет оригинального трека, просто останавливаем демонстрацию
+                if (screenTrack) {
+                    localStream.removeTrack(screenTrack);
+                    screenTrack.stop();
+                }
+            }
+            
+            // Обновляем локальное видео
+            document.getElementById('local-video').srcObject = localStream;
+            
+            isScreenSharing = false;
+            originalVideoTrack = null;
+            
+            const btn = document.getElementById('screen-share-btn');
+            btn.classList.remove('screen-sharing');
+            btn.innerHTML = '<i class="fas fa-desktop"></i>';
+            btn.title = 'Демонстрация экрана';
+            
+            // Показываем уведомление
+            showScreenShareNotification('Демонстрация экрана остановлена');
+            
+            // Уведомляем других участников через Firebase
+            if (currentCallId) {
+                if (isGroupCall) {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'group_calls', currentCallId), {
+                        screenSharing: {
+                            userId: me.uid,
+                            userName: me.username,
+                            isSharing: false,
+                            timestamp: serverTimestamp()
+                        }
+                    }, { merge: true });
+                } else {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'calls', currentCallId), {
+                        screenSharing: {
+                            userId: me.uid,
+                            userName: me.username,
+                            isSharing: false,
+                            timestamp: serverTimestamp()
+                        }
+                    }, { merge: true });
+                }
+            }
+            
+        } catch (err) {
+            console.error('Ошибка остановки демонстрации экрана:', err);
+        }
+    }
+
+    // Диалог выбора источника для Electron
+    function showSourcePicker(sources) {
+        return new Promise((resolve) => {
+            // Создаём модальное окно
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 z-[300] flex items-center justify-center bg-black/70';
+            modal.innerHTML = `
+                <div class="glass-panel rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">Выберите источник для демонстрации</h3>
+                        <button class="close-picker text-2xl opacity-60 hover:opacity-100">&times;</button>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 overflow-y-auto flex-1 source-grid">
+                        ${sources.map(source => `
+                            <div class="source-item cursor-pointer rounded-xl border-2 border-transparent hover:border-indigo-500 p-2 transition-all" data-id="${source.id}">
+                                <img src="${source.thumbnail}" class="w-full h-24 object-cover rounded-lg bg-gray-800" alt="${source.name}">
+                                <p class="text-sm mt-2 truncate text-center">${source.name}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Обработчики
+            modal.querySelector('.close-picker').onclick = () => {
+                modal.remove();
+                resolve(null);
+            };
+            
+            modal.querySelectorAll('.source-item').forEach(item => {
+                item.onclick = () => {
+                    const id = item.dataset.id;
+                    const source = sources.find(s => s.id === id);
+                    modal.remove();
+                    resolve(source);
+                };
+            });
+            
+            // Закрытие по клику на фон
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                    resolve(null);
+                }
+            };
+        });
+    }
+
+    function showScreenShareNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'screen-share-notification';
+        notification.innerHTML = `<i class="fas fa-desktop"></i> ${message}`;
+        
+        const callScreen = document.getElementById('active-call-screen');
+        if (callScreen) {
+            callScreen.appendChild(notification);
+            
+            // Удаляем уведомление через 3 секунды
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+        
+        // Обновляем индикатор демонстрации экрана
+        const indicator = document.getElementById('screen-share-indicator');
+        const userSpan = document.getElementById('screen-share-user');
+        
+        if (message.includes('демонстрирует экран')) {
+            const userName = message.split(' демонстрирует экран')[0];
+            userSpan.textContent = userName;
+            indicator.classList.remove('hidden');
+        } else if (message.includes('остановил демонстрацию') || message.includes('остановлена')) {
+            indicator.classList.add('hidden');
+        }
+    }
+
+    let isWatchingScreen = false;
+    window.toggleScreenWatch = () => {
+        console.log('toggleScreenWatch вызвана');
+        
+        const remoteVideo = document.getElementById('remote-video');
+        const localVideo = document.getElementById('local-video');
+        const watchBtn = document.getElementById('watch-screen-btn');
+        const videoContainer = document.getElementById('active-call-screen');
+        
+        console.log('Элементы:', { remoteVideo, localVideo, watchBtn, videoContainer });
+        
+        if (!remoteVideo) {
+            console.error('remote-video не найден');
+            return;
+        }
+        if (!localVideo) {
+            console.error('local-video не найден');
+            return;
+        }
+        if (!watchBtn) {
+            console.error('watch-screen-btn не найден');
+            return;
+        }
+        
+        isWatchingScreen = !isWatchingScreen;
+        console.log('isWatchingScreen:', isWatchingScreen);
+        
+        if (isWatchingScreen) {
+            console.log('Включаем режим просмотра');
+            // Переключаемся на полноэкранный просмотр демонстрации
+            remoteVideo.style.objectFit = 'contain';
+            remoteVideo.style.backgroundColor = '#000';
+            localVideo.style.width = '120px';
+            localVideo.style.height = '160px';
+            localVideo.style.bottom = '20px';
+            localVideo.style.right = '20px';
+            watchBtn.textContent = 'Свернуть';
+            watchBtn.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+            watchBtn.classList.add('bg-gray-500', 'hover:bg-gray-600');
+            
+            // Показываем уведомление
+            showScreenShareNotification('Просмотр демонстрации экрана');
+            console.log('Режим просмотра включен');
+        } else {
+            console.log('Выключаем режим просмотра');
+            // Возвращаемся к обычному виду
+            remoteVideo.style.objectFit = 'cover';
+            remoteVideo.style.backgroundColor = '';
+            localVideo.style.width = '150px';
+            localVideo.style.height = '200px';
+            localVideo.style.bottom = '120px';
+            localVideo.style.right = '20px';
+            watchBtn.textContent = 'Смотреть';
+            watchBtn.classList.remove('bg-gray-500', 'hover:bg-gray-600');
+            watchBtn.classList.add('bg-blue-500', 'hover:bg-blue-600');
+            console.log('Режим просмотра выключен');
+        }
+    };
+    
+    // ТЕСТОВАЯ ФУНКЦИЯ - для отладки (удалить после тестирования)
+    window.testScreenShareIndicator = () => {
+        const indicator = document.getElementById('screen-share-indicator');
+        if (indicator) {
+            indicator.classList.toggle('hidden');
+            console.log('Индикатор демонстрации экрана:', indicator.classList.contains('hidden') ? 'скрыт' : 'показан');
+        }
     };
 
     let isSpeakerOff = false;
@@ -10535,6 +11550,21 @@
             audioContextInitialized = true;
         }
     }, { once: true });
+    
+    // Предупреждение о HTTP для демонстрации экрана
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+        const warning = document.createElement('div');
+        warning.className = 'http-warning';
+        warning.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Для демонстрации экрана нужен HTTPS';
+        document.body.appendChild(warning);
+        
+        // Скрываем предупреждение через 10 секунд
+        setTimeout(() => {
+            if (warning.parentNode) {
+                warning.parentNode.removeChild(warning);
+            }
+        }, 10000);
+    }
     
     // ========== ФИЧА 3: Закладки сообщений ==========
     let bookmarks = JSON.parse(localStorage.getItem('flickers-bookmarks') || '[]');

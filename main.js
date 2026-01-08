@@ -1,4 +1,4 @@
-const { app, BrowserWindow, shell } = require('electron');
+const { app, BrowserWindow, shell, desktopCapturer, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -12,7 +12,8 @@ function createWindow() {
         icon: path.join(__dirname, 'icon.ico'),
         webPreferences: {
             nodeIntegration: false,
-            contextIsolation: true
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
         },
         titleBarStyle: 'default',
         autoHideMenuBar: true,
@@ -35,6 +36,19 @@ function createWindow() {
         mainWindow = null;
     });
 }
+
+// Обработчик для получения источников экрана
+ipcMain.handle('get-sources', async () => {
+    const sources = await desktopCapturer.getSources({
+        types: ['window', 'screen'],
+        thumbnailSize: { width: 150, height: 150 }
+    });
+    return sources.map(source => ({
+        id: source.id,
+        name: source.name,
+        thumbnail: source.thumbnail.toDataURL()
+    }));
+});
 
 app.whenReady().then(createWindow);
 
