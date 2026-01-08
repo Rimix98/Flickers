@@ -274,6 +274,11 @@
             display: block;
         }
         
+        /* Скрываем мобильный toolbar на десктопе */
+        .tg-mobile-toolbar {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             /* Скрываем десктопные кнопки */
             .desktop-input-btns {
@@ -289,6 +294,43 @@
             .plus-menu-container {
                 display: none !important;
             }
+            
+            /* Мобильная панель инструментов */
+            .tg-mobile-toolbar {
+                display: flex;
+                align-items: center;
+                gap: 2px;
+                padding: 4px;
+                background: var(--bg-secondary);
+                border-radius: 20px;
+                flex-shrink: 0;
+            }
+            
+            .tg-toolbar-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-secondary);
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .tg-toolbar-btn:active {
+                background: rgba(99, 102, 241, 0.15);
+                color: var(--accent);
+                transform: scale(0.95);
+            }
+            .tg-toolbar-btn i {
+                font-size: 14px;
+            }
+            .tg-toolbar-btn:nth-child(1) i { color: #6366f1; } /* Файл - индиго */
+            .tg-toolbar-btn:nth-child(2) i { color: #f97316; } /* AI - оранжевый */
+            .tg-toolbar-btn:nth-child(3) i { color: #22c55e; } /* Опрос - зелёный */
+            .tg-toolbar-btn:nth-child(4) i { color: #ec4899; } /* Игра - розовый */
             
             /* Показываем Telegram-style элементы */
             .tg-input-wrapper {
@@ -441,9 +483,9 @@
             /* Адаптируем footer для мобильных */
             #chat-footer {
                 padding: 8px 12px !important;
-                gap: 8px !important;
             }
-            #chat-footer > div {
+            #chat-footer > div.max-w-5xl {
+                flex-wrap: wrap;
                 gap: 8px !important;
             }
             
@@ -4136,11 +4178,22 @@
                     <input type="file" id="file-input" class="hidden" onchange="handleFile(this)">
 
                     <!-- Telegram-style input area -->
-                    <div class="tg-input-wrapper">
-                        <button onclick="togglePlusMenu()" class="tg-attach-btn">
+                    <div class="tg-mobile-toolbar">
+                        <button onclick="triggerFile()" class="tg-toolbar-btn" title="Файл">
                             <i class="fas fa-paperclip"></i>
                         </button>
-                        
+                        <button onclick="toggleAI()" class="tg-toolbar-btn" title="AI Ассистент">
+                            <i class="fas fa-robot"></i>
+                        </button>
+                        <button onclick="openPollModal()" class="tg-toolbar-btn" title="Опрос">
+                            <i class="fas fa-poll"></i>
+                        </button>
+                        <button onclick="inviteToGame()" class="tg-toolbar-btn" title="Крестики-нолики">
+                            <i class="fas fa-gamepad"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="tg-input-wrapper">
                         <div class="tg-input-field">
                             <input type="text" id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" oninput="syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()">
                             
