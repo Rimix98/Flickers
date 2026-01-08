@@ -377,10 +377,10 @@
                 font-size: 18px;
             }
             
-            /* Telegram-style Send/Voice buttons */
+            /* Telegram-style Send/Voice buttons (внутри поля) */
             .tg-send-btn, .tg-voice-btn {
-                width: 48px;
-                height: 48px;
+                width: 32px;
+                height: 32px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
@@ -404,7 +404,7 @@
                 transform: scale(0.9);
             }
             .tg-send-btn i {
-                font-size: 18px;
+                font-size: 14px;
             }
             
             .tg-voice-btn {
@@ -420,7 +420,7 @@
                 background: #ef4444;
             }
             .tg-voice-btn i {
-                font-size: 18px;
+                font-size: 14px;
             }
             
             @keyframes tg-btn-pop {
@@ -4151,6 +4151,13 @@
                                 <button onclick="toggleStickers()" class="tg-sticker-btn" title="Стикеры и GIF">
                                     <i class="fas fa-sticky-note"></i>
                                 </button>
+                                <!-- Кнопки отправки/микрофона внутри поля -->
+                                <button id="tg-voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="tg-voice-btn">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                <button id="tg-send-btn" onclick="sendMsg()" class="tg-send-btn">
+                                    <i class="fas fa-arrow-up"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -4249,14 +4256,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Telegram-style send/voice button -->
-                    <button id="tg-send-btn" onclick="sendMsg()" class="tg-send-btn">
-                        <i class="fas fa-arrow-up"></i>
-                    </button>
-                    <button id="tg-voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="tg-voice-btn">
-                        <i class="fas fa-microphone"></i>
-                    </button>
                     
                     <!-- Desktop buttons (hidden on mobile) -->
                     <div class="desktop-input-btns">
