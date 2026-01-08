@@ -328,9 +328,10 @@
                 font-size: 14px;
             }
             .tg-toolbar-btn:nth-child(1) i { color: #6366f1; } /* Файл - индиго */
-            .tg-toolbar-btn:nth-child(2) i { color: #f97316; } /* AI - оранжевый */
-            .tg-toolbar-btn:nth-child(3) i { color: #22c55e; } /* Опрос - зелёный */
-            .tg-toolbar-btn:nth-child(4) i { color: #ec4899; } /* Игра - розовый */
+            .tg-toolbar-btn:nth-child(2) i { color: #a855f7; } /* Видео-кружок - фиолетовый */
+            .tg-toolbar-btn:nth-child(3) i { color: #f97316; } /* AI - оранжевый */
+            .tg-toolbar-btn:nth-child(4) i { color: #22c55e; } /* Опрос - зелёный */
+            .tg-toolbar-btn:nth-child(5) i { color: #ec4899; } /* Игра - розовый */
             
             /* Показываем Telegram-style элементы */
             .tg-input-wrapper {
@@ -1209,6 +1210,13 @@
             padding: 12px 20px;
             border-radius: 2rem;
             animation: slide-up 0.2s ease;
+        }
+        .voice-recording-ui.video-mode {
+            border-color: #a855f7;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
+        }
+        .voice-recording-ui.video-mode .recording-indicator {
+            background: #a855f7;
         }
         @keyframes slide-up {
             from { opacity: 0; transform: translateY(10px); }
@@ -2160,7 +2168,9 @@
             position: absolute;
             bottom: 60px;
             left: 0;
+            right: auto;
             width: 350px;
+            max-width: calc(100vw - 24px);
             max-height: 400px;
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -4182,6 +4192,9 @@
                         <button onclick="triggerFile()" class="tg-toolbar-btn" title="Файл">
                             <i class="fas fa-paperclip"></i>
                         </button>
+                        <button onclick="openVideoCircle()" class="tg-toolbar-btn" title="Видео-кружок">
+                            <i class="fas fa-circle"></i>
+                        </button>
                         <button onclick="toggleAI()" class="tg-toolbar-btn" title="AI Ассистент">
                             <i class="fas fa-robot"></i>
                         </button>
@@ -4195,7 +4208,7 @@
                     
                     <div class="tg-input-wrapper">
                         <div class="tg-input-field">
-                            <input type="text" id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" oninput="syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()">
+                            <input type="text" id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" oninput="syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()" onkeydown="if(event.key==='Enter'){sendMsg(); event.preventDefault();}">
                             
                             <div class="tg-input-actions">
                                 <button onclick="toggleEmoji()" class="tg-emoji-btn">
@@ -4204,11 +4217,12 @@
                                 <button onclick="toggleStickers()" class="tg-sticker-btn" title="Стикеры и GIF">
                                     <i class="fas fa-sticky-note"></i>
                                 </button>
-                                <!-- Кнопки отправки/микрофона внутри поля -->
-                                <button id="tg-voice-btn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()" class="tg-voice-btn">
+                                <!-- Кнопка микрофона (показывается когда нет текста) -->
+                                <button id="tg-voice-btn" ontouchstart="startVoice()" ontouchend="stopVoice()" onmousedown="startVoice()" onmouseup="stopVoice()" class="tg-voice-btn">
                                     <i class="fas fa-microphone"></i>
                                 </button>
-                                <button id="tg-send-btn" onclick="sendMsg()" class="tg-send-btn">
+                                <!-- Кнопка отправки (показывается когда есть текст) -->
+                                <button id="tg-send-btn" ontouchend="sendMsg(); event.preventDefault();" onclick="sendMsg()" class="tg-send-btn">
                                     <i class="fas fa-arrow-up"></i>
                                 </button>
                             </div>
@@ -7156,53 +7170,70 @@ window.doNicknameSearch = function(val) {
         // Проверяем, включены ли уведомления
         if (!privacySettings.notifications) return;
         
-        // Не показываем уведомление если чат уже открыт
-        if (activeChatPartner && activeChatPartner.uid === partner.uid) return;
+        // Не показываем уведомление если чат уже открыт и окно в фокусе
+        if (activeChatPartner && activeChatPartner.uid === partner.uid && !document.hidden) return;
         
-        // Внутреннее уведомление (toast)
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'notification-toast';
-        toast.innerHTML = `
-            <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${partner.username[0].toUpperCase()}</div>
-            <div class="flex-1 overflow-hidden">
-                <p class="font-bold text-xs">@${partner.username}</p>
-                <p class="text-xs opacity-70 truncate">${message}</p>
-            </div>
-        `;
+        // Системное уведомление (работает даже когда браузер свёрнут)
+        if ('Notification' in window && Notification.permission === 'granted') {
+            // Показываем системное уведомление если окно не в фокусе или свёрнуто
+            if (document.hidden || !document.hasFocus()) {
+                try {
+                    const notification = new Notification(`@${partner.username}`, {
+                        body: message.length > 100 ? message.substring(0, 100) + '...' : message,
+                        icon: 'icon-64.png',
+                        badge: 'icon-64.png',
+                        tag: 'flickers-msg-' + partner.uid,
+                        renotify: true,
+                        requireInteraction: false,
+                        silent: false,
+                        vibrate: [200, 100, 200]
+                    });
+                    
+                    notification.onclick = () => {
+                        window.focus();
+                        selectChat(partner);
+                        notification.close();
+                    };
+                    
+                    // Автозакрытие через 8 секунд
+                    setTimeout(() => notification.close(), 8000);
+                } catch (e) {
+                    console.log('Notification error:', e);
+                }
+            }
+        }
         
-        toast.onclick = () => {
-            selectChat(partner);
-            toast.classList.add('toast-out');
-            setTimeout(() => toast.remove(), 500);
-        };
-
-        container.appendChild(toast);
-        notificationSound.play().catch(() => {});
-
-        setTimeout(() => {
-            if (toast.parentNode) {
+        // Внутреннее уведомление (toast) - показываем всегда если окно в фокусе
+        if (!document.hidden) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'notification-toast';
+            toast.innerHTML = `
+                <div class="w-10 h-10 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold">${partner.username[0].toUpperCase()}</div>
+                <div class="flex-1 overflow-hidden">
+                    <p class="font-bold text-xs">@${partner.username}</p>
+                    <p class="text-xs opacity-70 truncate">${message}</p>
+                </div>
+            `;
+            
+            toast.onclick = () => {
+                selectChat(partner);
                 toast.classList.add('toast-out');
                 setTimeout(() => toast.remove(), 500);
-            }
-        }, 5000);
-        
-        // Браузерное уведомление (если разрешено и окно не в фокусе)
-        if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
-            const notification = new Notification(`${t('newMessage')} от @${partner.username}`, {
-                body: message,
-                icon: 'icon-64.png',
-                tag: 'flickers-' + partner.uid
-            });
-            
-            notification.onclick = () => {
-                window.focus();
-                selectChat(partner);
-                notification.close();
             };
+
+            container.appendChild(toast);
             
-            setTimeout(() => notification.close(), 5000);
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast-out');
+                    setTimeout(() => toast.remove(), 500);
+                }
+            }, 5000);
         }
+        
+        // Звук уведомления
+        notificationSound.play().catch(() => {});
     }
 
     let chatsSnapshotId = 0; // Для отслеживания актуальности снапшота
@@ -7473,9 +7504,33 @@ window.doNicknameSearch = function(val) {
         const chatId = [me.uid, partner.uid].sort().join('_');
         const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), orderBy('timestamp', 'asc'));
         
+        let isFirstLoad = true;
         msgUnsub = onSnapshot(q, (snap) => {
             const cont = document.getElementById('messages-container');
             const shouldScroll = cont.scrollTop + cont.offsetHeight >= cont.scrollHeight - 100;
+            
+            // Уведомления о новых сообщениях (только после первой загрузки)
+            if (!isFirstLoad) {
+                snap.docChanges().forEach(change => {
+                    if (change.type === 'added') {
+                        const m = change.doc.data();
+                        // Уведомляем только о сообщениях от других пользователей
+                        if (m.senderId !== me.uid && !m.deleted) {
+                            // Если окно не в фокусе - показываем уведомление
+                            if (document.hidden || !document.hasFocus()) {
+                                let msgText = m.text || '';
+                                if (m.encrypted && msgText) msgText = decrypt(msgText);
+                                if (m.type === 'voice') msgText = '🎤 Голосовое сообщение';
+                                if (m.type === 'videoCircle') msgText = '🎥 Видео-кружок';
+                                if (m.type === 'file') msgText = '📎 ' + (m.fileName || 'Файл');
+                                if (m.type === 'gift') msgText = '🎁 Подарок';
+                                showNotification(partner, msgText || 'Новое сообщение');
+                            }
+                        }
+                    }
+                });
+            }
+            isFirstLoad = false;
             
             // Оптимизация: используем DocumentFragment для batch-рендеринга
             const fragment = document.createDocumentFragment();
@@ -10167,7 +10222,8 @@ window.doNicknameSearch = function(val) {
 
     function resetVoiceUI() {
         isRecording = false;
-        document.getElementById('voice-btn').classList.remove('recording');
+        const voiceBtn = document.getElementById('voice-btn');
+        if (voiceBtn) voiceBtn.classList.remove('recording');
         document.getElementById('msg-input').classList.remove('hidden');
         document.getElementById('voice-recording-ui').classList.add('hidden');
         document.getElementById('voice-timer').innerText = '0:00';
