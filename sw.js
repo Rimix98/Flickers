@@ -1,4 +1,4 @@
-const CACHE_NAME = 'flickers-v2';
+const CACHE_NAME = 'flickers-v3'; // Обновлена версия для принудительного обновления
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,6 +9,7 @@ const urlsToCache = [
 
 // Установка Service Worker
 self.addEventListener('install', event => {
+  console.log('[SW] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
@@ -18,6 +19,7 @@ self.addEventListener('install', event => {
 
 // Активация
 self.addEventListener('activate', event => {
+  console.log('[SW] Activating...');
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
@@ -32,13 +34,55 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// Сообщение SKIP_WAITING
+self.addEventListener('message', event => {
+  console.log('[SW] Message received:', event.data);
+  
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+    const { title, body, icon, tag, data } = event.data;
+    console.log('[SW] Showing notification:', title, body);
+    
+    self.registration.showNotification(title || 'Flickers', {
+      body: body || 'Новое сообщение',
+      icon: icon || '/icon-128.png',
+      badge: '/icon-128.png',
+      tag: tag || 'message-' + Date.now(),
+      data: data || {},
+      vibrate: [200, 100, 200],
+      requireInteraction: false,
+      silent: false
+    }).then(() => {
+      console.log('[SW] Notification shown successfully');
+    }).catch(err => {
+      console.error('[SW] Notification error:', err);
+    });
+  }
+});
+
 // Fetch - сначала сеть, потом кэш
+// НЕ кэшируем внешние ресурсы (Firebase, CDN и т.д.)
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // Пропускаем внешние запросы - не кэшируем их
+  if (url.origin !== self.location.origin) {
+    return; // Браузер сам обработает запрос
+  }
+  
+  // Пропускаем не-GET запросы
+  if (event.request.method !== 'GET') {
+    return;
+  }
+  
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Кэшируем успешные ответы
-        if (response.status === 200) {
+        // Кэшируем только успешные ответы для локальных ресурсов
+        if (response && response.status === 200 && response.type === 'basic') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME)
             .then(cache => cache.put(event.request, responseClone));
@@ -120,22 +164,4 @@ self.addEventListener('notificationclick', event => {
         }
       })
   );
-});
-
-// Получение сообщений от основного скрипта
-self.addEventListener('message', event => {
-  if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
-    const { title, body, icon, tag, data } = event.data;
-    
-    self.registration.showNotification(title || 'Flickers', {
-      body: body || 'Новое сообщение',
-      icon: icon || '/icon-128.png',
-      badge: '/icon-128.png',
-      tag: tag || 'message-' + Date.now(),
-      data: data || {},
-      vibrate: [200, 100, 200],
-      requireInteraction: false,
-      silent: false
-    });
-  }
 });

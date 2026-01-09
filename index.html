@@ -1384,6 +1384,29 @@
         .dark .link-preview:hover {
             background: rgba(255,255,255,0.1);
         }
+        
+        /* YouTube embed */
+        .youtube-preview {
+            border-left-color: #ff0000;
+            cursor: default;
+        }
+        .youtube-embed-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 */
+            margin-bottom: 8px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .youtube-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+        
         .link-preview-image {
             width: 100%;
             max-height: 150px;
@@ -3452,6 +3475,30 @@
             color: #78350f !important;
         }
     </style>
+    
+    <!-- Eruda Console для отладки на мобильных -->
+    <script>
+        // Включить консоль: в адресной строке введите javascript:toggleEruda() или нажмите кнопку в настройках
+        window.toggleEruda = function() {
+            if (window.eruda) {
+                if (window.eruda._isInit) {
+                    window.eruda.destroy();
+                    window.eruda._isInit = false;
+                } else {
+                    window.eruda.init();
+                    window.eruda._isInit = true;
+                }
+            } else {
+                var script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/eruda';
+                document.body.appendChild(script);
+                script.onload = function() {
+                    window.eruda.init();
+                    window.eruda._isInit = true;
+                };
+            }
+        };
+    </script>
 </head>
 <body class="theme-light h-screen flex flex-col overflow-hidden">
 
@@ -4650,6 +4697,15 @@
                             Включить
                         </button>
                     </div>
+                    <div class="privacy-toggle">
+                        <label>
+                            <i class="fas fa-bell text-yellow-500"></i>
+                            <span>Тест уведомления</span>
+                        </label>
+                        <button onclick="sendTestNotification()" class="px-3 py-1 rounded-lg bg-yellow-500 text-white text-xs font-bold">
+                            Тест
+                        </button>
+                    </div>
                 </div>
                 <p class="text-[10px] opacity-50 mt-3 leading-relaxed">
                     <i class="fas fa-shield-alt mr-1"></i>
@@ -4679,6 +4735,9 @@
                 </button>
                 <button onclick="handleLogout()" class="w-full p-4 text-center text-red-500 font-bold bg-red-50 dark:bg-red-500/10 rounded-2xl active:scale-95 transition-all">
                     <i class="fas fa-sign-out-alt mr-2"></i> <span data-i18n="logout">Выйти из аккаунта</span>
+                </button>
+                <button onclick="toggleEruda()" class="w-full p-3 text-center text-orange-500 font-bold bg-orange-50 dark:bg-orange-500/10 rounded-2xl active:scale-95 transition-all text-sm">
+                    <i class="fas fa-terminal mr-2"></i> Консоль разработчика
                 </button>
                 <button onclick="openAdminPanel()" class="w-full p-4 text-center text-slate-400 font-bold hover:text-slate-600 rounded-2xl active:scale-95 transition-all text-xs mt-4">
                     <i class="fas fa-shield-alt mr-2"></i> Admin
@@ -10495,54 +10554,131 @@ window.doNicknameSearch = function(val) {
             return linkPreviewCache.get(url);
         }
         
-        try {
-            // Используем бесплатный API для получения метаданных
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-            const response = await fetch(proxyUrl, { 
-                signal: AbortSignal.timeout(5000)
-            });
-            
-            if (!response.ok) return null;
-            
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            
-            // Извлекаем метаданные
-            const getMetaContent = (name) => {
-                const meta = doc.querySelector(`meta[property="${name}"], meta[name="${name}"]`);
-                return meta ? meta.getAttribute('content') : null;
-            };
-            
-            const preview = {
-                url: url,
-                title: getMetaContent('og:title') || doc.querySelector('title')?.textContent || '',
-                description: getMetaContent('og:description') || getMetaContent('description') || '',
-                image: getMetaContent('og:image') || '',
-                siteName: getMetaContent('og:site_name') || new URL(url).hostname.replace('www.', '')
-            };
-            
-            // Исправляем относительные URL изображений
-            if (preview.image && !preview.image.startsWith('http')) {
-                const baseUrl = new URL(url);
-                preview.image = preview.image.startsWith('/') 
-                    ? `${baseUrl.origin}${preview.image}`
-                    : `${baseUrl.origin}/${preview.image}`;
+        // Список прокси-серверов для обхода CORS
+        const proxyServers = [
+            (u) => `https://corsproxy.io/?${encodeURIComponent(u)}`,
+            (u) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
+            (u) => `https://proxy.cors.sh/${u}`,
+        ];
+        
+        // Для YouTube используем встроенный embed без прокси
+        if (url.includes('youtube.com') || url.includes('youtu.be')) {
+            const videoId = extractYouTubeId(url);
+            if (videoId) {
+                const preview = {
+                    url: url,
+                    title: 'YouTube Video',
+                    description: '',
+                    image: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+                    siteName: 'YouTube',
+                    isYouTube: true,
+                    videoId: videoId
+                };
+                linkPreviewCache.set(url, preview);
+                return preview;
             }
-            
-            // Кэшируем результат
-            linkPreviewCache.set(url, preview);
-            
-            return preview;
-        } catch (e) {
-            console.log('Link preview error:', e);
-            return null;
         }
+        
+        // Пробуем каждый прокси по очереди
+        for (const getProxyUrl of proxyServers) {
+            try {
+                const proxyUrl = getProxyUrl(url);
+                const response = await fetch(proxyUrl, { 
+                    signal: AbortSignal.timeout(5000),
+                    headers: {
+                        'x-requested-with': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (!response.ok) continue;
+                
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Извлекаем метаданные
+                const getMetaContent = (name) => {
+                    const meta = doc.querySelector(`meta[property="${name}"], meta[name="${name}"]`);
+                    return meta ? meta.getAttribute('content') : null;
+                };
+                
+                const preview = {
+                    url: url,
+                    title: getMetaContent('og:title') || doc.querySelector('title')?.textContent || '',
+                    description: getMetaContent('og:description') || getMetaContent('description') || '',
+                    image: getMetaContent('og:image') || '',
+                    siteName: getMetaContent('og:site_name') || new URL(url).hostname.replace('www.', '')
+                };
+                
+                // Исправляем относительные URL изображений
+                if (preview.image && !preview.image.startsWith('http')) {
+                    const baseUrl = new URL(url);
+                    preview.image = preview.image.startsWith('/') 
+                        ? `${baseUrl.origin}${preview.image}`
+                        : `${baseUrl.origin}/${preview.image}`;
+                }
+                
+                // Кэшируем результат
+                if (preview.title || preview.description) {
+                    linkPreviewCache.set(url, preview);
+                    return preview;
+                }
+            } catch (e) {
+                console.log('Proxy failed, trying next...', e.message);
+                continue;
+            }
+        }
+        
+        // Если все прокси не сработали - возвращаем базовое превью
+        const fallbackPreview = {
+            url: url,
+            title: '',
+            description: '',
+            image: '',
+            siteName: new URL(url).hostname.replace('www.', '')
+        };
+        linkPreviewCache.set(url, fallbackPreview);
+        return fallbackPreview;
+    }
+    
+    // Извлечение ID YouTube видео
+    function extractYouTubeId(url) {
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+            /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/
+        ];
+        for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match) return match[1];
+        }
+        return null;
     }
     
     // Рендеринг превью ссылки
     function renderLinkPreview(preview) {
-        if (!preview || (!preview.title && !preview.description)) return '';
+        if (!preview) return '';
+        
+        // Специальный рендер для YouTube
+        if (preview.isYouTube && preview.videoId) {
+            return `
+                <div class="link-preview youtube-preview" onclick="event.stopPropagation()">
+                    <div class="youtube-embed-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/${preview.videoId}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                    <div class="link-preview-site">
+                        <i class="fab fa-youtube text-red-500"></i> YouTube
+                    </div>
+                </div>
+            `;
+        }
+        
+        if (!preview.title && !preview.description && !preview.image) return '';
         
         const imageHtml = preview.image 
             ? `<img src="${preview.image}" class="link-preview-image" onerror="this.style.display='none'" loading="lazy">` 
@@ -14601,23 +14737,56 @@ window.doNicknameSearch = function(val) {
     let notificationsEnabled = false;
     
     // Регистрация Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js')
-            .then(reg => {
-                console.log('SW registered');
-                swRegistration = reg;
-                
-                // Проверяем разрешение на уведомления
-                if (Notification.permission === 'granted') {
-                    notificationsEnabled = true;
-                }
-            })
-            .catch(err => console.log('SW registration failed:', err));
+    async function registerServiceWorker() {
+        if (!('serviceWorker' in navigator)) {
+            console.log('Service Worker не поддерживается');
+            return null;
+        }
         
-        // Слушаем сообщения от Service Worker
+        try {
+            const reg = await navigator.serviceWorker.register('sw.js');
+            console.log('✅ SW registered:', reg.scope);
+            
+            // Ждём пока SW станет активным
+            if (reg.installing) {
+                console.log('SW installing...');
+                await new Promise(resolve => {
+                    reg.installing.addEventListener('statechange', e => {
+                        if (e.target.state === 'activated') resolve();
+                    });
+                });
+            } else if (reg.waiting) {
+                console.log('SW waiting...');
+                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            
+            // Убеждаемся что SW активен
+            await navigator.serviceWorker.ready;
+            console.log('✅ SW ready and active');
+            
+            swRegistration = reg;
+            
+            // Проверяем разрешение на уведомления
+            if ('Notification' in window && Notification.permission === 'granted') {
+                notificationsEnabled = true;
+                console.log('✅ Notifications already granted');
+            }
+            
+            return reg;
+        } catch (err) {
+            console.error('❌ SW registration failed:', err);
+            return null;
+        }
+    }
+    
+    // Запускаем регистрацию
+    registerServiceWorker();
+    
+    // Слушаем сообщения от Service Worker
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('message', event => {
+            console.log('📨 Message from SW:', event.data);
             if (event.data?.type === 'NOTIFICATION_CLICK') {
-                // Открываем чат при клике на уведомление
                 const data = event.data.data;
                 if (data?.chatPartnerId && data?.chatPartnerName) {
                     openChat({ uid: data.chatPartnerId, username: data.chatPartnerName });
@@ -14628,71 +14797,121 @@ window.doNicknameSearch = function(val) {
     
     // Запрос разрешения на уведомления
     window.requestNotificationPermission = async () => {
+        console.log('🔔 Requesting notification permission...');
+        
         if (!('Notification' in window)) {
+            console.log('❌ Notifications not supported');
             showToast('Уведомления не поддерживаются', '❌');
             return false;
         }
         
+        console.log('Current permission:', Notification.permission);
+        
         if (Notification.permission === 'granted') {
             notificationsEnabled = true;
             updatePushButton();
+            console.log('✅ Already granted');
             return true;
         }
         
         if (Notification.permission === 'denied') {
+            console.log('❌ Denied by user');
             showToast('Уведомления заблокированы в настройках браузера', '🔒');
             updatePushButton();
             return false;
         }
         
-        const permission = await Notification.requestPermission();
-        notificationsEnabled = permission === 'granted';
-        
-        if (notificationsEnabled) {
-            showToast('Push-уведомления включены!', '🔔');
-        } else {
-            showToast('Уведомления отклонены', '🔕');
+        try {
+            const permission = await Notification.requestPermission();
+            console.log('Permission result:', permission);
+            notificationsEnabled = permission === 'granted';
+            
+            if (notificationsEnabled) {
+                showToast('Push-уведомления включены!', '🔔');
+                // Тестовое уведомление
+                sendTestNotification();
+            } else {
+                showToast('Уведомления отклонены', '🔕');
+            }
+            
+            updatePushButton();
+            return notificationsEnabled;
+        } catch (e) {
+            console.error('Permission request error:', e);
+            return false;
         }
-        
-        updatePushButton();
-        return notificationsEnabled;
+    };
+    
+    // Тестовое уведомление
+    window.sendTestNotification = () => {
+        console.log('📤 Sending test notification...');
+        sendPushNotification('Тест уведомлений', 'Push-уведомления работают! 🎉', {
+            test: true
+        });
     };
     
     // Отправка push-уведомления через Service Worker
     window.sendPushNotification = async (title, body, data = {}) => {
-        // Не показываем уведомления если вкладка активна
-        if (document.visibilityState === 'visible' && document.hasFocus()) {
+        console.log('📤 sendPushNotification:', { title, body, data });
+        console.log('Document visible:', document.visibilityState);
+        console.log('Document focused:', document.hasFocus());
+        
+        // Не показываем уведомления если вкладка активна (кроме тестовых)
+        if (!data.test && document.visibilityState === 'visible' && document.hasFocus()) {
+            console.log('⏭️ Skipping - tab is active');
             return;
         }
         
-        if (!notificationsEnabled) {
-            // Пробуем запросить разрешение
+        if (!notificationsEnabled && Notification.permission !== 'granted') {
+            console.log('⚠️ Notifications not enabled, requesting...');
             const granted = await requestNotificationPermission();
-            if (!granted) return;
+            if (!granted) {
+                console.log('❌ Permission not granted');
+                return;
+            }
         }
         
-        if (swRegistration && swRegistration.active) {
-            // Отправляем через Service Worker (работает в фоне)
-            swRegistration.active.postMessage({
-                type: 'SHOW_NOTIFICATION',
-                title,
-                body,
-                icon: '/icon-128.png',
-                tag: 'chat-' + (data.chatPartnerId || Date.now()),
-                data
-            });
-        } else {
-            // Fallback на обычные уведомления
+        // Пробуем через Service Worker
+        if (swRegistration?.active) {
+            console.log('📤 Sending via Service Worker...');
             try {
-                new Notification(title, {
+                swRegistration.active.postMessage({
+                    type: 'SHOW_NOTIFICATION',
+                    title,
                     body,
                     icon: '/icon-128.png',
                     tag: 'chat-' + (data.chatPartnerId || Date.now()),
                     data
                 });
+                console.log('✅ Sent to SW');
+                return;
             } catch (e) {
-                console.log('Notification error:', e);
+                console.error('SW postMessage error:', e);
             }
+        }
+        
+        // Fallback - прямое уведомление
+        console.log('📤 Fallback: direct Notification API...');
+        try {
+            const notification = new Notification(title, {
+                body,
+                icon: '/icon-128.png',
+                tag: 'chat-' + (data.chatPartnerId || Date.now()),
+                requireInteraction: false,
+                silent: false
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                if (data.chatPartnerId && data.chatPartnerName) {
+                    selectChat({ uid: data.chatPartnerId, username: data.chatPartnerName });
+                }
+                notification.close();
+            };
+            
+            console.log('✅ Direct notification sent');
+        } catch (e) {
+            console.error('❌ Direct notification error:', e);
         }
     };
     
