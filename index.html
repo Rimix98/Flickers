@@ -14949,17 +14949,33 @@ window.doNicknameSearch = function(val) {
     // ========== WebRTC Звонки ==========
     const iceServers = {
         iceServers: [
-            // STUN сервер
+            // STUN серверы (бесплатные)
             { urls: 'stun:stun.l.google.com:19302' },
-            // TURN серверы
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun3.l.google.com:19302' },
+            { urls: 'stun:stun4.l.google.com:19302' },
+            { urls: 'stun:stun.stunprotocol.org:3478' },
+            // Metered TURN серверы (бесплатные)
             {
-                urls: [
-                    'turn:global.turn.twilio.com:3478?transport=udp',
-                    'turn:global.turn.twilio.com:3478?transport=tcp',
-                    'turn:global.turn.twilio.com:443?transport=tcp'
-                ],
-                username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27f3d3',
-                credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw='
+                urls: 'turn:a.relay.metered.ca:80',
+                username: 'e8dd65c92ae1c41e43b88a94',
+                credential: 'uWdWNmkhvyqTmFnQ'
+            },
+            {
+                urls: 'turn:a.relay.metered.ca:80?transport=tcp',
+                username: 'e8dd65c92ae1c41e43b88a94',
+                credential: 'uWdWNmkhvyqTmFnQ'
+            },
+            {
+                urls: 'turn:a.relay.metered.ca:443',
+                username: 'e8dd65c92ae1c41e43b88a94',
+                credential: 'uWdWNmkhvyqTmFnQ'
+            },
+            {
+                urls: 'turn:a.relay.metered.ca:443?transport=tcp',
+                username: 'e8dd65c92ae1c41e43b88a94',
+                credential: 'uWdWNmkhvyqTmFnQ'
             }
         ],
         iceCandidatePoolSize: 10
