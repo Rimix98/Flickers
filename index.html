@@ -7269,6 +7269,11 @@ window.doNicknameSearch = function(val) {
         // Не показываем уведомление если чат уже открыт и окно в фокусе
         if (activeChatPartner && activeChatPartner.uid === partner.uid && !document.hidden) return;
         
+        // ВИБРАЦИЯ для Firefox Android (работает всегда!)
+        if ('vibrate' in navigator) {
+            navigator.vibrate([200, 100, 200]);
+        }
+        
         const truncatedMessage = message.length > 100 ? message.substring(0, 100) + '...' : message;
         
         // Push-уведомление через Service Worker (работает даже когда браузер свёрнут)
@@ -14732,77 +14737,27 @@ window.doNicknameSearch = function(val) {
         }
     };
     
-    // ========== PUSH УВЕДОМЛЕНИЯ ==========
-    let swRegistration = null;
+    // ========== УВЕДОМЛЕНИЯ (с вибрацией для Firefox Android) ==========
     let notificationsEnabled = false;
+    const vibrationSupported = 'vibrate' in navigator;
+    const notificationSupported = 'Notification' in window;
     
-    // Регистрация Service Worker
-    async function registerServiceWorker() {
-        if (!('serviceWorker' in navigator)) {
-            console.log('Service Worker не поддерживается');
-            return null;
-        }
-        
-        try {
-            const reg = await navigator.serviceWorker.register('sw.js');
-            console.log('✅ SW registered:', reg.scope);
-            
-            // Ждём пока SW станет активным
-            if (reg.installing) {
-                console.log('SW installing...');
-                await new Promise(resolve => {
-                    reg.installing.addEventListener('statechange', e => {
-                        if (e.target.state === 'activated') resolve();
-                    });
-                });
-            } else if (reg.waiting) {
-                console.log('SW waiting...');
-                reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-            }
-            
-            // Убеждаемся что SW активен
-            await navigator.serviceWorker.ready;
-            console.log('✅ SW ready and active');
-            
-            swRegistration = reg;
-            
-            // Проверяем разрешение на уведомления
-            if ('Notification' in window && Notification.permission === 'granted') {
-                notificationsEnabled = true;
-                console.log('✅ Notifications already granted');
-            }
-            
-            return reg;
-        } catch (err) {
-            console.error('❌ SW registration failed:', err);
-            return null;
-        }
-    }
+    console.log('Vibration:', vibrationSupported, 'Notification:', notificationSupported);
     
-    // Запускаем регистрацию
-    registerServiceWorker();
-    
-    // Слушаем сообщения от Service Worker
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.addEventListener('message', event => {
-            console.log('📨 Message from SW:', event.data);
-            if (event.data?.type === 'NOTIFICATION_CLICK') {
-                const data = event.data.data;
-                if (data?.chatPartnerId && data?.chatPartnerName) {
-                    openChat({ uid: data.chatPartnerId, username: data.chatPartnerName });
-                }
-            }
-        });
+    if (notificationSupported) {
+        notificationsEnabled = Notification.permission === 'granted';
     }
     
     // Запрос разрешения на уведомления
     window.requestNotificationPermission = async () => {
-        console.log('🔔 Requesting notification permission...');
+        // Вибрация работает в Firefox Android
+        if (vibrationSupported) navigator.vibrate([200, 100, 200]);
         
-        if (!('Notification' in window)) {
-            console.log('❌ Notifications not supported');
-            showToast('Уведомления не поддерживаются', '❌');
-            return false;
+        if (!notificationSupported) {
+            showToast('Системные уведомления недоступны. Будет вибрация!', '📳');
+            notificationsEnabled = vibrationSupported;
+            updatePushButton();
+            return vibrationSupported;
         }
         
         console.log('Current permission:', Notification.permission);
@@ -14810,95 +14765,102 @@ window.doNicknameSearch = function(val) {
         if (Notification.permission === 'granted') {
             notificationsEnabled = true;
             updatePushButton();
-            console.log('✅ Already granted');
+            showToast('Уведомления уже включены!', '✅');
             return true;
         }
         
         if (Notification.permission === 'denied') {
-            console.log('❌ Denied by user');
-            showToast('Уведомления заблокированы в настройках браузера', '🔒');
+            showToast('Заблокировано. Будет вибрация.', '�');
+            notificationsEnabled = vibrationSupported;
             updatePushButton();
-            return false;
+            return vibrationSupported;
         }
         
         try {
             const permission = await Notification.requestPermission();
-            console.log('Permission result:', permission);
-            notificationsEnabled = permission === 'granted';
+            notificationsEnabled = permission === 'granted' || vibrationSupported;
             
-            if (notificationsEnabled) {
-                showToast('Push-уведомления включены!', '🔔');
-                // Тестовое уведомление
-                sendTestNotification();
+            if (permission === 'granted') {
+                showToast('Уведомления включены!', '🔔');
+                setTimeout(() => sendTestNotification(), 500);
             } else {
-                showToast('Уведомления отклонены', '🔕');
+                showToast('Будет вибрация + звук', '�');
             }
             
             updatePushButton();
             return notificationsEnabled;
         } catch (e) {
-            console.error('Permission request error:', e);
-            return false;
+            showToast('Будет вибрация', '📳');
+            notificationsEnabled = vibrationSupported;
+            updatePushButton();
+            return vibrationSupported;
         }
     };
     
     // Тестовое уведомление
     window.sendTestNotification = () => {
-        console.log('📤 Sending test notification...');
-        sendPushNotification('Тест уведомлений', 'Push-уведомления работают! 🎉', {
-            test: true
-        });
-    };
-    
-    // Отправка push-уведомления через Service Worker
-    window.sendPushNotification = async (title, body, data = {}) => {
-        console.log('📤 sendPushNotification:', { title, body, data });
-        console.log('Document visible:', document.visibilityState);
-        console.log('Document focused:', document.hasFocus());
+        console.log('� Sending test notification...');
         
-        // Не показываем уведомления если вкладка активна (кроме тестовых)
-        if (!data.test && document.visibilityState === 'visible' && document.hasFocus()) {
-            console.log('⏭️ Skipping - tab is active');
+        if (!('Notification' in window)) {
+            showToast('Уведомления не поддерживаются', '❌');
             return;
         }
         
-        if (!notificationsEnabled && Notification.permission !== 'granted') {
-            console.log('⚠️ Notifications not enabled, requesting...');
-            const granted = await requestNotificationPermission();
-            if (!granted) {
-                console.log('❌ Permission not granted');
-                return;
-            }
+        if (Notification.permission !== 'granted') {
+            showToast('Сначала включите уведомления', '⚠️');
+            return;
         }
         
-        // Пробуем через Service Worker
-        if (swRegistration?.active) {
-            console.log('📤 Sending via Service Worker...');
-            try {
-                swRegistration.active.postMessage({
-                    type: 'SHOW_NOTIFICATION',
-                    title,
-                    body,
-                    icon: '/icon-128.png',
-                    tag: 'chat-' + (data.chatPartnerId || Date.now()),
-                    data
-                });
-                console.log('✅ Sent to SW');
-                return;
-            } catch (e) {
-                console.error('SW postMessage error:', e);
-            }
+        try {
+            const notification = new Notification('Flickers - Тест', {
+                body: 'Уведомления работают! 🎉',
+                icon: 'icon-128.png',
+                tag: 'test-' + Date.now(),
+                requireInteraction: false
+            });
+            
+            notification.onclick = () => {
+                window.focus();
+                notification.close();
+            };
+            
+            // Автозакрытие через 5 сек
+            setTimeout(() => notification.close(), 5000);
+            
+            console.log('✅ Test notification sent');
+            showToast('Уведомление отправлено!', '✅');
+        } catch (e) {
+            console.error('❌ Notification error:', e);
+            showToast('Ошибка: ' + e.message, '❌');
+        }
+    };
+    
+    // Отправка уведомления о новом сообщении
+    window.sendPushNotification = (title, body, data = {}) => {
+        console.log('📤 sendPushNotification:', { title, body });
+        
+        // Не показываем если вкладка активна (кроме тестовых)
+        if (!data.test && document.visibilityState === 'visible' && document.hasFocus()) {
+            console.log('⏭️ Tab is active, skipping notification');
+            return;
         }
         
-        // Fallback - прямое уведомление
-        console.log('📤 Fallback: direct Notification API...');
+        if (!('Notification' in window)) {
+            console.log('❌ Notifications not supported');
+            return;
+        }
+        
+        if (Notification.permission !== 'granted') {
+            console.log('⚠️ Notifications not granted');
+            return;
+        }
+        
         try {
             const notification = new Notification(title, {
-                body,
-                icon: '/icon-128.png',
-                tag: 'chat-' + (data.chatPartnerId || Date.now()),
-                requireInteraction: false,
-                silent: false
+                body: body,
+                icon: 'icon-128.png',
+                tag: 'msg-' + (data.chatPartnerId || Date.now()),
+                requireInteraction: false
             });
             
             notification.onclick = () => {
@@ -14909,9 +14871,12 @@ window.doNicknameSearch = function(val) {
                 notification.close();
             };
             
-            console.log('✅ Direct notification sent');
+            // Автозакрытие через 8 сек
+            setTimeout(() => notification.close(), 8000);
+            
+            console.log('✅ Notification sent');
         } catch (e) {
-            console.error('❌ Direct notification error:', e);
+            console.error('❌ Notification error:', e);
         }
     };
     
