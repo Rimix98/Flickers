@@ -591,6 +591,30 @@
             animation: toast-out 0.5s ease forwards;
         }
         
+        /* Промпт для включения уведомлений */
+        .notification-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            animation: slide-up 0.3s ease;
+        }
+        .notification-prompt-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        @keyframes slide-up {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
         /* Уведомление о демонстрации экрана */
         .screen-share-notification {
             position: absolute;
@@ -4617,10 +4641,23 @@
                         </label>
                         <div id="toggle-notifications" class="toggle-switch active" onclick="togglePrivacy('notifications')"></div>
                     </div>
+                    <div class="privacy-toggle" id="push-notification-setting">
+                        <label>
+                            <i class="fas fa-mobile-alt text-green-500"></i>
+                            <span>Push-уведомления</span>
+                        </label>
+                        <button onclick="requestNotificationPermission()" id="push-permission-btn" class="px-3 py-1 rounded-lg bg-indigo-500 text-white text-xs font-bold">
+                            Включить
+                        </button>
+                    </div>
                 </div>
                 <p class="text-[10px] opacity-50 mt-3 leading-relaxed">
                     <i class="fas fa-shield-alt mr-1"></i>
                     <span data-i18n="privacyNote">Все сообщения шифруются локально перед отправкой. Никто, включая сервер, не может прочитать ваши сообщения.</span>
+                </p>
+                <p class="text-[10px] opacity-50 mt-1 leading-relaxed">
+                    <i class="fas fa-bell mr-1"></i>
+                    Push-уведомления приходят даже когда браузер свёрнут или закрыт.
                 </p>
             </div>
 
@@ -7173,34 +7210,15 @@ window.doNicknameSearch = function(val) {
         // Не показываем уведомление если чат уже открыт и окно в фокусе
         if (activeChatPartner && activeChatPartner.uid === partner.uid && !document.hidden) return;
         
-        // Системное уведомление (работает даже когда браузер свёрнут)
-        if ('Notification' in window && Notification.permission === 'granted') {
-            // Показываем системное уведомление если окно не в фокусе или свёрнуто
-            if (document.hidden || !document.hasFocus()) {
-                try {
-                    const notification = new Notification(`@${partner.username}`, {
-                        body: message.length > 100 ? message.substring(0, 100) + '...' : message,
-                        icon: 'icon-64.png',
-                        badge: 'icon-64.png',
-                        tag: 'flickers-msg-' + partner.uid,
-                        renotify: true,
-                        requireInteraction: false,
-                        silent: false,
-                        vibrate: [200, 100, 200]
-                    });
-                    
-                    notification.onclick = () => {
-                        window.focus();
-                        selectChat(partner);
-                        notification.close();
-                    };
-                    
-                    // Автозакрытие через 8 секунд
-                    setTimeout(() => notification.close(), 8000);
-                } catch (e) {
-                    console.log('Notification error:', e);
-                }
-            }
+        const truncatedMessage = message.length > 100 ? message.substring(0, 100) + '...' : message;
+        
+        // Push-уведомление через Service Worker (работает даже когда браузер свёрнут)
+        if (document.hidden || !document.hasFocus()) {
+            sendPushNotification(`@${partner.username}`, truncatedMessage, {
+                chatPartnerId: partner.uid,
+                chatPartnerName: partner.username,
+                url: '/'
+            });
         }
         
         // Внутреннее уведомление (toast) - показываем всегда если окно в фокусе
@@ -14572,24 +14590,174 @@ window.doNicknameSearch = function(val) {
     window.showApp = showApp = function() {
         originalShowApp.call ? originalShowApp.call(this) : originalShowApp();
         listenForCalls();
+        // Инициализируем push-уведомления
+        if (typeof initNotifications === 'function') {
+            initNotifications();
+        }
     };
     
-    // Регистрация Service Worker для PWA (отключено для отладки)
-    // Раскомментируй для продакшена на HTTPS
-    /*
+    // ========== PUSH УВЕДОМЛЕНИЯ ==========
+    let swRegistration = null;
+    let notificationsEnabled = false;
+    
+    // Регистрация Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js')
-            .then(reg => console.log('SW registered'))
-            .catch(err => console.log('SW registration failed'));
-    }
-    */
-    
-    // Удаляем старый SW если есть
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-            registrations.forEach(reg => reg.unregister());
+            .then(reg => {
+                console.log('SW registered');
+                swRegistration = reg;
+                
+                // Проверяем разрешение на уведомления
+                if (Notification.permission === 'granted') {
+                    notificationsEnabled = true;
+                }
+            })
+            .catch(err => console.log('SW registration failed:', err));
+        
+        // Слушаем сообщения от Service Worker
+        navigator.serviceWorker.addEventListener('message', event => {
+            if (event.data?.type === 'NOTIFICATION_CLICK') {
+                // Открываем чат при клике на уведомление
+                const data = event.data.data;
+                if (data?.chatPartnerId && data?.chatPartnerName) {
+                    openChat({ uid: data.chatPartnerId, username: data.chatPartnerName });
+                }
+            }
         });
     }
+    
+    // Запрос разрешения на уведомления
+    window.requestNotificationPermission = async () => {
+        if (!('Notification' in window)) {
+            showToast('Уведомления не поддерживаются', '❌');
+            return false;
+        }
+        
+        if (Notification.permission === 'granted') {
+            notificationsEnabled = true;
+            updatePushButton();
+            return true;
+        }
+        
+        if (Notification.permission === 'denied') {
+            showToast('Уведомления заблокированы в настройках браузера', '🔒');
+            updatePushButton();
+            return false;
+        }
+        
+        const permission = await Notification.requestPermission();
+        notificationsEnabled = permission === 'granted';
+        
+        if (notificationsEnabled) {
+            showToast('Push-уведомления включены!', '🔔');
+        } else {
+            showToast('Уведомления отклонены', '🔕');
+        }
+        
+        updatePushButton();
+        return notificationsEnabled;
+    };
+    
+    // Отправка push-уведомления через Service Worker
+    window.sendPushNotification = async (title, body, data = {}) => {
+        // Не показываем уведомления если вкладка активна
+        if (document.visibilityState === 'visible' && document.hasFocus()) {
+            return;
+        }
+        
+        if (!notificationsEnabled) {
+            // Пробуем запросить разрешение
+            const granted = await requestNotificationPermission();
+            if (!granted) return;
+        }
+        
+        if (swRegistration && swRegistration.active) {
+            // Отправляем через Service Worker (работает в фоне)
+            swRegistration.active.postMessage({
+                type: 'SHOW_NOTIFICATION',
+                title,
+                body,
+                icon: '/icon-128.png',
+                tag: 'chat-' + (data.chatPartnerId || Date.now()),
+                data
+            });
+        } else {
+            // Fallback на обычные уведомления
+            try {
+                new Notification(title, {
+                    body,
+                    icon: '/icon-128.png',
+                    tag: 'chat-' + (data.chatPartnerId || Date.now()),
+                    data
+                });
+            } catch (e) {
+                console.log('Notification error:', e);
+            }
+        }
+    };
+    
+    // Автоматический запрос разрешения при первом входе
+    window.initNotifications = async () => {
+        // Обновляем UI кнопки
+        updatePushButton();
+        
+        if ('Notification' in window && Notification.permission === 'default') {
+            // Показываем кнопку для запроса разрешения
+            setTimeout(() => {
+                if (Notification.permission === 'default') {
+                    showNotificationPrompt();
+                }
+            }, 5000);
+        } else if (Notification.permission === 'granted') {
+            notificationsEnabled = true;
+        }
+    };
+    
+    // Обновление UI кнопки push-уведомлений
+    window.updatePushButton = () => {
+        const btn = document.getElementById('push-permission-btn');
+        if (!btn) return;
+        
+        if (!('Notification' in window)) {
+            btn.textContent = 'Не поддерживается';
+            btn.disabled = true;
+            btn.className = 'px-3 py-1 rounded-lg bg-slate-300 text-slate-500 text-xs font-bold cursor-not-allowed';
+        } else if (Notification.permission === 'granted') {
+            btn.textContent = '✓ Включены';
+            btn.className = 'px-3 py-1 rounded-lg bg-green-500 text-white text-xs font-bold';
+            btn.onclick = null;
+        } else if (Notification.permission === 'denied') {
+            btn.textContent = 'Заблокированы';
+            btn.className = 'px-3 py-1 rounded-lg bg-red-500/20 text-red-500 text-xs font-bold';
+            btn.onclick = () => showToast('Разблокируйте уведомления в настройках браузера', '🔒');
+        } else {
+            btn.textContent = 'Включить';
+            btn.className = 'px-3 py-1 rounded-lg bg-indigo-500 text-white text-xs font-bold';
+        }
+    };
+    
+    // Показываем промпт для включения уведомлений
+    window.showNotificationPrompt = () => {
+        const prompt = document.createElement('div');
+        prompt.className = 'notification-prompt';
+        prompt.innerHTML = `
+            <div class="notification-prompt-content">
+                <i class="fas fa-bell text-2xl text-indigo-500"></i>
+                <div>
+                    <p class="font-bold">Включить уведомления?</p>
+                    <p class="text-xs opacity-60">Получайте сообщения даже когда браузер свёрнут</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="this.closest('.notification-prompt').remove()" class="px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 text-sm">Позже</button>
+                    <button onclick="requestNotificationPermission(); this.closest('.notification-prompt').remove()" class="px-3 py-1 rounded-lg bg-indigo-500 text-white text-sm">Включить</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(prompt);
+        
+        // Автоудаление через 10 секунд
+        setTimeout(() => prompt.remove(), 10000);
+    };
     
     // ========== Индикатор "печатает..." ==========
     let typingTimeout = null;
