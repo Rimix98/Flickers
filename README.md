@@ -1,2 +1,2 @@
 # Flickers
-Good rounded messanger
+Chat. Freely. Forever
