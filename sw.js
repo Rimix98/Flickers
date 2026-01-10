@@ -78,6 +78,11 @@ self.addEventListener('fetch', event => {
     return;
   }
   
+  // Пропускаем manifest.json - пусть браузер сам обрабатывает
+  if (url.pathname.endsWith('manifest.json')) {
+    return;
+  }
+  
   event.respondWith(
     fetch(event.request)
       .then(response => {
@@ -91,7 +96,10 @@ self.addEventListener('fetch', event => {
       })
       .catch(() => {
         // Если сеть недоступна - берём из кэша
-        return caches.match(event.request);
+        return caches.match(event.request).then(cached => {
+          // Если нет в кэше - возвращаем пустой ответ вместо undefined
+          return cached || new Response('Not found', { status: 404 });
+        });
       })
   );
 });

@@ -530,10 +530,17 @@
                 color: var(--accent);
             }
             
+            .tg-mic-btn.hidden {
+                display: none !important;
+            }
+            
             .tg-send-btn-right {
                 background: var(--accent);
                 color: white;
                 font-size: 16px;
+            }
+            .tg-send-btn-right:not(.hidden) {
+                display: flex !important;
             }
             .tg-send-btn-right:active {
                 transform: scale(0.95);
@@ -571,6 +578,7 @@
                 padding: 12px;
                 min-height: 200px;
                 max-height: 45vh;
+                position: relative;
             }
             
             .attach-gallery-grid {
@@ -705,24 +713,31 @@
             
             /* Send selected button */
             .attach-send-btn {
-                position: absolute;
-                bottom: 100px;
-                right: 16px;
-                width: 56px;
-                height: 56px;
+                position: fixed;
+                bottom: 200px;
+                right: 20px;
+                width: 60px;
+                height: 60px;
                 border-radius: 50%;
-                background: var(--accent);
+                background: linear-gradient(135deg, #6366f1, #8b5cf6);
                 color: white;
                 display: none;
                 align-items: center;
                 justify-content: center;
-                font-size: 20px;
-                box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+                font-size: 22px;
+                box-shadow: 0 8px 24px rgba(99, 102, 241, 0.6);
                 cursor: pointer;
-                z-index: 10;
+                z-index: 1200;
+                border: none;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
             }
             .attach-send-btn.visible {
-                display: flex;
+                display: flex !important;
+            }
+            .attach-send-btn:active {
+                transform: scale(0.9);
+                background: linear-gradient(135deg, #4f46e5, #7c3aed);
             }
             
             /* Hide old styles */
@@ -1221,6 +1236,133 @@
             * {
                 animation: none !important;
                 transition: none !important;
+            }
+        }
+        
+        /* ========== АДАПТАЦИЯ ДЛЯ МАЛЕНЬКИХ ЭКРАНОВ (до 400px) ========== */
+        @media (max-width: 400px) {
+            /* Уменьшаем отступы */
+            .p-4 { padding: 0.75rem !important; }
+            .p-6 { padding: 1rem !important; }
+            .px-4 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+            .py-4 { padding-top: 0.75rem !important; padding-bottom: 0.75rem !important; }
+            .gap-4 { gap: 0.5rem !important; }
+            .gap-3 { gap: 0.375rem !important; }
+            
+            /* Уменьшаем шрифты */
+            .text-xl { font-size: 1rem !important; }
+            .text-lg { font-size: 0.9rem !important; }
+            .text-base { font-size: 0.85rem !important; }
+            .text-sm { font-size: 0.75rem !important; }
+            .text-xs { font-size: 0.65rem !important; }
+            
+            /* Компактный header чата */
+            #chat-header {
+                padding: 8px 12px !important;
+                min-height: 50px !important;
+            }
+            #chat-header .w-10, #chat-header .w-12 {
+                width: 36px !important;
+                height: 36px !important;
+            }
+            #chat-header .text-lg {
+                font-size: 0.9rem !important;
+            }
+            
+            /* Компактные сообщения */
+            .message-bubble {
+                max-width: 85% !important;
+                padding: 8px 12px !important;
+                font-size: 0.9rem !important;
+                border-radius: 1rem !important;
+            }
+            
+            /* Компактный input */
+            .tg-input-row {
+                padding: 6px 8px !important;
+                gap: 4px !important;
+            }
+            .tg-emoji-btn-left, .tg-attach-btn, .tg-mic-btn {
+                width: 34px !important;
+                height: 34px !important;
+                font-size: 18px !important;
+            }
+            .tg-message-input {
+                font-size: 15px !important;
+                padding: 8px 0 !important;
+            }
+            .tg-send-btn-right {
+                width: 34px !important;
+                height: 34px !important;
+            }
+            
+            /* Компактное меню вложений */
+            .attach-action-item {
+                padding: 6px !important;
+            }
+            .attach-action-icon {
+                width: 44px !important;
+                height: 44px !important;
+                font-size: 18px !important;
+            }
+            .attach-action-item span {
+                font-size: 10px !important;
+            }
+            .attach-actions-bar {
+                padding: 10px 4px !important;
+            }
+            
+            /* Компактный список чатов */
+            .chat-item {
+                padding: 10px 12px !important;
+            }
+            .chat-item .w-12 {
+                width: 40px !important;
+                height: 40px !important;
+            }
+            
+            /* Компактные модальные окна */
+            .modal-content, [class*="modal"] > div {
+                padding: 16px !important;
+                margin: 8px !important;
+                border-radius: 16px !important;
+            }
+            
+            /* Компактные кнопки */
+            button.rounded-xl, .btn {
+                padding: 10px 16px !important;
+                font-size: 0.85rem !important;
+            }
+            
+            /* Уменьшаем аватары */
+            .w-16 { width: 3rem !important; height: 3rem !important; }
+            .w-14 { width: 2.75rem !important; height: 2.75rem !important; }
+            .w-12 { width: 2.5rem !important; height: 2.5rem !important; }
+            .w-10 { width: 2rem !important; height: 2rem !important; }
+        }
+        
+        /* ========== ОЧЕНЬ МАЛЕНЬКИЕ ЭКРАНЫ (до 320px) ========== */
+        @media (max-width: 320px) {
+            .tg-input-row {
+                padding: 4px 6px !important;
+            }
+            .tg-emoji-btn-left, .tg-attach-btn, .tg-mic-btn {
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 16px !important;
+            }
+            .message-bubble {
+                max-width: 90% !important;
+                padding: 6px 10px !important;
+                font-size: 0.85rem !important;
+            }
+            .attach-action-icon {
+                width: 38px !important;
+                height: 38px !important;
+                font-size: 16px !important;
+            }
+            .attach-action-item span {
+                font-size: 9px !important;
             }
         }
         
@@ -1773,6 +1915,7 @@
         .call-btn-mute { background: rgba(255,255,255,0.2); color: white; }
         .call-btn-mute.active { background: #ef4444; }
         .call-btn-mute.screen-sharing { background: #3b82f6; }
+        .call-btn-mute.speakerphone-active { background: #22c55e; }
         
         /* Видео контейнер */
         .video-container {
@@ -5274,8 +5417,11 @@
         <button class="call-btn call-btn-mute" id="screen-share-btn" onclick="toggleScreenShare()" title="Демонстрация экрана">
             <i class="fas fa-desktop"></i>
         </button>
-        <button class="call-btn call-btn-mute" id="speaker-btn" onclick="toggleSpeaker()" title="Динамик">
+        <button class="call-btn call-btn-mute" id="speaker-btn" onclick="toggleSpeaker()" title="Выключить звук">
             <i class="fas fa-volume-up"></i>
+        </button>
+        <button class="call-btn call-btn-mute" id="speakerphone-btn" onclick="toggleSpeakerphone()" title="Громкая связь">
+            <i class="fas fa-phone-volume"></i>
         </button>
         <button class="call-btn call-btn-decline" onclick="endCall()" title="Завершить">
             <i class="fas fa-phone-slash"></i>
@@ -5680,6 +5826,11 @@
                             <i class="far fa-smile"></i>
                         </button>
                         
+                        <!-- Stickers/GIF button -->
+                        <button onclick="toggleStickers()" class="tg-emoji-btn-left" style="margin-left: -8px;">
+                            <i class="fas fa-sticky-note"></i>
+                        </button>
+                        
                         <!-- Input field -->
                         <div class="tg-input-center">
                             <textarea id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" rows="1" oninput="autoResizeTextarea(this); syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()" onkeydown="if(event.key==='Enter' && !event.shiftKey){sendMsg(); event.preventDefault();}"></textarea>
@@ -5694,7 +5845,7 @@
                         <button id="tg-voice-btn" ontouchstart="startVoice()" ontouchend="stopVoice()" onmousedown="startVoice()" onmouseup="stopVoice()" class="tg-mic-btn">
                             <i class="fas fa-microphone"></i>
                         </button>
-                        <button id="tg-send-btn" onclick="sendMsg()" class="tg-send-btn-right hidden">
+                        <button id="tg-send-btn-right" onclick="sendMsg()" class="tg-send-btn-right hidden">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
@@ -12223,19 +12374,7 @@ window.doNicknameSearch = function(val) {
         menu.id = 'mobile-attach-menu';
         menu.className = 'mobile-attach-menu hidden';
         menu.innerHTML = `
-            <div class="attach-gallery-section">
-                <div class="attach-gallery-grid" id="attach-gallery-grid">
-                    <div class="attach-gallery-placeholder">
-                        <i class="fas fa-images"></i>
-                        <span>Нажмите "Галерея" для выбора фото</span>
-                    </div>
-                </div>
-            </div>
             <div class="attach-actions-bar">
-                <div class="attach-action-item" id="attach-btn-gallery">
-                    <div class="attach-action-icon gallery-icon"><i class="fas fa-images"></i></div>
-                    <span>Галерея</span>
-                </div>
                 <div class="attach-action-item" id="attach-btn-file">
                     <div class="attach-action-icon file-icon"><i class="fas fa-file"></i></div>
                     <span>Файл</span>
@@ -12252,12 +12391,12 @@ window.doNicknameSearch = function(val) {
                     <div class="attach-action-icon poll-icon"><i class="fas fa-poll"></i></div>
                     <span>Опрос</span>
                 </div>
-            </div>
-            <div class="attach-actions-bar" style="border-top: none; padding-top: 0;">
                 <div class="attach-action-item" id="attach-btn-ai">
                     <div class="attach-action-icon ai-icon"><i class="fas fa-robot"></i></div>
                     <span>AI</span>
                 </div>
+            </div>
+            <div class="attach-actions-bar" style="border-top: none; padding-top: 0;">
                 <div class="attach-action-item" id="attach-btn-game">
                     <div class="attach-action-icon game-icon"><i class="fas fa-gamepad"></i></div>
                     <span>Игра</span>
@@ -12281,7 +12420,6 @@ window.doNicknameSearch = function(val) {
         document.body.appendChild(menu);
         
         // Добавляем обработчики
-        document.getElementById('attach-btn-gallery').addEventListener('click', openGalleryPicker);
         document.getElementById('attach-btn-file').addEventListener('click', () => { triggerFile(); closeMobileAttachMenu(); });
         document.getElementById('attach-btn-location').addEventListener('click', () => { sendLocation(); closeMobileAttachMenu(); });
         document.getElementById('attach-btn-event').addEventListener('click', () => { openEventModal(); closeMobileAttachMenu(); });
@@ -12291,7 +12429,6 @@ window.doNicknameSearch = function(val) {
         document.getElementById('attach-btn-video').addEventListener('click', () => { openVideoCircle(); closeMobileAttachMenu(); });
         document.getElementById('attach-btn-schedule').addEventListener('click', () => { openScheduleModal(); closeMobileAttachMenu(); });
         document.getElementById('attach-btn-tasks').addEventListener('click', () => { openTasksPanel(); closeMobileAttachMenu(); });
-        document.getElementById('gallery-input').addEventListener('change', function() { handleGallerySelect(this); });
     }
     
     window.openMobileAttachMenu = () => {
@@ -12317,135 +12454,51 @@ window.doNicknameSearch = function(val) {
     window.closeMobileAttachMenu = () => {
         const menu = document.getElementById('mobile-attach-menu');
         const overlay = document.getElementById('attach-overlay');
-        if (menu) {
-            menu.classList.add('hidden');
-        }
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
-        // Сбрасываем выбранные фото
-        selectedGalleryItems = [];
-        updateGallerySendBtn();
+        if (menu) menu.classList.add('hidden');
+        if (overlay) overlay.style.display = 'none';
     };
     
-    // Галерея
-    let selectedGalleryItems = [];
-    
+    // Простая отправка файла - без галереи, сразу при выборе
     window.openGalleryPicker = () => {
-        document.getElementById('gallery-input').click();
+        const input = document.getElementById('gallery-input');
+        if (input) input.click();
     };
     
-    window.handleGallerySelect = (input) => {
+    // Обработка выбора файла - СРАЗУ отправляем
+    window.handleGallerySelect = async (input) => {
         const files = Array.from(input.files);
         if (!files.length) return;
         
-        const grid = document.getElementById('attach-gallery-grid');
-        grid.innerHTML = '';
-        
-        files.forEach((file, index) => {
-            const item = document.createElement('div');
-            item.className = 'attach-gallery-item';
-            item.dataset.index = index;
-            
-            const isVideo = file.type.startsWith('video/');
-            const url = URL.createObjectURL(file);
-            
-            if (isVideo) {
-                item.innerHTML = `
-                    <video src="${url}" muted></video>
-                    <div class="gallery-check"><i class="fas fa-check"></i></div>
-                    <div class="hd-badge"><i class="fas fa-play"></i></div>
-                `;
-            } else {
-                item.innerHTML = `
-                    <img src="${url}" alt="">
-                    <div class="gallery-check"><i class="fas fa-check"></i></div>
-                `;
-            }
-            
-            item.onclick = () => toggleGalleryItem(item, file, index);
-            grid.appendChild(item);
-        });
-        
-        // Добавляем кнопку отправки
-        let sendBtn = document.getElementById('gallery-send-btn');
-        if (!sendBtn) {
-            sendBtn = document.createElement('button');
-            sendBtn.id = 'gallery-send-btn';
-            sendBtn.className = 'attach-send-btn';
-            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-            sendBtn.onclick = sendSelectedGalleryItems;
-            document.getElementById('mobile-attach-menu').appendChild(sendBtn);
+        if (!activeChatPartner && !activeGroup) {
+            showToast('Сначала откройте чат', '⚠️');
+            input.value = '';
+            return;
         }
         
-        // Автоматически выбираем первый элемент
-        const firstItem = grid.querySelector('.attach-gallery-item');
-        if (firstItem) {
-            toggleGalleryItem(firstItem, files[0], 0);
-        }
-    };
-    
-    function toggleGalleryItem(item, file, index) {
-        const isSelected = item.classList.contains('selected');
-        
-        if (isSelected) {
-            item.classList.remove('selected');
-            selectedGalleryItems = selectedGalleryItems.filter(f => f.index !== index);
-        } else {
-            item.classList.add('selected');
-            selectedGalleryItems.push({ file, index });
-        }
-        
-        updateGallerySendBtn();
-    }
-    
-    function updateGallerySendBtn() {
-        const sendBtn = document.getElementById('gallery-send-btn');
-        if (sendBtn) {
-            if (selectedGalleryItems.length > 0) {
-                sendBtn.classList.add('visible');
-                sendBtn.innerHTML = selectedGalleryItems.length > 1 
-                    ? `<span style="font-size:14px;font-weight:bold;">${selectedGalleryItems.length}</span>`
-                    : '<i class="fas fa-paper-plane"></i>';
-            } else {
-                sendBtn.classList.remove('visible');
-            }
-        }
-    }
-    
-    async function sendSelectedGalleryItems() {
-        if (!selectedGalleryItems.length) return;
-        
+        // Закрываем меню сразу
         closeMobileAttachMenu();
-        showToast(`Отправка ${selectedGalleryItems.length} файл(ов)...`, '📤');
         
-        for (const item of selectedGalleryItems) {
-            await handleFileUpload(item.file);
-        }
+        showToast(`Отправка ${files.length} файл(ов)...`, '📤');
         
-        // Сбрасываем
-        selectedGalleryItems = [];
-        document.getElementById('gallery-input').value = '';
-        document.getElementById('attach-gallery-grid').innerHTML = `
-            <div class="attach-gallery-placeholder">
-                <i class="fas fa-images"></i>
-                <span>Нажмите "Галерея" для выбора фото</span>
-            </div>
-        `;
-    }
-    
-    // Функция загрузки файла (используется для галереи)
-    async function handleFileUpload(file) {
-        if (!activeChatPartner && !activeGroup) return;
+        let successCount = 0;
         
-        const isImage = file.type.startsWith('image/');
-        const isVideo = file.type.startsWith('video/');
-        
-        // Конвертируем в base64 для небольших файлов
-        if (file.size < 5 * 1024 * 1024) { // < 5MB
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                const base64 = e.target.result;
+        for (const file of files) {
+            try {
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`${file.name} > 5MB`, '⚠️');
+                    continue;
+                }
+                
+                // Читаем файл в base64
+                const base64 = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.onerror = () => reject(new Error('Ошибка чтения'));
+                    reader.readAsDataURL(file);
+                });
+                
+                const isImage = file.type.startsWith('image/');
+                const isVideo = file.type.startsWith('video/');
                 
                 const msgData = {
                     senderId: me.uid,
@@ -12464,23 +12517,28 @@ window.doNicknameSearch = function(val) {
                     msgData.type = 'file';
                 }
                 
-                try {
-                    if (activeGroup) {
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'groups', activeGroup.id, 'messages'), msgData);
-                    } else {
-                        const chatId = [me.uid, activeChatPartner.uid].sort().join('_');
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msgData);
-                    }
-                } catch (err) {
-                    console.error('Upload error:', err);
-                    showToast('Ошибка отправки', '❌');
+                if (activeGroup) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'groups', activeGroup.id, 'messages'), msgData);
+                } else {
+                    const chatId = [me.uid, activeChatPartner.uid].sort().join('_');
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msgData);
                 }
-            };
-            reader.readAsDataURL(file);
-        } else {
-            showToast('Файл слишком большой (макс. 5MB)', '❌');
+                
+                successCount++;
+            } catch (err) {
+                console.error('Upload error:', err);
+            }
         }
-    }
+        
+        // Очищаем input
+        input.value = '';
+        
+        if (successCount > 0) {
+            showToast(`Отправлено: ${successCount}`, '✅');
+        } else {
+            showToast('Не удалось отправить', '❌');
+        }
+    };
     
     // Синхронизация мобильного и десктопного input
     window.syncInputs = (source) => {
@@ -12544,7 +12602,8 @@ window.doNicknameSearch = function(val) {
         // Очищаем оба input
         if (mobileInput) {
             mobileInput.value = '';
-            mobileInput.style.height = 'auto'; // Сбрасываем высоту textarea
+            mobileInput.style.height = 'auto';
+            mobileInput.rows = 1;
         }
         if (desktopInput) desktopInput.value = '';
         handleInputChange(); // Сбрасываем кнопку на микрофон
@@ -16585,6 +16644,8 @@ window.doNicknameSearch = function(val) {
             if (!text && !fileData) return;
             
             input.value = '';
+            input.style.height = 'auto';
+            input.rows = 1;
             handleInputChange(); // Сбрасываем кнопку на микрофон
             const encryptedText = text ? encrypt(text) : '';
             
@@ -16898,21 +16959,11 @@ window.doNicknameSearch = function(val) {
     // ========== WebRTC Звонки ==========
     const iceServers = {
         iceServers: [
-            // STUN серверы (бесплатные)
+            // STUN сервер (Google - самый надёжный)
             { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:stun2.l.google.com:19302' },
-            { urls: 'stun:stun3.l.google.com:19302' },
-            { urls: 'stun:stun4.l.google.com:19302' },
-            { urls: 'stun:stun.stunprotocol.org:3478' },
-            // Metered TURN серверы (бесплатные)
+            // TURN серверы (Metered - бесплатные, для NAT traversal)
             {
                 urls: 'turn:a.relay.metered.ca:80',
-                username: 'e8dd65c92ae1c41e43b88a94',
-                credential: 'uWdWNmkhvyqTmFnQ'
-            },
-            {
-                urls: 'turn:a.relay.metered.ca:80?transport=tcp',
                 username: 'e8dd65c92ae1c41e43b88a94',
                 credential: 'uWdWNmkhvyqTmFnQ'
             },
@@ -18348,9 +18399,17 @@ window.doNicknameSearch = function(val) {
         }
     }
 
+    let isCleaningUp = false;
+    
     function endCallCleanup() {
-        // Отправляем сообщение о звонке в чат
-        sendCallMessage();
+        // Предотвращаем повторный вызов
+        if (isCleaningUp) return;
+        isCleaningUp = true;
+        
+        // Отправляем сообщение о звонке в чат (только инициатор звонка)
+        if (isOutgoingCall) {
+            sendCallMessage();
+        }
         
         // Воспроизводим звук завершения звонка
         endCallSound.play().catch(() => {});
@@ -18365,6 +18424,8 @@ window.doNicknameSearch = function(val) {
         document.getElementById('incoming-call-screen').classList.add('hidden');
         document.getElementById('active-call-screen').classList.add('hidden');
         
+        // Сбрасываем флаг через небольшую задержку
+        setTimeout(() => { isCleaningUp = false; }, 500);
         // Сбрасываем видимость элементов
         const localVideoEl = document.getElementById('local-video');
         const remoteVideoEl = document.getElementById('remote-video');
@@ -18960,6 +19021,8 @@ window.doNicknameSearch = function(val) {
     };
 
     let isSpeakerOff = false;
+    let isSpeakerphone = false; // Громкая связь
+    
     window.toggleSpeaker = () => {
         isSpeakerOff = !isSpeakerOff;
         const remoteVideo = document.getElementById('remote-video');
@@ -18970,6 +19033,50 @@ window.doNicknameSearch = function(val) {
         const btn = document.getElementById('speaker-btn');
         btn.classList.toggle('active', isSpeakerOff);
         btn.innerHTML = isSpeakerOff ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+    };
+    
+    // Громкая связь (speakerphone)
+    window.toggleSpeakerphone = async () => {
+        isSpeakerphone = !isSpeakerphone;
+        const remoteVideo = document.getElementById('remote-video');
+        const btn = document.getElementById('speakerphone-btn');
+        
+        if (remoteVideo) {
+            // Пробуем использовать setSinkId для переключения аудиовыхода
+            if (typeof remoteVideo.setSinkId === 'function') {
+                try {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const audioOutputs = devices.filter(d => d.kind === 'audiooutput');
+                    
+                    if (audioOutputs.length > 1) {
+                        // Переключаемся между устройствами
+                        const currentIndex = audioOutputs.findIndex(d => d.deviceId === (remoteVideo.sinkId || 'default'));
+                        const nextIndex = (currentIndex + 1) % audioOutputs.length;
+                        await remoteVideo.setSinkId(audioOutputs[nextIndex].deviceId);
+                        showToast(isSpeakerphone ? 'Громкая связь включена' : 'Громкая связь выключена', '🔊');
+                    } else {
+                        // Если только одно устройство - меняем громкость
+                        remoteVideo.volume = isSpeakerphone ? 1.0 : 0.5;
+                        showToast(isSpeakerphone ? 'Громкая связь включена' : 'Обычный режим', '🔊');
+                    }
+                } catch (err) {
+                    console.log('setSinkId not supported, using volume fallback');
+                    remoteVideo.volume = isSpeakerphone ? 1.0 : 0.5;
+                    showToast(isSpeakerphone ? 'Громкая связь включена' : 'Обычный режим', '🔊');
+                }
+            } else {
+                // Fallback - просто меняем громкость
+                remoteVideo.volume = isSpeakerphone ? 1.0 : 0.5;
+                showToast(isSpeakerphone ? 'Громкая связь включена' : 'Обычный режим', '🔊');
+            }
+        }
+        
+        if (btn) {
+            btn.classList.toggle('speakerphone-active', isSpeakerphone);
+            btn.innerHTML = isSpeakerphone 
+                ? '<i class="fas fa-volume-up"></i>' 
+                : '<i class="fas fa-phone-volume"></i>';
+        }
     };
 
     // Запускаем слушатель звонков после авторизации
@@ -20138,6 +20245,8 @@ window.doNicknameSearch = function(val) {
             if (!text && !fileData) return;
             
             input.value = '';
+            input.style.height = 'auto';
+            input.rows = 1;
             handleInputChange();
             const encryptedText = text ? encrypt(text) : '';
             
