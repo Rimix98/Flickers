@@ -164,6 +164,54 @@
             position: relative;
             transform-origin: bottom;
             transition: transform 0.2s ease;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        .message-bubble p,
+        .message-bubble span,
+        .message-bubble div {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        
+        /* Кнопка меню сообщения (три точки) - только для мобильных */
+        .msg-menu-btn {
+            display: none;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.1);
+            border: none;
+            color: inherit;
+            opacity: 0.6;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            z-index: 5;
+            transition: opacity 0.2s, background 0.2s;
+        }
+        .msg-menu-btn:hover {
+            opacity: 1;
+            background: rgba(0,0,0,0.2);
+        }
+        .message-bubble.sent .msg-menu-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        .message-bubble.sent .msg-menu-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        @media (max-width: 768px) {
+            .msg-menu-btn {
+                display: flex;
+            }
         }
         
         /* Свайп для ответа */
@@ -502,8 +550,14 @@
                 color: var(--text-primary);
                 resize: none;
                 max-height: 120px;
-                line-height: 1.4;
-                padding: 10px 0;
+                min-height: 22px;
+                height: auto;
+                line-height: 22px;
+                padding: 0;
+                margin: 10px 0;
+                vertical-align: top;
+                overflow-y: auto;
+                box-sizing: border-box;
             }
             .tg-message-input::placeholder {
                 color: #9ca3af;
@@ -936,9 +990,23 @@
                 min-width: 200px;
             }
             
-            /* Voice recording UI на мобильных */
-            .voice-recording-ui {
-                border-radius: 24px !important;
+            /* Voice recording UI - скрываем десктопный на мобильных */
+            #voice-recording-ui,
+            .desktop-only-voice {
+                display: none !important;
+                visibility: hidden !important;
+                position: absolute !important;
+                left: -9999px !important;
+            }
+            
+            /* Фиксируем высоту input row при записи */
+            .tg-input-row {
+                min-height: 56px;
+            }
+            
+            /* Фиксируем footer */
+            #chat-footer {
+                flex-shrink: 0;
             }
         }
         
@@ -1143,6 +1211,26 @@
                 animation: none !important;
                 opacity: 1 !important;
                 transform: none !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+                max-width: 85% !important;
+            }
+            
+            /* Перенос текста в сообщениях */
+            .message-bubble p,
+            .message-bubble span,
+            .message-bubble div,
+            .message-bubble .msg-text,
+            .message-bubble .text-sm,
+            .message-bubble .leading-relaxed {
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                word-break: break-word !important;
+            }
+            
+            #messages-container {
+                overflow-x: hidden !important;
             }
             
             /* Отключаем hover эффекты (не нужны на тач-устройствах) */
@@ -5820,7 +5908,7 @@
                     <input type="file" id="file-input" class="hidden" onchange="handleFile(this)">
 
                     <!-- Telegram-style input area (mobile) -->
-                    <div class="tg-input-row">
+                    <div class="tg-input-row" style="position: relative;">
                         <!-- Emoji button left -->
                         <button onclick="toggleEmoji()" class="tg-emoji-btn-left">
                             <i class="far fa-smile"></i>
@@ -5832,12 +5920,24 @@
                         </button>
                         
                         <!-- Input field -->
-                        <div class="tg-input-center">
+                        <div class="tg-input-center" id="tg-input-center">
                             <textarea id="msg-input" data-i18n-placeholder="writeMessage" placeholder="Сообщение" class="tg-message-input" rows="1" oninput="autoResizeTextarea(this); syncInputs(this); handleInputChange(); if(typeof onTyping==='function')onTyping()" onkeydown="if(event.key==='Enter' && !event.shiftKey){sendMsg(); event.preventDefault();}"></textarea>
                         </div>
                         
+                        <!-- Mobile voice recording UI - fixed overlay -->
+                        <div id="mobile-voice-ui" style="display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 64px; align-items: center; gap: 12px; background: var(--bg-card); border-top: 2px solid #ef4444; padding: 10px 16px; z-index: 9999;">
+                            <div style="width: 14px; height: 14px; background: #ef4444; border-radius: 50%; animation: recording-pulse 1.5s infinite; flex-shrink: 0;"></div>
+                            <div class="voice-waveform" style="display: flex; gap: 3px; align-items: center;">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <span id="mobile-voice-timer" class="font-mono font-bold" style="color: #ef4444; font-size: 18px; flex: 1;">0:00</span>
+                            <button onclick="cancelVoice()" style="color: #ef4444; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: rgba(239,68,68,0.15); border-radius: 50%; border: none; font-size: 18px;">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        
                         <!-- Right buttons -->
-                        <button onclick="openMobileAttachMenu()" class="tg-attach-btn">
+                        <button onclick="openMobileAttachMenu()" class="tg-attach-btn" id="tg-attach-btn">
                             <i class="fas fa-paperclip"></i>
                         </button>
                         
@@ -5934,8 +6034,8 @@
                             </div>
                         </div>
                         
-                        <!-- UI записи голосового -->
-                        <div id="voice-recording-ui" class="voice-recording-ui hidden absolute inset-0">
+                        <!-- UI записи голосового (только десктоп) -->
+                        <div id="voice-recording-ui" class="voice-recording-ui hidden absolute inset-0 desktop-only-voice">
                             <div class="recording-indicator"></div>
                             <div class="voice-waveform">
                                 <span></span><span></span><span></span><span></span><span></span>
@@ -10037,14 +10137,14 @@ window.doNicknameSearch = function(val) {
                 // Проверяем, есть ли сообщения в этом чате
                 try {
                     const messagesRef = collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages');
-                    const messagesSnap = await getDocs(query(messagesRef, orderBy('ts', 'desc'), limit(1)));
+                    const messagesSnap = await getDocs(query(messagesRef, orderBy('timestamp', 'desc'), limit(1)));
                     
                     if (messagesSnap.empty) continue;
                     
                     const lastMessage = messagesSnap.docs[0].data();
                     
                     // Если последнее сообщение от другого пользователя - создаём чат
-                    if (lastMessage.from !== me.uid) {
+                    if (lastMessage.senderId !== me.uid) {
                         // Получаем данные отправителя
                         const senderDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', partnerId));
                         
@@ -10060,8 +10160,8 @@ window.doNicknameSearch = function(val) {
                                 uid: partnerId,
                                 username: senderName,
                                 last: lastMessage.text || (lastMessage.type === 'voice' ? '🎤 Голосовое сообщение' : '📎 Вложение'),
-                                lastSenderId: lastMessage.from,
-                                ts: lastMessage.ts
+                                lastSenderId: lastMessage.senderId,
+                                timestamp: lastMessage.timestamp
                             }, { merge: true });
                             
                             // Показываем уведомление
@@ -10536,8 +10636,13 @@ window.doNicknameSearch = function(val) {
         const chatId = [me.uid, partner.uid].sort().join('_');
         const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), orderBy('timestamp', 'asc'));
         
+        console.log('Subscribing to chat:', chatId);
+        console.log('Using appId:', appId);
+        console.log('Full path: artifacts/' + appId + '/public/data/chats/' + chatId + '/messages');
+        
         let isFirstLoad = true;
         msgUnsub = onSnapshot(q, (snap) => {
+            console.log('Messages snapshot received:', snap.size, 'messages');
             const cont = document.getElementById('messages-container');
             const shouldScroll = cont.scrollTop + cont.offsetHeight >= cont.scrollHeight - 100;
             
@@ -10866,7 +10971,10 @@ window.doNicknameSearch = function(val) {
                 
                 const timeHtml = `<span class="text-[9px] block mt-1 opacity-50 text-right">${timeStr}${readReceiptHtml}${destructTimerHtml}</span>`;
                 
-                div.innerHTML = swipeHint + forwardedHtml + replyQuoteHtml + senderHtml + content + reactionsHtml + timeHtml;
+                // Кнопка меню (три точки) для мобильных
+                const menuBtnHtml = `<button class="msg-menu-btn" onclick="event.stopPropagation(); showMsgMenuFromBtn(this, '${msgId}', ${m.senderId === me.uid}, '${(m.text || '').replace(/'/g, "\\'")}', ${m.encrypted || false}, '${m.type || 'text'}')"><i class="fas fa-ellipsis-v"></i></button>`;
+                
+                div.innerHTML = menuBtnHtml + swipeHint + forwardedHtml + replyQuoteHtml + senderHtml + content + reactionsHtml + timeHtml;
                 
                 // Помечаем сообщение как прочитанное (для чужих сообщений)
                 if (!isMine && !m.readAt && activeChatPartner) {
@@ -10879,6 +10987,12 @@ window.doNicknameSearch = function(val) {
                 div.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
                     showMessageContextMenu(e, msgId, m.senderId === me.uid, m.text, m.encrypted, m.type);
+                });
+                
+                // Долгое нажатие для мобильных
+                setupLongPress(div, (e) => {
+                    const touch = e.touches ? e.touches[0] : e;
+                    showMessageContextMenu({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} }, msgId, m.senderId === me.uid, m.text, m.encrypted, m.type);
                 });
                 
                 // Двойной клик для быстрой реакции ❤️
@@ -10994,11 +11108,65 @@ window.doNicknameSearch = function(val) {
                 }
             });
             if(shouldScroll) cont.scrollTop = cont.scrollHeight;
+        }, (error) => {
+            console.error('Messages onSnapshot error:', error);
+            console.error('Error code:', error.code);
+            console.error('Error message:', error.message);
         });
     };
 
     // ========== Контекстное меню сообщений ==========
     let currentContextMenu = null;
+    
+    // Функция для добавления долгого нажатия (для мобильных)
+    function setupLongPress(element, callback, duration = 500) {
+        let timer = null;
+        let startX, startY;
+        
+        const start = (e) => {
+            // Запоминаем начальную позицию
+            const touch = e.touches ? e.touches[0] : e;
+            startX = touch.clientX;
+            startY = touch.clientY;
+            
+            timer = setTimeout(() => {
+                // Вибрация на мобильных
+                if (navigator.vibrate) navigator.vibrate(50);
+                callback(e);
+            }, duration);
+        };
+        
+        const cancel = () => {
+            if (timer) {
+                clearTimeout(timer);
+                timer = null;
+            }
+        };
+        
+        const move = (e) => {
+            if (!timer) return;
+            const touch = e.touches ? e.touches[0] : e;
+            const dx = Math.abs(touch.clientX - startX);
+            const dy = Math.abs(touch.clientY - startY);
+            // Отменяем если палец сдвинулся больше чем на 10px
+            if (dx > 10 || dy > 10) cancel();
+        };
+        
+        element.addEventListener('touchstart', start, { passive: true });
+        element.addEventListener('touchend', cancel);
+        element.addEventListener('touchcancel', cancel);
+        element.addEventListener('touchmove', move, { passive: true });
+    }
+    
+    // Показать меню по клику на кнопку (три точки)
+    window.showMsgMenuFromBtn = (btn, msgId, isOwn, text, encrypted, type) => {
+        const rect = btn.getBoundingClientRect();
+        showMessageContextMenu({ 
+            clientX: rect.left, 
+            clientY: rect.bottom + 5,
+            preventDefault: () => {} 
+        }, msgId, isOwn, text, encrypted, type);
+    };
     
     function showMessageContextMenu(e, msgId, isOwn, text, encrypted, type) {
         // Закрываем предыдущее меню
@@ -11079,6 +11247,25 @@ window.doNicknameSearch = function(val) {
             </div>
         `;
         
+        // Разделитель перед опасными действиями
+        menuItems += `<div class="msg-context-divider"></div>`;
+        
+        // Очистить историю (только для личных чатов)
+        if (!isGroup && activeChatPartner) {
+            menuItems += `
+                <div class="msg-context-item danger" onclick="event.stopPropagation(); closeContextMenu(); clearChatHistory()">
+                    <i class="fas fa-broom"></i> ${currentLang === 'ru' ? 'Очистить историю' : 'Clear history'}
+                </div>
+            `;
+            
+            // Заблокировать пользователя
+            menuItems += `
+                <div class="msg-context-item danger" onclick="event.stopPropagation(); closeContextMenu(); blockUserFromMenu()">
+                    <i class="fas fa-ban"></i> ${currentLang === 'ru' ? 'Заблокировать' : 'Block user'}
+                </div>
+            `;
+        }
+        
         menu.innerHTML = menuItems;
         
         // Позиционируем меню
@@ -11148,6 +11335,34 @@ window.doNicknameSearch = function(val) {
         document.removeEventListener('click', closeContextMenu);
         document.removeEventListener('contextmenu', closeContextMenu);
     }
+    
+    // Заблокировать пользователя из контекстного меню сообщения
+    window.blockUserFromMenu = async () => {
+        if (!activeChatPartner || !me) return;
+        
+        const confirmed = confirm(currentLang === 'ru' 
+            ? `Заблокировать @${activeChatPartner.username}? Вы не сможете получать от него сообщения.` 
+            : `Block @${activeChatPartner.username}? You won't receive messages from them.`);
+        
+        if (!confirmed) return;
+        
+        try {
+            const userDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid));
+            const userData = userDoc.exists() ? userDoc.data() : {};
+            const blockedUsers = userData.blockedUsers || {};
+            
+            blockedUsers[activeChatPartner.uid] = true;
+            
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', me.uid), {
+                blockedUsers: blockedUsers
+            });
+            
+            showToast(currentLang === 'ru' ? 'Пользователь заблокирован' : 'User blocked', '🚫');
+        } catch (err) {
+            console.error('Error blocking user:', err);
+            showToast(currentLang === 'ru' ? 'Ошибка' : 'Error', '❌');
+        }
+    };
     
     // ========== Ответ на сообщение ==========
     let replyingTo = null; // { msgId, text, author, isGroup }
@@ -12317,13 +12532,24 @@ window.doNicknameSearch = function(val) {
         }
     };
 
+    // Полный сброс textarea после отправки сообщения
+    window.resetTextarea = (textarea) => {
+        if (!textarea) return;
+        textarea.value = '';
+        textarea.setAttribute('rows', '1');
+        textarea.style.cssText = 'height: auto !important;';
+        textarea.scrollTop = 0;
+        // Триггерим reflow
+        void textarea.offsetHeight;
+    };
+
     // Автоматическое изменение высоты textarea (как в WhatsApp)
     window.autoResizeTextarea = (textarea) => {
         if (!textarea) return;
         // Сбрасываем высоту для правильного расчёта
-        textarea.style.height = 'auto';
-        // Устанавливаем новую высоту (максимум 120px)
-        const newHeight = Math.min(textarea.scrollHeight, 120);
+        textarea.style.height = '24px';
+        // Устанавливаем новую высоту (максимум 120px, минимум 24px)
+        const newHeight = Math.max(24, Math.min(textarea.scrollHeight, 120));
         textarea.style.height = newHeight + 'px';
     };
 
@@ -12600,16 +12826,15 @@ window.doNicknameSearch = function(val) {
         }
 
         // Очищаем оба input
-        if (mobileInput) {
-            mobileInput.value = '';
-            mobileInput.style.height = 'auto';
-            mobileInput.rows = 1;
-        }
-        if (desktopInput) desktopInput.value = '';
+        resetTextarea(mobileInput);
+        resetTextarea(desktopInput);
         handleInputChange(); // Сбрасываем кнопку на микрофон
         
         try {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msg);
+            console.log('Sending message to chat:', chatId);
+            console.log('Message data:', JSON.stringify(msg, null, 2));
+            const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats', chatId, 'messages'), msg);
+            console.log('Message sent successfully, docId:', docRef.id);
             
             // Начисляем рубины за отправку сообщения
             earnRubies(RUBY_PER_MESSAGE);
@@ -13171,16 +13396,32 @@ window.doNicknameSearch = function(val) {
             mediaRecorder.start();
             isRecording = true;
             
-            document.getElementById('voice-btn').classList.add('recording');
-            document.getElementById('msg-input').classList.add('hidden');
-            document.getElementById('voice-recording-ui').classList.remove('hidden');
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // Mobile - просто показываем overlay
+                const mobileVoiceUI = document.getElementById('mobile-voice-ui');
+                if (mobileVoiceUI) {
+                    mobileVoiceUI.style.display = 'flex';
+                }
+            } else {
+                // Desktop UI
+                const voiceBtn = document.getElementById('voice-btn');
+                if (voiceBtn) voiceBtn.classList.add('recording');
+                document.getElementById('msg-input').classList.add('hidden');
+                document.getElementById('voice-recording-ui').classList.remove('hidden');
+            }
             
             voiceStartTime = Date.now();
             voiceTimerInterval = setInterval(() => {
                 const elapsed = Math.floor((Date.now() - voiceStartTime) / 1000);
                 const mins = Math.floor(elapsed / 60);
                 const secs = elapsed % 60;
-                document.getElementById('voice-timer').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+                const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+                const desktopTimer = document.getElementById('voice-timer');
+                const mobileTimer = document.getElementById('mobile-voice-timer');
+                if (desktopTimer) desktopTimer.innerText = timeStr;
+                if (mobileTimer) mobileTimer.innerText = timeStr;
             }, 1000);
             
         } catch (err) {
@@ -13206,11 +13447,28 @@ window.doNicknameSearch = function(val) {
 
     function resetVoiceUI() {
         isRecording = false;
-        const voiceBtn = document.getElementById('voice-btn');
-        if (voiceBtn) voiceBtn.classList.remove('recording');
-        document.getElementById('msg-input').classList.remove('hidden');
-        document.getElementById('voice-recording-ui').classList.add('hidden');
-        document.getElementById('voice-timer').innerText = '0:00';
+        
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            // Mobile - просто скрываем overlay
+            const mobileVoiceUI = document.getElementById('mobile-voice-ui');
+            if (mobileVoiceUI) {
+                mobileVoiceUI.style.display = 'none';
+            }
+            const mobileTimer = document.getElementById('mobile-voice-timer');
+            if (mobileTimer) mobileTimer.innerText = '0:00';
+        } else {
+            // Desktop UI
+            const voiceBtn = document.getElementById('voice-btn');
+            if (voiceBtn) voiceBtn.classList.remove('recording');
+            const msgInput = document.getElementById('msg-input');
+            if (msgInput) msgInput.classList.remove('hidden');
+            const voiceUI = document.getElementById('voice-recording-ui');
+            if (voiceUI) voiceUI.classList.add('hidden');
+            const voiceTimer = document.getElementById('voice-timer');
+            if (voiceTimer) voiceTimer.innerText = '0:00';
+        }
         
         if (voiceTimerInterval) {
             clearInterval(voiceTimerInterval);
@@ -16541,6 +16799,7 @@ window.doNicknameSearch = function(val) {
                 const linkedText = (!m.type || m.type === 'text') ? linkifyText(displayText) : displayText;
                 
                 div.innerHTML = `
+                    <button class="msg-menu-btn" onclick="event.stopPropagation(); showMsgMenuFromBtn(this, '${msgId}', ${isMine}, '${(m.text || '').replace(/'/g, "\\'")}', ${m.encrypted || false}, '${m.type || 'text'}')"><i class="fas fa-ellipsis-v"></i></button>
                     <div class="swipe-reply-hint"><i class="fas fa-reply"></i></div>
                     ${forwardedHtml}
                     ${replyQuoteHtml}
@@ -16566,6 +16825,12 @@ window.doNicknameSearch = function(val) {
                 div.addEventListener('contextmenu', (e) => {
                     e.preventDefault();
                     showMessageContextMenu(e, msgId, isMine, m.text, m.encrypted, m.type);
+                });
+                
+                // Долгое нажатие для мобильных
+                setupLongPress(div, (e) => {
+                    const touch = e.touches ? e.touches[0] : e;
+                    showMessageContextMenu({ clientX: touch.clientX, clientY: touch.clientY, preventDefault: () => {} }, msgId, isMine, m.text, m.encrypted, m.type);
                 });
                 
                 // Двойной клик для быстрой реакции ❤️
@@ -16601,7 +16866,8 @@ window.doNicknameSearch = function(val) {
             const oldBanner = document.getElementById('group-call-banner');
             if (oldBanner) oldBanner.remove();
             
-            if (!snap.empty && !isGroupCall) {
+            // Не показываем баннер если звонок только что завершился или мы участвуем в звонке
+            if (!snap.empty && !isGroupCall && !groupCallJustEnded) {
                 const callData = snap.docs[0].data();
                 const callId = snap.docs[0].id;
                 const participantCount = callData.participants?.length || 1;
@@ -16643,9 +16909,7 @@ window.doNicknameSearch = function(val) {
             const text = input.value.trim();
             if (!text && !fileData) return;
             
-            input.value = '';
-            input.style.height = 'auto';
-            input.rows = 1;
+            resetTextarea(input);
             handleInputChange(); // Сбрасываем кнопку на микрофон
             const encryptedText = text ? encrypt(text) : '';
             
@@ -16750,7 +17014,11 @@ window.doNicknameSearch = function(val) {
                     lastMsgEl.innerHTML = `<span class="text-green-500"><i class="fas fa-phone-alt mr-1"></i>${currentLang === 'ru' ? 'Звонок' : 'Call'} (${participantCount})</span>`;
                 }
             } else {
+                // Звонок завершён - скрываем индикатор и очищаем текст
                 if (indicator) indicator.classList.add('hidden');
+                if (lastMsgEl && lastMsgEl.innerHTML.includes('fa-phone-alt')) {
+                    lastMsgEl.innerHTML = '';
+                }
             }
         });
     }
@@ -17384,6 +17652,7 @@ window.doNicknameSearch = function(val) {
     let groupCallConnections = {}; // uid -> RTCPeerConnection
     let groupCallStreams = {}; // uid -> MediaStream
     let isGroupCall = false;
+    let groupCallJustEnded = false; // Флаг для предотвращения показа баннера сразу после завершения
 
     window.startCall = async (withVideo) => {
         // Проверяем, это групповой или личный звонок
@@ -17900,6 +18169,20 @@ window.doNicknameSearch = function(val) {
     }
 
     function endGroupCallCleanup() {
+        // Устанавливаем флаг чтобы баннер не показывался сразу после завершения
+        groupCallJustEnded = true;
+        setTimeout(() => { groupCallJustEnded = false; }, 2000);
+        
+        // Отписываемся от слушателя активного звонка
+        if (activeGroupCallUnsub) {
+            activeGroupCallUnsub();
+            activeGroupCallUnsub = null;
+        }
+        
+        // Удаляем баннер группового звонка
+        const groupCallBanner = document.getElementById('group-call-banner');
+        if (groupCallBanner) groupCallBanner.remove();
+        
         // Удаляем аудио элементы участников
         Object.keys(groupCallConnections).forEach(participantId => {
             const audioEl = document.getElementById(`group-audio-${participantId}`);
@@ -17927,6 +18210,14 @@ window.doNicknameSearch = function(val) {
             groupAudioContainer.innerHTML = '';
         }
         if (singleAvatarContainer) singleAvatarContainer.classList.remove('hidden');
+        
+        // Удаляем индикаторы активного звонка в списке групп
+        document.querySelectorAll('[data-group-call]').forEach(el => el.remove());
+        document.querySelectorAll('.group-last-msg').forEach(el => {
+            if (el.innerHTML.includes('Активный звонок')) {
+                el.innerHTML = '';
+            }
+        });
         
         endCallCleanup();
     }
@@ -20244,9 +20535,7 @@ window.doNicknameSearch = function(val) {
             const text = input.value.trim();
             if (!text && !fileData) return;
             
-            input.value = '';
-            input.style.height = 'auto';
-            input.rows = 1;
+            resetTextarea(input);
             handleInputChange();
             const encryptedText = text ? encrypt(text) : '';
             
