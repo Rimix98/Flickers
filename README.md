@@ -6,4 +6,4 @@ Chat. Freely. Forever
 
 Flickers is free, opensourced messenger made with love.
 
-Made as heavy fork for telegram
+Made as alternative messenging platform
