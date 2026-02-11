@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+updater/node_modules/
+
+# Build output
+dist/
+updater/dist/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package locks (optional - можно раскомментировать если нужно)
+# package-lock.json
+# backend/package-lock.json
+# updater/package-lock.json

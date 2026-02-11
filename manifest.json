@@ -1,7 +1,7 @@
 {
   "name": "Flickers Messenger",
   "short_name": "Flickers",
-  "description": "Умный мессенджер с нейросетями",
+  "description": "Всё для комфортной жизни!",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#1e1b4b",

@@ -1,17 +1,23 @@
 {
   "name": "flickers-messenger",
   "version": "1.1.0",
-  "description": "Flickers Messenger - Modern chat application",
+  "description": "Flickers Messenger - Всё для комфортной жизни!",
   "main": "main.js",
   "author": "Flickers",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
+    "start": "concurrently \"npm run backend\" \"npm run electron\"",
+    "electron": "electron .",
+    "backend": "cd backend && npm start",
+    "dev": "concurrently \"npm run backend\" \"npm run electron\"",
+    "web": "concurrently \"npm run backend\" \"node serve.js\"",
+    "serve": "node serve.js",
     "build": "electron-builder --win",
     "build:installer": "electron-builder --win nsis",
     "build:portable": "electron-builder --win portable"
   },
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "electron": "^28.0.0",
     "electron-builder": "^24.9.1",
     "png-to-ico": "^3.0.1",
@@ -29,7 +35,8 @@
       "!updater/**",
       "!.qodo/**",
       "!.vscode/**",
-      "!node_modules/.cache/**"
+      "!node_modules/.cache/**",
+      "backend/**/*"
     ],
     "extraFiles": [
       "preload.js"
